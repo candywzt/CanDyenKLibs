@@ -1,0 +1,9 @@
+
+W
+java:S1118":Add a private constructor to hide the implicit public one.(Áÿ€Ñ8Ïä§0
+{
+java:S4276"YRefactor this code to use the more specialised Functional Interface 'IntFunction<String>'(Ãòóıÿÿÿÿ8¡Ïä§0
+|
+java:S4276"ZRefactor this code to use the more specialised Functional Interface 'LongFunction<String>'(—ÀŞöúÿÿÿÿ8£Ïä§0
+y
+java:S4276&"\Refactor this code to use the more specialised Functional Interface 'DoubleFunction<String>'(¾Ù›8¥Ïä§0

@@ -1,0 +1,24 @@
+
+~
+java:S1488¾"[Immediately return this expression instead of assigning it to the temporary variable "dec".(‡¿Üùıÿÿÿÿ8ëâê§0
+\
+java:S1118":Add a private constructor to hide the implicit public one.(Ÿºğ—ûÿÿÿÿ8®ãê§0
+o	java:S100""NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ú°ñªûÿÿÿÿ8²ãê§0
+j	java:S1007"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ß˜áÑ8µãê§0
+o	java:S100L"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÖÙïüşÿÿÿÿ8¸ãê§0
+j	java:S100S"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ŸÈÖõ8ºãê§0
+o	java:S100W"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÇÄšòÿÿÿÿÿ8»ãê§0
+o	java:S100["NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ì†›ùÿÿÿÿ8¼ãê§0
+H
+java:S1168i"&Return an empty array instead of null.(–İŠÙşÿÿÿÿ8½ãê§0
+O
+java:S1135s"2Complete the task associated to this TODO comment.(³·”8Àãê§0
+C
+java:S1168v"&Return an empty array instead of null.(¥¹ï8Áãê§0
+P
+java:S1135Š"2Complete the task associated to this TODO comment.(³·”8Äãê§0
+Q
+java:S2201¯".The return value of "replaceAll" must be used.(õğ•—úÿÿÿÿ8Çãê§0
+L
+java:S2201·".The return value of "replaceAll" must be used.(”“š×8Éãê§0
+p	java:S100É"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ñ¹‘¡úÿÿÿÿ8Ëãê§0
