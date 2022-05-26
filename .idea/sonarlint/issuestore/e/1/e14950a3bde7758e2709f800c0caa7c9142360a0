@@ -1,20 +1,0 @@
-
-b	java:S116"NRename this field "ACL" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(êŒÿy
-Š
-java:S1130&"oRemove the declaration of thrown exception 'org.json.JSONException', as it cannot be thrown from method's body.(‡š•©øÿÿÿÿ
-M
-java:S1128"7Remove this unused import 'com.google.gson.JsonObject'.(µÊ´½
-F
-java:S1128"0Remove this unused import 'java.util.ArrayList'.(÷‰îƒ
-F
-java:S1128"+Remove this unused import 'java.util.List'.(Õë±Äøÿÿÿÿ
-B
-java:S1068",Remove this unused "objectId" private field.(²„‹Þ
-H
-java:S1068"-Remove this unused "createdAt" private field.(µ±œÎÿÿÿÿÿ
-B
-java:S1068"-Remove this unused "updatedAt" private field.(©åíO
-<
-java:S1068"'Remove this unused "ACL" private field.(êŒÿy
-C
-java:S1068"-Remove this unused "tableName" private field.(¹ò¦¢
