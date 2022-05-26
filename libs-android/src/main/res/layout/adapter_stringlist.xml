@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<candyenk.android.viewgroup.NoLinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical">
+
+    <TextView
+            android:id="@+id/stringlist_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/error"
+            android:textSize="18sp"/>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="-1dp"
+            android:layout_marginRight="30dp"
+            android:background="@color/teal_200"/>
+
+</candyenk.android.viewgroup.NoLinearLayout>

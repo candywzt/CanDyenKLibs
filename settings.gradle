@@ -1,4 +1,5 @@
 rootProject.name = 'CanDyenKLib'
 include 'libs-java'
 include 'libs-javafx'
-
+include 'libs-android'
+include 'app-android'

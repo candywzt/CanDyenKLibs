@@ -1,0 +1,96 @@
+<resources>
+    <!--CDKstytle基类-->
+    <style name="CDKWidget"></style>
+    <!--RecycleView基类-->
+    <style name="CDKWidget.RecyclerView"></style>
+    <!--Button基类-->
+    <style name="CDKWidget.Button" />
+    <!--ImageView基类-->
+    <style name="CDKWidget.ImageView" />
+    <!--Dialog基类-->
+    <style name="CDKWidget.Dialog" />
+    <!--*****************************************************************************************-->
+    <!--RecycleView风格-->
+    <!--RecycleView边缘衰减-->
+    <style name="CDKWidget.RecyclerView.NaverScrollBars" parent="CDKWidget.RecyclerView">
+        <item name="android:overScrollMode">never</item><!--滚动条模式-->
+        <item name="android:scrollbars">none</item><!--滚动条方向-->
+        <item name="android:requiresFadingEdge">vertical</item><!--边缘衰减方向-->
+        <item name="android:fadingEdgeLength">30dp</item><!--边缘衰减长度-->
+        <item name="android:colorEdgeEffect">@android:color/transparent</item><!--边缘颜色-->
+    </style>
+    <!--RecycleView安卓快速滚动条-->
+    <style name="CDKWidget.RecyclerView.ScrollBars" parent="CDKWidget.RecyclerView.NaverScrollBars">
+        <item name="android:overScrollMode">ifContentScrolls</item><!--滚动条模式-->
+        <item name="android:scrollbarSize">5dp</item><!--滚动条宽度-->
+        <item name="android:scrollbarThumbVertical">@color/mainGC4_1
+        </item><!--滚动条背景-->
+        <item name="android:scrollbars">vertical</item><!--滚动条方向-->
+    </style>
+    <!--RecycleView快速滚动条-->
+    <style name="CDKWidget.RecyclerView.FastScrollBars" parent="CDKWidget.RecyclerView.NaverScrollBars">
+        <item name="android:overScrollMode">never</item><!--滚动条模式-->
+        <item name="fastScrollEnabled">true</item><!--滚动条拖动-->
+        <item name="fastScrollHorizontalThumbDrawable">@drawable/slider_track</item><!--水平滚动块-->
+        <item name="fastScrollHorizontalTrackDrawable">@android:color/transparent
+        </item><!--水平滚动块背景-->
+        <item name="fastScrollVerticalThumbDrawable">@drawable/slider_track</item><!--竖直滚动块-->
+        <item name="fastScrollVerticalTrackDrawable">@android:color/transparent</item><!--竖直滚动块背景-->
+    </style>
+    <!--*****************************************************************************************-->
+    <!--Button风格-->
+    <!--TextButton-->
+    <style name="CDKWidget.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton"></style>
+    <!--实心按钮-->
+    <style name="CDKWidget.Button.TextButton.Solid" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/text_title</item><!--按钮文本颜色-->
+        <item name="rippleColor">@color/mainGC4_3</item><!--波纹颜色-->
+        <item name="backgroundTint">@color/mainGC4_1</item><!--背景图-->
+        <item name="cornerRadius">120dp</item><!--圆角-->
+    </style>
+    <!--空心按钮-->
+    <style name="CDKWidget.Button.TextButton.Outlined" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="strokeColor">@color/mtrl_btn_stroke_color_selector</item><!--轮廓笔画-->
+        <item name="strokeWidth">1dp</item><!--笔画宽度-->
+        <item name="android:textColor">@color/mainGC4_1</item><!--按钮文本颜色-->
+        <item name="rippleColor">@color/mainGC4_3</item><!--波纹颜色-->
+        <item name="backgroundTint">@android:color/transparent</item><!--背景色-->
+        <item name="cornerRadius">120dp</item><!--圆角-->
+    </style>
+    <!--*****************************************************************************************-->
+    <!--Switch风格-->
+    <style name="CDKWidget.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="android:thumb">@drawable/switch_thumb</item>
+        <item name="android:track">@drawable/switch_track</item>
+        <item name="android:background">@null</item>
+        <item name="android:maxHeight">25dp</item>
+        <item name="android:minHeight">25dp</item>
+
+    </style>
+    <!--*****************************************************************************************-->
+    <!--Seekbar风格-->
+    <style name="CDKWidget.SeekBar" parent="Widget.AppCompat.SeekBar">
+        <item name="android:thumb">@drawable/seekbar_thumb</item><!--拖动按钮背景图-->
+        <item name="android:progressDrawable">@drawable/seekbar_background</item>
+        <!--        <item name="android:indeterminateDrawable">@drawable/seekbar_indeterminate</item>-->
+        <item name="android:splitTrack">false</item><!--关闭中间割裂-->
+        <item name="android:background">@null</item>
+        <item name="android:maxHeight">25dp</item>
+        <item name="android:minHeight">25dp</item>
+
+    </style>
+    <!--*****************************************************************************************-->
+    <!--ShapeableImageView控件样式-->
+    <!--圆角图片-->
+    <style name="CDKWidget.ImageView.RoundStyle" parent="CDKWidget.ImageView">
+        <item name="cornerSizeTopLeft">25%</item>
+        <item name="cornerSizeTopRight">25%</item>
+        <item name="cornerSizeBottomRight">25%</item>
+        <item name="cornerSizeBottomLeft">25%</item>
+    </style>
+    <!--*****************************************************************************************-->
+    <!--DialogButtom风格-->
+    <style name="CDKWidget.Dialog.Bottom.Modal" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+</resources>

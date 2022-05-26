@@ -1,0 +1,15 @@
+
+`	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(‘ßÒŽþÿÿÿÿ
+V	java:S125"<This block of commented-out lines of code should be removed.(¡ö„›úÿÿÿÿ
+V	java:S125"<This block of commented-out lines of code should be removed.(¡ö„›úÿÿÿÿ
+h	java:S100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‘ßÒŽþÿÿÿÿ
+Q	java:S125@"<This block of commented-out lines of code should be removed.(ýèŠ 
+V	java:S125R"<This block of commented-out lines of code should be removed.(­Ž¾èùÿÿÿÿ
+i	java:S100‚"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Èø÷åøÿÿÿÿ
+R	java:S125"<This block of commented-out lines of code should be removed.(¥ý‘ä
+W	java:S125Ç"<This block of commented-out lines of code should be removed.(Ì¶²ûûÿÿÿÿ
+R	java:S125Ù"<This block of commented-out lines of code should be removed.(•Ò™
+W	java:S125ú"<This block of commented-out lines of code should be removed.(»‹è“þÿÿÿÿ
+R	java:S125Š"<This block of commented-out lines of code should be removed.(ËÜ›¹
+G
+java:S1144‚"+Remove this unused private "XFHook" method.(Èø÷åøÿÿÿÿ

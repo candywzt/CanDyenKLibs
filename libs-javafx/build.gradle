@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+version '0.1'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+dependencies {
+    //def javaFXPath = "${System.getenv("JAVAFX_HOME")}/lib"
+    //implementation fileTree(dir: javaFXPath, includes: ['*.jar'])
+}
+
+jar {
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+    archiveBaseName.set "canDyenKLibs-JavaFX"
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}

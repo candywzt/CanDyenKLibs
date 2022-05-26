@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+version '0.1'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+dependencies {
+    //def javaFXPath = "${System.getenv("JAVAFX_HOME")}/lib"
+    //implementation fileTree(dir: javaFXPath, includes: ['*.jar'])
+    implementation 'com.google.code.gson:gson:2.9.0'
+}
+
+jar {
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+    archiveBaseName.set "CanDyenKLibs-Java"
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}

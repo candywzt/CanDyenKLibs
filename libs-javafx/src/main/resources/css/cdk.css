@@ -1,0 +1,19 @@
+root {
+    -fx-background-color: #F4F4F4;
+}
+
+.windowtitle {
+    -fx-background-color: #EEF4F9;
+}
+
+.windowtitle.button {
+    -fx-background-color: transparent;
+}
+
+.windowtitle.button :hover {
+    -fx-background-color: #E9E9EA;
+}
+
+.windowtitle.button :pressed {
+    -fx-background-color: #EDEDEE;
+}

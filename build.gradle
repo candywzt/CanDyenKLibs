@@ -1,3 +1,21 @@
-plugins {
-    id 'java'
+buildscript {
+    repositories {
+        mavenLocal()
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.2.0"//Android Gradle插件
+        //classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"//Kotlin Gradle插件
+    }
+}
+//Gradle缓存库移到Maven库
+task cacheToLocalMavenRepository(type: Copy) {
+    from new File(gradle.gradleUserHomeDir, 'caches/modules-2/files-2.1')
+    into repositories.mavenLocal().url
+    eachFile {
+        List<String> parts = it.path.split('/')
+        it.path = (parts[0] + '/' + parts[1]).replace('.', '/') + '/' + parts[2] + '/' + parts[4]
+    }
+    includeEmptyDirs false
 }

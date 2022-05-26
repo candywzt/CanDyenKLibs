@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--CDKItem系列控件属性 -->
+    <!--Item -->
+    <declare-styleable name="CDKItem">
+        <attr name="title" format="string" />
+        <attr name="summary" format="string" />
+        <attr name="icon" format="reference" />
+    </declare-styleable>
+    <!--ItemSwitch-->
+    <declare-styleable name="CDKItemSwitch">
+        <attr name="title" />
+        <attr name="summary" />
+        <attr name="icon" />
+        <attr name="switchTextOn" format="string" />
+        <attr name="switchTextOff" format="string" />
+        <attr name="switchNF" format="boolean" />
+    </declare-styleable>
+    <!--ItemSeekBar-->
+    <declare-styleable name="CDKItemSeekBar">
+        <attr name="title" />
+        <attr name="summary" />
+        <attr name="icon" />
+        <attr name="progress" format="integer" />
+        <attr name="max" format="integer" />
+        <attr name="min" format="integer" />
+    </declare-styleable>
+    <!--ItemNimble-->
+    <declare-styleable name="CDKItemNimble">
+        <attr name="iconLocation" format="enum"><!--控件方向-->
+            <enum name="left" value="0" />
+            <enum name="right" value="1" />
+        </attr>
+        <attr name="title" />
+        <attr name="cardbackground" format="reference" />
+        <attr name="image" format="reference" /><!--控件图片-->
+    </declare-styleable>
+
+    <!--CDKAutoImageView微动背景图-->
+    <declare-styleable name="CDKAutoImageView">
+        <attr name="android:src" format="reference" />
+    </declare-styleable>
+    <!--CDKProgressBar进度条-->
+    <declare-styleable name="CDKProgressBar">
+        <attr name="android:max" />
+        <attr name="android:min" />
+        <attr name="android:progress" />
+        <attr name="displayMode" format="integer">
+            <flag name="none" value="1" />
+            <flag name="extremum" value="2" />
+            <flag name="number" value="4" />
+            <flag name="percent" value="8" />
+        </attr>
+    </declare-styleable>
+    <!--LabelView小标签组件-->
+    <declare-styleable name="CDKLabelView">
+        <attr name="android:text" format="string" />
+        <attr name="android:textColor" format="color"/>
+        <attr name="android:background" format="color" />
+        <attr name="android:src" format="reference" />
+    </declare-styleable>
+</resources>

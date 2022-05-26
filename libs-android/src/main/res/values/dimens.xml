@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="activity_top_default">120dp</dimen>
+    <dimen name="activity_bottom_default">100dp</dimen>
+</resources>
