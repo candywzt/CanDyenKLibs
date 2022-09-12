@@ -5,8 +5,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.2.0"//Android Gradle插件
-        //classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"//Kotlin Gradle插件
+        classpath 'com.android.tools.build:gradle:7.0.0'//Android Gradle插件
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0"//Kotlin Gradle插件
     }
 }
 //Gradle缓存库移到Maven库

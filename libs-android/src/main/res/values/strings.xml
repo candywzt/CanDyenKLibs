@@ -6,7 +6,16 @@
 
     <!--Crash崩溃捕捉活动-->
     <string name="crash_title_text">Crash Log</string>
-    <string name="crash_content_text">Ah! An uncontrollable exception occurred in the app. The detailed log is shown below, \nwhich can be copied and fed back to the developer. \nWe will try our best to repair the exception. Thank you for your cooperation. \nEvery feedback will make the app better!</string>
-    <string name="crash_error">An exception from an unknown source has been detected and the log cannot be captured normally. \n you can dictate the crash replication process to the developer \ n</string>
-
+    <string name="crash_content_text">Ah! An uncontrollable exception occurred in the app. The detailed log is shown
+        below, \nwhich can be copied and fed back to the developer. \nWe will try our best to repair the exception.
+        Thank you for your cooperation. \nEvery feedback will make the app better!
+    </string>
+    <string name="crash_error">An exception from an unknown source has been detected and the log cannot be captured
+        normally. \n you can dictate the crash replication process to the developer \ n
+    </string>
+    <!--文件选择器-->
+    <string name="file_chooser_title">File Chooser</string>
+    <string name="file_chooser_filesize">File Size</string>
+    <string name="file_chooser_lmd">Last Modified Date</string>
+    <string name="file_chooser_no_file">No File</string>
 </resources>

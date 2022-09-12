@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!--全局信息-->
     <string name="error">错误</string>
     <string name="yes">确认</string>
     <string name="no">取消</string>
-
+    <!--Crash崩溃捕捉活动-->
     <string name="crash_title_text">崩溃日志</string>
-    <string name="crash_content_text">啊！APP发生了无法控制的异常， 详细日志如下所示，\n可复制并反馈给开发者， \n我们将尽全力修复此异常，感谢您的配合， \n您的每一条反馈都将使APP更加优秀！</string>
+    <string name="crash_content_text">啊！APP发生了无法控制的异常， 详细日志如下所示，\n可复制并反馈给开发者，
+        \n我们将尽全力修复此异常，感谢您的配合， \n您的每一条反馈都将使APP更加优秀！
+    </string>
     <string name="crash_error">检测到未知来源的异常，无法正常捕捉到日志，\n可向开发者口述崩溃复现过程\n</string>
-
+    <!--文件选择器-->
+    <string name="file_chooser_title">文件选择器</string>
+    <string name="file_chooser_filesize">文件大小</string>
+    <string name="file_chooser_lmd">最后修改日期</string>
+    <string name="file_chooser_no_file">该文件夹为空</string>
 </resources>

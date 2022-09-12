@@ -1,6 +1,6 @@
 package candyenk.javafx.pane;
 
-import com.candyenk.libs.java.utils.R;
+import candyenk.java.tools.R;
 import candyenk.javafx.application.AM;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

@@ -114,6 +114,7 @@ public class LanguageTable implements LanguageInterface {
         return this;
     }
 
+    @Override
     public void setDefaultLanguage(String locale) {
         langCode = locale;
         langCodeTemporary = locale;
@@ -230,7 +231,7 @@ public class LanguageTable implements LanguageInterface {
         sb.append("语言Key:").append(keyList).append("\n");
         allLanguage.forEach((k, v) -> {
             sb.append("语言名:").append(k).append("\n");
-            sb.append("语言内容:").append(Arrays.toString(v)).append("\n");
+            sb.append("语言内容:").append(v.toString()).append("\n");
         });
         return sb.toString();
     }

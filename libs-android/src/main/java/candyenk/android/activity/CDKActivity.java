@@ -16,7 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import candyenk.android.R;
 import candyenk.android.qq.QQ;
-import candyenk.android.utils.L;
+import candyenk.android.tools.L;
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.Tencent;
 
@@ -278,7 +278,7 @@ public abstract class CDKActivity extends AppCompatActivity {
     /**
      * 设置内容布局
      * 设置多Fragment切换布局
-     * 函数
+     * index:默认显示的页面索引
      */
     public void setContentView(int index, Supplier<CDKFragment>... sup) {
         for (Supplier<CDKFragment> f : sup) {

@@ -11,14 +11,20 @@ repositories {
 dependencies {
     //def javaFXPath = "${System.getenv("JAVAFX_HOME")}/lib"
     //implementation fileTree(dir: javaFXPath, includes: ['*.jar'])
+    implementation project(path: ':libs-java')
 }
 
 jar {
     duplicatesStrategy DuplicatesStrategy.EXCLUDE
-    archiveBaseName.set "canDyenKLibs-JavaFX"
+    archiveBaseName.set "CanDyenKLibs-JavaFX"
     from {
         configurations.runtimeClasspath.collect {
             it.isDirectory() ? it : zipTree(it)
         }
+    }
+    manifest {
+        attributes 'Implementation-Title': '标题'
+        attributes 'Manifest-Version': '1.0'
+        attributes 'Main-Class': 'candyenk.java.Test'
     }
 }

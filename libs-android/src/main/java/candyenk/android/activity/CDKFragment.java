@@ -16,14 +16,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import candyenk.android.R;
-import candyenk.android.utils.L;
+import candyenk.android.tools.L;
 
 
 public abstract class CDKFragment extends Fragment {
     private FrameLayout container;//根布局
     private LinearLayout titleBar;//底栏控件
-    private View childView;//添加的子控件
-    private LayoutInflater inflater;
+    protected View childView;//添加的子控件
+    protected LayoutInflater inflater;
     private CharSequence showTitle;//手动显示的标题
     private Bundle savedInstanceState, saveData;
     protected String TAG;

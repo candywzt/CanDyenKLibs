@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import candyenk.android.crash.CrashTool;
-import candyenk.android.utils.AppUtil;
+import candyenk.android.handle.CrashHandler;
+import candyenk.android.utils.UApp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +109,7 @@ public class CDKApplication extends Application {
      * 自动初始化Activity管理器
      */
     protected void InitCrash() {
-        CrashTool.INSTANCE().init(this);
+        CrashHandler.INSTANCE().init(this);
         InitActivityManager();
     }
 
@@ -117,7 +117,7 @@ public class CDKApplication extends Application {
      * App工具初始化
      */
     protected void InitApp() {
-        AppUtil.INSTANCE().init(this);
+        UApp.init(this);
     }
 
     /**

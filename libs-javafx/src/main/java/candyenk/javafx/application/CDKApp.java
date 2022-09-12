@@ -1,6 +1,6 @@
 package candyenk.javafx.application;
 
-import com.candyenk.libs.java.utils.R;
+import candyenk.java.tools.R;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

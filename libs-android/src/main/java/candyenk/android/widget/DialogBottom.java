@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import candyenk.android.R;
 import candyenk.android.viewgroup.NoLinearLayout;
+
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -39,14 +40,14 @@ public class DialogBottom extends BottomSheetDialog {
     private static final String TAG = DialogBottom.class.getSimpleName();
     private static final HashSet<View> mList = new HashSet<>();//拉起的控件列表
 
-    private Context context; //拉起弹窗的Activity
-    private Context viewContext;
-    private View parentView; //调用上拉弹窗的View对象
-    private boolean isShow;//是否已经展示
-    private LinearLayout dialogView;//弹窗布局对象
-    private TextView titleView;  //标题文字控件
-    private RecyclerView listView; //列表控件
-    private Button leftButton, rightButton;  //左右按钮控件
+    protected Context context; //拉起弹窗的Activity
+    protected Context viewContext;
+    protected View parentView; //调用上拉弹窗的View对象
+    protected boolean isShow;//是否已经展示
+    protected LinearLayout dialogView;//弹窗布局对象
+    protected TextView titleView;  //标题文字控件
+    protected RecyclerView listView; //列表控件
+    protected Button leftButton, rightButton;  //左右按钮控件
 
     private AdapterDialogBottom adapter; //列表adp
     private AdapterView.OnItemClickListener itemCL; //列表点击事件
@@ -182,7 +183,7 @@ public class DialogBottom extends BottomSheetDialog {
         super.setContentView(dialogView);
     }
 
-    private int dp2px(double dpValue) {
+    protected int dp2px(double dpValue) {
         float num = dpValue < 0 ? -1 : 1;
         final double scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + (0.5f * num));
@@ -203,6 +204,7 @@ public class DialogBottom extends BottomSheetDialog {
      * 依据是否设置点击事件、设置了几个点击事件来显示或隐藏底栏按钮
      * 至多显示两个按钮，不调用该方法即不显示按钮
      * 调用setButtonText(CharSequence... text)方法可改变按钮文本
+     * 拉起弹窗后不可修改
      *
      * @param l 点击事件
      */
@@ -227,6 +229,7 @@ public class DialogBottom extends BottomSheetDialog {
      * 该方法与setContent(CharSequence... stringList)需同时设置才会起作用
      * 不分先后，顺序随意
      * parent 和id是空的
+     * 拉起弹窗后不可修改
      *
      * @param l 项目点击监听
      */
@@ -246,6 +249,7 @@ public class DialogBottom extends BottomSheetDialog {
      * 自定义布局的布局事件设置方法
      * 征用了一下View的点击事件hhh
      * 塞到adp里了
+     * 拉起弹窗后不可修改
      *
      * @param l
      */
@@ -258,19 +262,20 @@ public class DialogBottom extends BottomSheetDialog {
      * 设置左右按钮文本
      * 需同时调用setOnButtonClickListener(onButtonClickListener... l)方法
      * 该方法与按钮的显示无关，不调用该方法按钮将显示默认文本
+     * 拉起弹窗后不可修改
      *
      * @param text
      */
     public void setButtonText(CharSequence... text) {
         if (isShow) return;
         leftButton.setText(text[0]);
-        if (text.length > 1)
-            rightButton.setText(text[1]);
+        if (text.length > 1) rightButton.setText(text[1]);
     }
 
     /**
      * 设置弹窗外触关闭和返回键关闭
      * 默认 true,true
+     * 拉起弹窗后不可修改
      *
      * @param touchOff 外触是否关闭
      * @param backOff  返回键是否关闭
@@ -287,8 +292,7 @@ public class DialogBottom extends BottomSheetDialog {
      * 设置标题文本
      * 调用该方法将显示标题栏
      * 不调用则隐藏标题栏
-     *
-     * @param title
+     * 拉起弹窗后不可修改
      */
     public void setTitle(CharSequence title) {
         if (isShow) return;
@@ -299,9 +303,8 @@ public class DialogBottom extends BottomSheetDialog {
     /**
      * 设置标题位置,默认左边
      * 好吧只能center|left|right
+     * 拉起弹窗后不可修改
      *
-     * @param gravity
-     * @return
      * @see Gravity
      */
     public void setTitleGravity(int gravity) {
@@ -312,8 +315,7 @@ public class DialogBottom extends BottomSheetDialog {
 
     /**
      * 设置纯文本格式内容
-     *
-     * @param text CharSequence文本
+     * 拉起弹窗后不可修改
      */
     public void setContent(CharSequence text) {
         if (isShow) return;
@@ -324,8 +326,7 @@ public class DialogBottom extends BottomSheetDialog {
     /**
      * 设置文本项目列表格式内容
      * 调用该方法建议不要显示底栏按钮
-     *
-     * @param stringList CharSequence数组
+     * 拉起弹窗后不可修改
      */
     public void setContent(CharSequence... stringList) {
         if (isShow) return;
@@ -342,20 +343,30 @@ public class DialogBottom extends BottomSheetDialog {
 
     /**
      * 设置内自定义布局内容
+     * 拉起弹窗后不可修改
      */
     public void setContent(int viewid) {
         if (isShow) return;
         View view = LayoutInflater.from(viewContext).inflate(viewid, null, false);
+        this.setContent(view);
+    }
+
+    /**
+     * 设置内自定义View内容
+     * 拉起弹窗后不可修改
+     */
+    public void setContent(View view) {
+        if (isShow) return;
         adapter = new AdapterDialogBottom(view);
         listView.setAdapter(adapter);
     }
 
     /**
-     * 设置内自定义View内容
+     * 设置内自定义适配器内容
+     * 拉起弹窗后不可修改
      */
-    public void setContent(View view) {
+    public void setContent(RecyclerView.Adapter adapter) {
         if (isShow) return;
-        adapter = new AdapterDialogBottom(view);
         listView.setAdapter(adapter);
     }
 

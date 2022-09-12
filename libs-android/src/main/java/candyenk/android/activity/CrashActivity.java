@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import candyenk.android.CDKApplication;
 import candyenk.android.R;
-import candyenk.android.utils.TextUtil;
+import candyenk.android.handle.TextHandle;
 
 
 public class CrashActivity extends CDKActivity {
@@ -91,7 +91,7 @@ public class CrashActivity extends CDKActivity {
                     .setContentViewController(v1 -> {
                         WebView web = v1.findViewById(R.id.view_web);
                         web.loadUrl("https://wj.qq.com/s2/9654530/5215/");
-                        WebUtil.initWebView(this, web);
+                        UWeb.initWebView(this, web);
                         web.setWebChromeClient(new WebChromeClient() {
                             public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
 
@@ -138,7 +138,7 @@ public class CrashActivity extends CDKActivity {
     private Spannable getCrashReport(Throwable ex) {
         SpannableStringBuilder exceptionStr = new SpannableStringBuilder();
         exceptionStr.append(ex.getClass() + ":")
-                .append(TextUtil.setTextColor(ex.getMessage(), getResources().getColor(R.color.red)) + "\n");
+                .append(TextHandle.setTextColor(ex.getMessage(), getResources().getColor(R.color.red)) + "\n");
         StackTraceElement[] elements = ex.getStackTrace();
         for (StackTraceElement ste : elements) {
             exceptionStr.append(ste.toString() + "\n");

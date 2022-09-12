@@ -11,7 +11,7 @@ import android.view.View;
 import androidx.annotation.ColorInt;
 
 import candyenk.android.R;
-import candyenk.android.utils.DataUtil;
+import candyenk.java.utils.UData;
 
 /**
  * 原生CDKProgressBar
@@ -212,8 +212,9 @@ public class ProgressBar extends View {
         if ((this.displayMode & DISPLAY_MODE_EXTREMUM) != 0) {//显示极值
             Paint.FontMetrics f = extremumPaint.getFontMetrics();
             float y = this.yPoint - ((f.ascent + f.descent) * 0.5f);
-            canvas.drawText(DataUtil.intToShortString(min), padding * 0.5f, y, extremumPaint);
-            canvas.drawText(DataUtil.intToShortString(max), this.layoutWidth - padding * 0.5f, y, extremumPaint);
+            //TODO:这里方法改了
+            canvas.drawText(UData.L2A(min, "", "%.1f"), padding * 0.5f, y, extremumPaint);
+            canvas.drawText(UData.L2A(max, "", "%.1f"), this.layoutWidth - padding * 0.5f, y, extremumPaint);
         }
     }
 
@@ -233,7 +234,8 @@ public class ProgressBar extends View {
         if ((this.displayMode & DISPLAY_MODE_NONE) != 0) return;//不显示进度
         String text = "";
         if ((this.displayMode & DISPLAY_MODE_NUM) != 0) {//显示数值
-            text = DataUtil.intToShortString(progress);
+            text = UData.L2A(progress, "", "%.1f");
+            //TODO:这里方法改了
         } else if ((this.displayMode & DISPLAY_MODE_PERCENT) != 0) {//显示百分数
             text = (int) (progressPercent * 100) + "%";
         }

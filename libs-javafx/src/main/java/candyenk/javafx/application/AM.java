@@ -30,11 +30,11 @@ public class AM {
      * 获取当前APP实例列表
      */
     public static Map<Class<? extends CDKApp>, ? extends CDKApp> getAppMap() {
-        return Map.copyOf(appMap);
+        return new HashMap<>(appMap);
     }
 
     public static List<Class<? extends CDKApp>> getAppList() {
-        return List.copyOf(classList);
+        return new ArrayList<>(classList);
     }
 
     /**
