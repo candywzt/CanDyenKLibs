@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
+import candyenk.java.entity.FileType;
+
 /**
  * Java文件工具
  * 文件读取到字符串(可调编码)
@@ -30,10 +32,10 @@ public class UFile {
     /**********************************************************************************************/
     /**
      * 文件判空
-     * 当前文件路径是否存在且可访问
+     * 当前文件路径是否为空或不可访问
      */
     public static boolean isEmpty(File file) {
-        return file != null && file.exists();
+        return file == null || file.exists();
     }
 
     public static boolean isEmpty(String filePath) {
@@ -303,71 +305,16 @@ public class UFile {
     }
 
     /**
-     * 判断文件后缀
+     * 判断文件类型
      */
-    public static TypeFile getTypeFile(String filename) {
-        return TypeFile.type(filename);
+    public static FileType getTypeFile(String filename) {
+        return FileType.type(filename);
     }
 
     /**
      * 判断文件类型
      */
-    public static TypeFile getTypeFile(File file) {
-        return TypeFile.type(file);
-    }
-
-    /******************************************************************************************************************/
-    /********************************************文件类型内部类**********************************************************/
-    /******************************************************************************************************************/
-    public enum TypeFile {
-        NULL,//没有后缀的文件
-        UNKNOWN,//未知后缀的文件
-        DIRECTORY,//目录
-        TEXT("txt", "lua", "pdf", "xml", "htm", "html", "doc", "docx"),
-        IMAGE("bmp", "jpg", "jpeg", "png", "gif", "tif", "tiff", "ico", "webp", "psd", "svg", "ai"),
-        AUDIO("mp3", "wav", "wma", "ogg", "flac", "aac", "ape", "acc", "wv", "m4a", "m4r", "mp2", "mpa", "m1a", "m2a", "m3a", "mid", "midi", "rmi", "aif", "aiff", "aifc", "ra", "ram", "wma", "wav", "au", "snd"),
-        VIDEO("avi", "mp4", "mkv", "wmv", "flv", "mov", "3gp", "mpg", "mpeg", "mpe", "mpv", "m4v", "mxf", "rm", "rmvb", "asf", "asx", "vob", "divx", "dv", "dvd", "f4v", "flv", "m2ts", "m2t", "m2v", "m4v", "mts", "mv", "mxf", "mxv", "qt", "ram", "smi", "smil", "swf", "vob", "wmv", "xvid", "webm"),
-        COMPRESS("apk", "zip", "rar", "7z", "cab", "tar", "gz", "bz2", "jar", "war", "ear", "xz", "z", "iso", "dmg", "jar", "war", "ear", "xz", "z", "iso", "dmg"),
-        BINARY("bin", "exe", "dll", "class", "so", "o", "a", "lib", "obj", "elf"),
-        HEXADECIMAL("hex");
-
-        private static TypeFile type(File file) {
-            if (file.isDirectory()) {
-                return DIRECTORY;
-            } else {
-                return type(file.getName());
-            }
-        }
-
-        private static TypeFile type(String filename) {
-            String suffix = getSuffix(filename.toLowerCase());
-            if (suffix.isEmpty()) {
-                return TypeFile.NULL;
-            } else if (TEXT.typeList.contains(suffix)) {
-                return TypeFile.TEXT;
-            } else if (IMAGE.typeList.contains(suffix)) {
-                return TypeFile.IMAGE;
-            } else if (AUDIO.typeList.contains(suffix)) {
-                return TypeFile.AUDIO;
-            } else if (VIDEO.typeList.contains(suffix)) {
-                return TypeFile.VIDEO;
-            } else if (COMPRESS.typeList.contains(suffix)) {
-                return TypeFile.COMPRESS;
-            } else if (BINARY.typeList.contains(suffix)) {
-                return TypeFile.BINARY;
-            } else if (HEXADECIMAL.typeList.contains(suffix)) {
-                return TypeFile.HEXADECIMAL;
-            } else {
-                return TypeFile.UNKNOWN;
-            }
-        }
-
-        private final List<String> typeList;
-
-        TypeFile(String... value) {
-            typeList = Arrays.asList(value);
-        }
-
-
+    public static FileType getTypeFile(File file) {
+        return FileType.type(file);
     }
 }
