@@ -35,7 +35,7 @@ public class UFile {
      * 当前文件路径是否为空或不可访问
      */
     public static boolean isEmpty(File file) {
-        return file == null || file.exists();
+        return file == null || !file.exists();
     }
 
     public static boolean isEmpty(String filePath) {
