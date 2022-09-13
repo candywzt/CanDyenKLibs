@@ -116,8 +116,11 @@ public class UArrays {
             //TODO:泛型怎么检查啊,算了就这样吧
             if (action == null) {
                 list.add((R) t);
-            } else if (action.apply(t) != null) {
-                list.add(action.apply(t));
+            } else {
+                R r = action.apply(t);
+                if (r != null) {
+                    list.add(r);
+                }
             }
         }
     }
