@@ -13,6 +13,9 @@ import java.nio.charset.Charset;
  * SD卡文件读写删改同Java
  */
 public class UFile extends candyenk.java.utils.UFile {
+    public static final String rootPath = "/";
+    public static final String sdcardPath = "/storage/emulated/0/";
+    public static final String systemPath = "/system/";
 
     /**
      * Raw资源文件读取(res/raw/文件夹)
