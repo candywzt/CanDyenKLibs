@@ -27,11 +27,11 @@ import androidx.annotation.RequiresApi;
  * <br><font color=red>线程不安全</font>
  * 默认使用[)Spanned.SPAN_INCLUSIVE_EXCLUSIVE
  */
-public class TextHandle {
-    private static TextHandle INSTANCE;
+public class TextHandler {
+    private static TextHandler INSTANCE;
     private SpannableStringBuilder span;
 
-    private TextHandle() {
+    private TextHandler() {
         INSTANCE = this;
     }
 
@@ -44,7 +44,7 @@ public class TextHandle {
     /**
      * <br>给文本换个颜色(十六进制颜色值)
      */
-    public TextHandle addColor(int start, int end, int color) {
+    public TextHandler addColor(int start, int end, int color) {
         if (span.length() == 0) {
             return this;
         } else if (end == 0) {
@@ -62,7 +62,7 @@ public class TextHandle {
     /**
      * <br>给文本换个背景颜色(十六进制颜色值)
      */
-    public TextHandle addBackgroundColor(int start, int end, int color) {
+    public TextHandler addBackgroundColor(int start, int end, int color) {
         if (span.length() == 0) {
             return this;
         } else if (end == 0) {
@@ -81,7 +81,7 @@ public class TextHandle {
      * <br>给文本换个字体
      */
     @RequiresApi(api = Build.VERSION_CODES.P)
-    public TextHandle addTypeFont(int start, int end, Typeface typeface) {
+    public TextHandler addTypeFont(int start, int end, Typeface typeface) {
         if (span.length() == 0) {
             return this;
         } else if (end == 0) {
@@ -101,7 +101,7 @@ public class TextHandle {
      *
      * @param dip true:输入px;false:输入dp
      */
-    public TextHandle addSize(int start, int end, int size, boolean dip) {
+    public TextHandler addSize(int start, int end, int size, boolean dip) {
         if (span.length() == 0) {
             return this;
         } else if (end == 0) {
@@ -121,7 +121,7 @@ public class TextHandle {
      * <br>记得给TextView控件设置
      * <br>setMovementMethod(LinkMovementMethod.getInstance())
      */
-    public TextHandle addClickable(int start, int end, View.OnClickListener l) {
+    public TextHandler addClickable(int start, int end, View.OnClickListener l) {
         if (span.length() == 0) {
             return this;
         } else if (end == 0) {
@@ -151,7 +151,7 @@ public class TextHandle {
      * @param color    标点颜色(如果颜色为透明,则不显示标点)
      * @param radius   标点半径px
      */
-    public TextHandle addBulletSpan(int start, int end, int gapWidth, int color, int radius) {
+    public TextHandler addBulletSpan(int start, int end, int gapWidth, int color, int radius) {
         if (span.length() == 0) {
             return this;
         } else if (end == 0) {
@@ -180,8 +180,8 @@ public class TextHandle {
     /***************************************静态方法************************************************/
     /**********************************************************************************************/
     //创建
-    public static TextHandle CREARE(CharSequence text) {
-        new TextHandle();
+    public static TextHandler CREARE(CharSequence text) {
+        new TextHandler();
         INSTANCE.span = new SpannableStringBuilder(text);
         return INSTANCE;
     }
