@@ -90,7 +90,7 @@ public class FileInfo implements Comparable<FileInfo> {
      */
     public static FileInfo[] toInfos(File[] files) {
         if (files == null || files.length == 0) return new FileInfo[0];
-        return UArrays.toArray(files, FileInfo::create);
+        return UArrays.toArray(files, (Function<File, FileInfo>) FileInfo::create);
     }
 
 

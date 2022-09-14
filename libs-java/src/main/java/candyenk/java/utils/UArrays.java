@@ -9,12 +9,20 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.DoubleFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.LongFunction;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 
 /**
  * Java数组工具
  * 自定义数组ToString
+ * 基本数据类型数组ToString
  * 自定义数组转化
+ * 自定义数组转化为基本数据类型数组
  * 数组转自定义List
  * 数组转自定义Set
  * Collection添加自定义数组
@@ -26,7 +34,8 @@ public class UArrays {
     /***********************************公共静态方法*************************************************/
     /**********************************************************************************************/
     /**
-     * 自带数据处理的数组ToString
+     * 自定义数组转字符串
+     * 可函数
      */
     public static <T> String toString(T[] array, Function<T, String> action) {
         if (array == null) return "";
@@ -37,7 +46,11 @@ public class UArrays {
         return Arrays.toString(strs);
     }
 
-    public static String toString(int[] array, Function<Integer, String> action) {
+    /**
+     * int数组转字符串
+     * 可函数
+     */
+    public static String toString(int[] array, IntFunction<String> action) {
         if (array == null) return "";
         String[] strs = new String[array.length];
         for (int i = 0; i < array.length; i++) {
@@ -46,7 +59,11 @@ public class UArrays {
         return Arrays.toString(strs);
     }
 
-    public static String toString(long[] array, Function<Long, String> action) {
+    /**
+     * long数组转字符串
+     * 可函数
+     */
+    public static String toString(long[] array, LongFunction<String> action) {
         if (array == null) return "";
         String[] strs = new String[array.length];
         for (int i = 0; i < array.length; i++) {
@@ -55,7 +72,11 @@ public class UArrays {
         return Arrays.toString(strs);
     }
 
-    public static String toString(double[] array, Function<Double, String> action) {
+    /**
+     * double数组转字符串
+     * 可函数
+     */
+    public static String toString(double[] array, DoubleFunction<String> action) {
         if (array == null) return "";
         String[] strs = new String[array.length];
         for (int i = 0; i < array.length; i++) {
@@ -66,12 +87,51 @@ public class UArrays {
 
     /**
      * 自定义数组间转化
+     * 可函数
      */
     public static <T, R> R[] toArray(T[] array, Function<T, R> action) {
         if (array == null) return null;
         R[] r = (R[]) Array.newInstance(action.apply(array[0]).getClass(), array.length);
         for (int i = 0; i < array.length; i++) {
             r[i] = action.apply(array[i]);
+        }
+        return r;
+    }
+
+    /**
+     * 自定义数组转int数组
+     */
+    public static <T> int[] toArray(T[] array, ToIntFunction<T> action) {
+        if (array == null) return new int[0];
+        int[] r = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            r[i] = action.applyAsInt(array[i]);
+        }
+        return r;
+    }
+
+    /**
+     * 自定义数组转long数组
+     * 可函数
+     */
+    public static <T> long[] toArray(T[] array, ToLongFunction<T> action) {
+        if (array == null) return new long[0];
+        long[] r = new long[array.length];
+        for (int i = 0; i < array.length; i++) {
+            r[i] = action.applyAsLong(array[i]);
+        }
+        return r;
+    }
+
+    /**
+     * 自定义数组转double数组
+     * 可函数
+     */
+    public static <T> double[] toArray(T[] array, ToDoubleFunction<T> action) {
+        if (array == null) return new double[0];
+        double[] r = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            r[i] = action.applyAsDouble(array[i]);
         }
         return r;
     }
