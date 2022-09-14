@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import candyenk.android.CDKApplication;
 import candyenk.android.R;
-import candyenk.android.handle.TextHandle;
+import candyenk.android.handle.TextHandler;
 
 
 public class CrashActivity extends CDKActivity {
@@ -138,7 +138,7 @@ public class CrashActivity extends CDKActivity {
     private Spannable getCrashReport(Throwable ex) {
         SpannableStringBuilder exceptionStr = new SpannableStringBuilder();
         exceptionStr.append(ex.getClass() + ":")
-                .append(TextHandle.setTextColor(ex.getMessage(), getResources().getColor(R.color.red)) + "\n");
+                .append(TextHandler.setTextColor(ex.getMessage(), getResources().getColor(R.color.red)) + "\n");
         StackTraceElement[] elements = ex.getStackTrace();
         for (StackTraceElement ste : elements) {
             exceptionStr.append(ste.toString() + "\n");
