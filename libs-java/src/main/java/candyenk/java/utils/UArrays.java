@@ -1,6 +1,7 @@
 package candyenk.java.utils;
 
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,9 +26,12 @@ import java.util.function.ToLongFunction;
  * 自定义数组转化为基本数据类型数组
  * 数组转自定义List
  * 数组转自定义Set
+ * int数组转byte数组
+ * byte数组转int数组
+ * int数组转long数组
  * Collection添加自定义数组
- * 判断Object/int/Double数组内是否含有某元素
- * int/long数组求和/绝对和
+ * 判断Object/int/long/Double数组内是否含有某元素
+ * int/long/double数组求和/绝对和
  */
 public class UArrays {
     /**********************************************************************************************/
@@ -137,6 +141,39 @@ public class UArrays {
     }
 
     /**
+     * int数组转byte数组
+     */
+    public static byte[] I2B(int[] array) {
+        byte[] bytes = new byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            bytes[i] = (byte) array[i];
+        }
+        return bytes;
+    }
+
+    /**
+     * bytr数组转int数组
+     */
+    public static int[] B2I(byte[] array) {
+        int[] ints = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            ints[i] = array[i];
+        }
+        return ints;
+    }
+
+    /**
+     * int数组转long数组
+     */
+    public static long[] I2L(int[] array) {
+        long[] longs = new long[array.length];
+        for (int i = 0; i < array.length; i++) {
+            longs[i] = (byte) array[i];
+        }
+        return longs;
+    }
+
+    /**
      * 数组转自定义List
      * 生成可变List
      * 若生成不可变List
@@ -187,10 +224,6 @@ public class UArrays {
 
     /**
      * 判断Object数组内是否含有某单个元素
-     *
-     * @param mList   Object数组
-     * @param element 检查Object元素
-     * @return 是否含有
      */
     public static boolean isContain(Object[] mList, Object element) {
         if (mList == null) {
@@ -206,10 +239,6 @@ public class UArrays {
 
     /**
      * 判断int数组内是否含有某单个元素
-     *
-     * @param mList
-     * @param element
-     * @return
      */
     public static boolean isContain(int[] mList, int element) {
         if (mList == null) {
@@ -224,11 +253,22 @@ public class UArrays {
     }
 
     /**
+     * 判断long数组内是否含有某单个元素
+     */
+    public static boolean isContain(long[] mList, long element) {
+        if (mList == null) {
+            return false;
+        }
+        for (long l : mList) {
+            if (l == element) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 判断double数组内是否含有某单个元素
-     *
-     * @param mList
-     * @param element
-     * @return
      */
     public static boolean isContain(double[] mList, double element) {
         if (mList == null) {
@@ -243,7 +283,7 @@ public class UArrays {
     }
 
     /**
-     * 计算int/long数组的和
+     * 计算int/long/double数组的和
      */
     public static long sum(int[] array) {
         long sum = 0;
@@ -253,16 +293,17 @@ public class UArrays {
         return sum;
     }
 
-    public static BigInteger sum(long[] array) {
-        BigInteger sum = BigInteger.ZERO;
-        for (long i : array) {
-            sum.add(BigInteger.valueOf(i));
+
+    public static double sum(double[] array) {
+        double sum = 0;
+        for (double i : array) {
+            sum += i;
         }
         return sum;
     }
 
     /**
-     * 计算int/long数组的绝对和
+     * 计算int/long/double数组的绝对和
      */
     public static long absoluteSum(int[] array) {
         long sum = 0;
@@ -278,6 +319,15 @@ public class UArrays {
         for (long i : array) {
             if (i <= 0) i = i * -1;
             sum.add(BigInteger.valueOf(i));
+        }
+        return sum;
+    }
+
+    public static double absoluteSum(double[] array) {
+        long sum = 0;
+        for (double i : array) {
+            if (i < 0) i = i * -1;
+            sum += i;
         }
         return sum;
     }
