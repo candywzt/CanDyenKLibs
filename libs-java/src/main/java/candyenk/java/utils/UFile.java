@@ -1,11 +1,19 @@
 package candyenk.java.utils;
 
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -23,6 +31,7 @@ import candyenk.java.entity.FileType;
  * 文件(夹)路径拼接
  * 文件(夹)路径分割
  * 获取当前jar运行路径
+ * 创建缓存文件
  * 获取文件后缀
  * 判断文件类型
  */
@@ -302,6 +311,26 @@ public class UFile {
         } else {
             return false;
         }
+    }
+
+    /**
+     * 创建缓存文件
+     * 例如
+     * xxx/cache/CDK/(Test)/abcd.tmp
+     * xxx/cache/CDK/(Test/Demo)/abcd.cdk
+     *
+     * @param folderName 路径(不带前后斜杠)
+     */
+    public static File createTmp(String folderName) {
+        String cache = System.getProperty("java.io.tmpdir");
+        File file = new File(cache + "/CDK/" + folderName);
+        File tmp = null;
+        try {
+            tmp = File.createTempFile(folderName, "cdk", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return tmp;
     }
 
     /**
