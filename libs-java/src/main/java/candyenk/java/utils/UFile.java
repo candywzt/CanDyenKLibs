@@ -324,6 +324,8 @@ public class UFile {
     public static File createTmp(String folderName) {
         String cache = System.getProperty("java.io.tmpdir");
         File file = new File(cache + "/CDK/" + folderName);
+        if (file.isFile() && file.delete()) return createTmp(folderName);
+        else file.mkdirs();
         File tmp = null;
         try {
             tmp = File.createTempFile(folderName, "cdk", file);
