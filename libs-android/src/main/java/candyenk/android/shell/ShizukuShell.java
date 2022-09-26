@@ -7,8 +7,6 @@ import android.os.Looper;
 
 import androidx.annotation.RequiresApi;
 
-import java.io.InputStream;
-
 import candyenk.android.tools.L;
 import rikka.shizuku.Shizuku;
 
@@ -32,7 +30,6 @@ public class ShizukuShell extends UserShell {
 
     public ShizukuShell(Handler handler) {
         this(false, handler);
-
     }
 
     public ShizukuShell(ShellCallBack callBack) {

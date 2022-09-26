@@ -72,25 +72,24 @@ public class UserShell implements Shell {
 
     @Override
     public boolean writeCmd(String cmd) {
+        allowRun(cmd);
         if (process == null && !ready()) return false;
-        if (cmd.contains("su\n") || cmd.contains("\nsu")) return false;//禁止提权(会卡死)
         try {
             byte[] bytes = cmd.getBytes();
             in.write(bytes);
             if (bytes[bytes.length - 1] != 10) in.write(10);
-            if (overtime[0] == -1) {//指令型命令,自动退出,不予回调
+            if (overtime[0] == -1) {//指令型命令,自动退出
                 in.write(exit);
-                close();
             } else if (overtime[0] > 0) {//超时命令,资源回收
                 recycler();
             }
             in.flush();
+            return true;
         } catch (Exception e) {
             L.e(TAG, "命令写入失败(" + hashCode() + "):" + e.getMessage());
             e.printStackTrace();
             return false;
         }
-        return true;
     }
 
     @Override
@@ -200,5 +199,13 @@ public class UserShell implements Shell {
             }
         });
         recycler.start();
+    }
+
+    /*** 命令检查器 ***/
+    /*** 在这里面抛异常就行 ***/
+    protected void allowRun(String cmd) {
+        if (cmd.contains(" su\n") || cmd.contains("\nsu")) {
+            throw new RuntimeException("命令不被允许允许");
+        }
     }
 }
