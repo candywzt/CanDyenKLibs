@@ -51,6 +51,7 @@ public class DialogBottom extends BottomSheetDialog {
 
     private AdapterDialogBottom adapter; //列表adp
     private AdapterView.OnItemClickListener itemCL; //列表点击事件
+    private AdapterView.OnItemLongClickListener itemLCL; //列表点击事件
 
 
     /**********************************************************************************************/
@@ -246,6 +247,28 @@ public class DialogBottom extends BottomSheetDialog {
     }
 
     /**
+     * 设置列表项目长按事件
+     * 该方法与setContent(CharSequence... stringList)需同时设置才会起作用
+     * 不分先后，顺序随意
+     * parent 和id是空的
+     * 拉起弹窗后不可修改
+     *
+     * @param l 项目点击监听
+     */
+    public void setOnItemLongClickListener(AdapterView.OnItemLongClickListener l) {
+        if (isShow) return;
+        this.itemLCL = l;
+        if (adapter != null) {
+            adapter.setOnItemClickListener((parent, view, position, id) -> {
+                itemLCL.onItemLongClick(parent, view, position, id);
+                dismiss();
+            });
+            listView.setAdapter(adapter);
+        }
+    }
+
+
+    /**
      * 自定义布局的布局事件设置方法
      * 征用了一下View的点击事件hhh
      * 塞到adp里了
@@ -378,7 +401,8 @@ public class DialogBottom extends BottomSheetDialog {
         private final Object object;
         private ViewGroup parent;
         private View.OnClickListener viewCL;
-        private AdapterView.OnItemClickListener listener;
+        private AdapterView.OnItemClickListener clickListener;
+        private AdapterView.OnItemLongClickListener longClickListener;
 
         /*****************************************************************************************/
         /**************************************构造函数*********************************************/
@@ -426,10 +450,13 @@ public class DialogBottom extends BottomSheetDialog {
                     holder.textView.setText(((CharSequence[]) object)[position]);
                     //绑定点击事件
                     holder.itemView.setOnClickListener(v -> {
-                        if (listener != null) {
-                            listener.onItemClick(null, v, position, 0);
+                        if (clickListener != null) {
+                            clickListener.onItemClick(null, v, position, 0);
                         }
                     });
+                    //绑定长按事件
+                    holder.itemView.setOnLongClickListener(v -> longClickListener != null&&
+                        longClickListener.onItemLongClick(null, v, position, 0));
                     break;
                 case 3:
                     if (viewCL != null) {
@@ -486,7 +513,15 @@ public class DialogBottom extends BottomSheetDialog {
          * parent 和id是空的
          */
         public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
-            this.listener = onItemClickListener;
+            this.clickListener = onItemClickListener;
+        }
+
+        /**
+         * 项目长按事件
+         * parent 和id是空的
+         */
+        public void setOnItemLongClickListener(AdapterView.OnItemLongClickListener onItemLongClickListener) {
+            this.longClickListener = onItemLongClickListener;
         }
 
         @Override
