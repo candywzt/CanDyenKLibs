@@ -1,32 +1,42 @@
 package candyenk.android.shell;
 
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+import androidx.annotation.RequiresApi;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 
 import candyenk.android.tools.L;
+import candyenk.android.utils.UFile;
 
+/**
+ * 用户Shell,以应用的身份执行Shell命令
+ * 部分命令取药对应权限
+ */
+@RequiresApi(api = Build.VERSION_CODES.O)
 public class UserShell implements Shell {
-    private static final String TAG = UserShell.class.getName();
-    private static final byte[] exit = {101, 120, 105, 116, 10};
-    private static final int MAX_OVER = 360000;
+    private static final String TAG = UserShell.class.getSimpleName();
+    protected static final byte[] exit = {101, 120, 105, 116, 10};
 
-    private final Handler handler;
-    private boolean overSign;
-    private long[] overtime = {5000, 0};
-    private Thread recycler;
-    private Process process;
-    private OutputStream out;
-    private BufferedReader in;
-    private BufferedReader error;
+    protected final Handler handler;
+    protected boolean overSign = true;
+    protected long[] overtime = {OVER_DEFAULT, 0};
+    protected Thread recycler;
+    protected Process process;
+    protected OutputStream in;
+    protected FileInputStream out;
+    protected FileInputStream err;
+    protected File outFile;
+    protected File errFile;
 
     public UserShell(Handler handler) {
         this.handler = handler;
+        registerShell();
     }
 
     public UserShell(ShellCallBack callBack) {
@@ -35,22 +45,25 @@ public class UserShell implements Shell {
 
     @Override
     public boolean ready() {
+        if (!overSign) return true;
         try {
-            process = Runtime.getRuntime().exec("sh");
-            out = new DataOutputStream(process.getOutputStream());
-            in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            overSign = false;
-            Log.e(TAG, hashCode() + "Shell进程创建成功");
+            outFile = UFile.createTmp(TAG);
+            errFile = UFile.createTmp(TAG);
+            process = new ProcessBuilder("sh")
+                    .redirectOutput(outFile)
+                    .redirectError(errFile)
+                    .start();
+            in = process.getOutputStream();
+
+            L.e(TAG, "Shell进程创建成功(" + hashCode() + ")");
             if (handler != null && overtime[0] != -1) {
-                //TODO:判断handler内是否有消息处理器
-                Log.e(TAG, hashCode() + "启动回调接收器");
                 outReader();
                 errorReader();
             }
+            overSign = false;
             return true;
         } catch (Exception e) {
-            L.e(TAG, hashCode() + "Shell进程创建失败:" + e.getMessage());
+            L.e(TAG, "Shell进程创建失败(" + hashCode() + "):" + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -58,21 +71,21 @@ public class UserShell implements Shell {
 
     @Override
     public boolean writeCmd(String cmd) {
-        if (process == null) ready();
+        if (process == null && !ready()) return false;
+        if (cmd.contains("su\n") || cmd.contains("\nsu")) return false;//禁止提权(会卡死)
         try {
             byte[] bytes = cmd.getBytes();
-            out.write(bytes);
-            if (bytes[bytes.length - 1] != 10) out.write(10);
+            in.write(bytes);
+            if (bytes[bytes.length - 1] != 10) in.write(10);
             if (overtime[0] == -1) {//指令型命令,自动退出,不予回调
-                out.write(exit);
+                in.write(exit);
                 close();
-            } else if (overtime[0] > 0) {//超时命令,自动退出,资源回收
-                out.write(exit);
+            } else if (overtime[0] > 0) {//超时命令,资源回收
                 recycler();
             }
-            out.flush();
+            in.flush();
         } catch (Exception e) {
-            L.e(TAG, hashCode() + "字节流写入失败:" + e.getMessage());
+            L.e(TAG, "命令写入失败(" + hashCode() + "):" + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -82,91 +95,78 @@ public class UserShell implements Shell {
     @Override
     public void setOverTime(int time) {
         if (time < 0) time = -1;
-        else if (time > MAX_OVER) time = MAX_OVER;
+        else if (time > OVER_MAX) time = OVER_MAX;
         this.overtime[0] = time;
     }
 
     @Override
-    public String getShellPermissions() {
-        return "shell";
+    public int getShellPermissions() {
+        return SP_USER;
     }
 
     @Override
     public void close() {
-        L.e(TAG, hashCode() + "尝试关闭Shell进程");
-        if (process != null) {
-            process.destroy();
-            process = null;
+        L.e(TAG, "尝试关闭Shell进程(" + hashCode() + ")");
+        try {
+            if (in != null) in.close();
+            if (out != null) out.close();
+            if (err != null) err.close();
+            if (recycler != null) recycler = null;
+        } catch (Exception e) {
         }
         overSign = true;//打开已回收标记
-        try {
-            if (out != null) {
-                out.close();
-                out = null;
-            }
-            if (in != null) {
-                in.close();
-                in = null;
-            }
-            if (error != null) {
-                error.close();
-                error = null;
-            }
-            if (recycler != null) {
-                recycler = null;
-            }
-        } catch (Exception e) {
-            L.e(TAG, hashCode() + "Shell关闭失败:" + e.getMessage());
-            e.printStackTrace();
-        }
-        L.e(TAG, hashCode() + "Shell会话已关闭");
+        if (outFile != null) outFile.delete();
+        if (errFile != null) errFile.delete();
+        if (process != null) process.destroy();
+        process = null;
+        in = null;
+        out = null;
+        err = null;
     }
 
 
-    /*** 读取输出流 ***/
-    private void outReader() {
+    /*** 读取Shell输出 ***/
+    protected void outReader() {
         new Thread(() -> {
             try {
-                StringBuilder sb = new StringBuilder();
-                Log.e(TAG, "输出流已启动");
-                while (!overSign && in != null) {
-                    String line = in.readLine();
-                    if (line != null) {
-                        sb.append(line).append('\n');
-                    } else if (sb.length() != 0) {
-                        handler.sendMessage(handler.obtainMessage(SH_SUCCESS, sb.toString()));
-                        close();
-                    }
-                    Thread.sleep(100);
+                out = new FileInputStream(outFile);
+                FileChannel fc = out.getChannel();
+                while (!overSign && out != null) {
+                    int size = Math.toIntExact(fc.size() - fc.position());
+                    if (size == 0) continue;
+                    Thread.sleep(size);
+                    byte[] bytes = new byte[Math.toIntExact(fc.size() - fc.position())];
+                    out.read(bytes);
+                    handler.sendMessage(handler.obtainMessage(Shell.CB_SUCCESS, bytes));
+                    if (overtime[0] > 0) close();
                 }
             } catch (Exception e) {
                 if (!overSign) {
-                    L.e(TAG, hashCode() + "输出流读取异常:" + e.getMessage());
+                    L.e(TAG, "输出流读取异常(" + hashCode() + "):" + e.getMessage());
                     e.printStackTrace();
                 }
             }
         }).start();
     }
 
-    /*** 读取错误流 ***/
-    private void errorReader() {
+    /*** 读取Shell错误 ***/
+    protected void errorReader() {
         new Thread(() -> {
             try {
-                StringBuilder sb = new StringBuilder();
-                Log.e(TAG, "错误流已启动");
-                while (!overSign && error != null) {
-                    String line = error.readLine();
-                    if (line != null) {
-                        sb.append(line).append('\n');
-                    } else if (sb.length() != 0) {
-                        handler.sendMessage(handler.obtainMessage(SH_FAILED, sb.toString()));
-                        close();
-                    }
-                    Thread.sleep(100);
+                err = new FileInputStream(errFile);
+                FileChannel fc = err.getChannel();
+                while (!overSign && err != null) {
+                    int size = Math.toIntExact(fc.size() - fc.position());
+                    if (size == 0) continue;
+                    Thread.sleep(size);
+                    byte[] bytes = new byte[Math.toIntExact(fc.size() - fc.position())];
+                    err.read(bytes);
+                    handler.sendMessage(handler.obtainMessage(Shell.CB_FAILED, bytes));
+                    if (overtime[0] > 0) close();
                 }
             } catch (Exception e) {
                 if (!overSign) {
-                    L.e(TAG, hashCode() + "错误流读取异常:" + e.getMessage());
+                    L.e(TAG, "错误流读取异常(" + hashCode() + "):" + e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -174,43 +174,27 @@ public class UserShell implements Shell {
     }
 
     /*** 资源回收器 ***/
-    /*
-    为什么这么麻烦?
-    因为我还抱有着能执行一次读取一次不需要重复创建进程的幻想
-    即便重新创建进程只需要几毫秒
-    既然这样
-    资源回收器就要做到刷新超时时间
-     */
-    private void recycler() {
-        L.e(TAG, hashCode() + "准备回收器");
+    protected void recycler() {
         long nowTime = System.currentTimeMillis();
         overtime[1] = nowTime + overtime[0];//刷新目标时间
-        L.e(TAG, hashCode() + "当前时间:" + nowTime);
-        L.e(TAG, hashCode() + "超时时间:" + overtime[0]);
-        L.e(TAG, hashCode() + "目标时间:" + overtime[1]);
         if (recycler != null) return;//回收器正在运行,仅刷新目标时间
-        L.e(TAG, hashCode() + "启动回收器");
+        L.e(TAG, "启动回收器(" + hashCode() + ")");
         recycler = new Thread(() -> {
             try {
                 do {
-                    L.e(TAG, hashCode() + "开始休眠,时长:" + overtime[0]);
                     Thread.sleep(overtime[0]);//休眠
                     if (overtime[0] <= 0 || overSign) {
                         //当前条件不足以运行回收器,或已经被回收,则终止回收器
-                        L.e(TAG, hashCode() + "终止回收器");
                         return;
                     }
-                    L.e(TAG, hashCode() + "休眠结束");
                 } while (System.currentTimeMillis() < overtime[1]);//若休眠期间刷新
                 if (handler != null && !overSign) {
                     //达到超时界限,发送超时消息
-                    L.e(TAG, hashCode() + "发送超时消息");
-                    handler.sendMessage(handler.obtainMessage(SH_OVERTIME, ""));//发送超时消息
+                    handler.sendMessage(handler.obtainMessage(CB_OVERTIME, new byte[0]));//发送超时消息
                 }
                 close();//回收资源
-                L.e(TAG, hashCode() + "资源回收成功");
             } catch (Exception e) {
-                L.e(TAG, hashCode() + "资源回收器工作异常,请手动回收" + e.getMessage());
+                L.e(TAG, "资源回收器工作异常,请手动回收(" + hashCode() + "):" + e.getMessage());
                 e.printStackTrace();
             }
         });
