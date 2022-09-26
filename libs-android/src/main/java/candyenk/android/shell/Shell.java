@@ -7,11 +7,23 @@ import java.util.List;
 
 /**
  * Shell命令执行器接口
+ * 异常关闭可能产生缓存文件
  */
 public interface Shell {
-    int SH_SUCCESS = 1;
-    int SH_FAILED = -1;
-    int SH_OVERTIME = 0;
+    /*** SH命令执行结果标志 ***/
+    int CB_SUCCESS = 1;//SH命令执行成功
+    int CB_FAILED = -1;//SH命令执行失败
+    int CB_OVERTIME = 0;//SH命令执行超时
+    /*** SH命令超时时间标志 ***/
+    int OVER_NOW = -1;//立即结束,不需要等待返回值
+    int OVER_DEFAULT = 5000;//默认超时时间
+    int OVER_MAX = 360000;//允许设置的最大超时时间
+    int OVER_INFINITY = 0;//不设置超时,永不关闭
+    /*** SH权限标志 ***/
+    int SP_USER = 1;//应用级别
+    int SP_ADB = 2000;//ADB权限
+    int SP_ROOT = 0;//Root权限
+
     List<Shell> shellList = new ArrayList<>();
 
     /**
@@ -21,6 +33,14 @@ public interface Shell {
         for (Shell shell : shellList) {
             if (shell != null) shell.close();
         }
+        shellList.clear();
+    }
+
+    /**
+     * 记录当前Shell实例
+     */
+    default void registerShell() {
+        if (!shellList.contains(this)) shellList.add(this);
     }
 
     /**
@@ -28,16 +48,16 @@ public interface Shell {
      */
     static Handler.Callback createHandlerCallback(ShellCallBack callBack) {
         return msg -> {
-            String message = (String) msg.obj;
+            byte[] message = (byte[]) msg.obj;
             if (!callBack.callBack(msg.what, message)) {
                 switch (msg.what) {
-                    case SH_SUCCESS:
-                        callBack.onSuccess(message);
+                    case CB_SUCCESS:
+                        callBack.onSuccess(new String(message));
                         break;
-                    case SH_FAILED:
-                        callBack.onFailed(message);
+                    case CB_FAILED:
+                        callBack.onFailed(new String(message));
                         break;
-                    case SH_OVERTIME:
+                    case CB_OVERTIME:
                         callBack.onOverTime();
                         break;
                 }
@@ -76,10 +96,11 @@ public interface Shell {
      *
      * @return
      */
-    String getShellPermissions();
+    int getShellPermissions();
 
     /**
      * 关闭命令执行器,释放所有资源
+     * 最好弄完了执行一下,不然垃圾缓存到处都是
      */
     void close();
 
