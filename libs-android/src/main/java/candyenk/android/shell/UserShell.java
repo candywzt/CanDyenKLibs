@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
@@ -20,17 +21,17 @@ import candyenk.android.utils.UFile;
  */
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class UserShell implements Shell {
-    private static final String TAG = UserShell.class.getSimpleName();
-    protected static final byte[] exit = {101, 120, 105, 116, 10};
-
+    protected String TAG = UserShell.class.getSimpleName();
+    protected final byte[] exit = {101, 120, 105, 116, 10};
+    protected final String[] startCmd = {"sh"};
     protected final Handler handler;
     protected boolean overSign = true;
     protected long[] overtime = {OVER_DEFAULT, 0};
     protected Thread recycler;
     protected Process process;
     protected OutputStream in;
-    protected FileInputStream out;
-    protected FileInputStream err;
+    protected InputStream out;
+    protected InputStream err;
     protected File outFile;
     protected File errFile;
 
@@ -49,7 +50,7 @@ public class UserShell implements Shell {
         try {
             outFile = UFile.createTmp(TAG);
             errFile = UFile.createTmp(TAG);
-            process = new ProcessBuilder("sh")
+            process = new ProcessBuilder(startCmd)
                     .redirectOutput(outFile)
                     .redirectError(errFile)
                     .start();
@@ -130,7 +131,7 @@ public class UserShell implements Shell {
         new Thread(() -> {
             try {
                 out = new FileInputStream(outFile);
-                FileChannel fc = out.getChannel();
+                FileChannel fc = ((FileInputStream) out).getChannel();
                 while (!overSign && out != null) {
                     int size = Math.toIntExact(fc.size() - fc.position());
                     if (size == 0) continue;
@@ -154,7 +155,7 @@ public class UserShell implements Shell {
         new Thread(() -> {
             try {
                 err = new FileInputStream(errFile);
-                FileChannel fc = err.getChannel();
+                FileChannel fc = ((FileInputStream) err).getChannel();
                 while (!overSign && err != null) {
                     int size = Math.toIntExact(fc.size() - fc.position());
                     if (size == 0) continue;

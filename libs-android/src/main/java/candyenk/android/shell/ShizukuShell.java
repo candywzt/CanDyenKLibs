@@ -3,6 +3,7 @@ package candyenk.android.shell;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.RequiresApi;
 
@@ -18,10 +19,16 @@ import rikka.shizuku.Shizuku;
  */
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class ShizukuShell extends UserShell {
-    private static final String TAG = ShizukuShell.class.getSimpleName();
-    private String[] cmd = {"sh"};
-    protected InputStream out;
-    protected InputStream err;
+
+    public ShizukuShell(boolean useADB, Handler handler) {
+        super(handler);
+        TAG = ShizukuShell.class.getSimpleName();
+        if (useADB && Shizuku.getUid() == SP_ROOT) startCmd[0] = "/data/adb/libchid.so 2000";
+    }
+
+    public ShizukuShell(boolean useADB, ShellCallBack callBack) {
+        this(useADB, new Handler(Looper.myLooper(), Shell.createHandlerCallback(callBack)));
+    }
 
     public ShizukuShell(Handler handler) {
         this(false, handler);
@@ -32,22 +39,13 @@ public class ShizukuShell extends UserShell {
         this(false, callBack);
     }
 
-    public ShizukuShell(boolean useADB, Handler handler) {
-        super(handler);
-        if (useADB && Shizuku.getUid() == SP_ROOT) cmd[0] = "/data/adb/libchid.so 2000";
-    }
-
-    public ShizukuShell(boolean useADB, ShellCallBack callBack) {
-        super(callBack);
-    }
-
     @Override
     public boolean ready() {
         if (!overSign) return true;
         try {
             if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_DENIED)
                 throw new SecurityException("Shizuku未授权");
-            process = Shizuku.newProcess(cmd, null, null);
+            process = Shizuku.newProcess(startCmd, null, null);
             in = process.getOutputStream();
             out = process.getInputStream();
             err = process.getErrorStream();
@@ -106,7 +104,7 @@ public class ShizukuShell extends UserShell {
      */
     @Override
     public int getShellPermissions() {
-        return cmd[0].equals("sh") && Shizuku.getUid() == SP_ROOT ? SP_ROOT : SP_ADB;
+        return startCmd[0].equals("sh") && Shizuku.getUid() == SP_ROOT ? SP_ROOT : SP_ADB;
     }
 
     @Override
