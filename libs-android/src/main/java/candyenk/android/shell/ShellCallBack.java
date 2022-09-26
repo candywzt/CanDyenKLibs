@@ -15,7 +15,7 @@ public interface ShellCallBack {
      * @param msg  返回的消息,超时消息为空字符串
      * @return 返回true则不进行下一步处理(不调用以下三个方法)
      */
-    default boolean callBack(int code, String msg) {
+    default boolean callBack(int code, byte[] msg) {
         return false;
     }
 
