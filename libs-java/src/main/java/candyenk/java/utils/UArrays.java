@@ -136,7 +136,7 @@ public class UArrays {
      * @param <T>
      */
     public static <T> void forEach(T[] array, ObjIntConsumer<T> consumer) {
-        if (array == null && array.length > 0) {
+        if (array == null || array.length > 0) {
             for (int i = 0; i < array.length; i++) {
                 consumer.accept(array[i], i);
             }
