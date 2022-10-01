@@ -1,22 +1,9 @@
 package candyenk.java.utils;
 
 import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.DoubleFunction;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.LongFunction;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
+import java.util.*;
+import java.util.function.*;
 
 /**
  * Java数组工具
@@ -26,6 +13,7 @@ import java.util.function.ToLongFunction;
  * 自定义数组转化为基本数据类型数组
  * 数组转自定义List
  * 数组转自定义Set
+ * 数组ForEach
  * int数组转byte数组
  * byte数组转int数组
  * int数组转long数组
@@ -138,6 +126,19 @@ public class UArrays {
             r[i] = action.applyAsDouble(array[i]);
         }
         return r;
+    }
+
+    /**
+     * 数组ForEach
+     *
+     * @param array
+     * @param consumer
+     * @param <T>
+     */
+    public static <T> void forEach(T[] array, Consumer<T> consumer) {
+        if (array == null && array.length > 0) {
+            for (T a : array) consumer.accept(a);
+        }
     }
 
     /**
