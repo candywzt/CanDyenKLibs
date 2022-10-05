@@ -2,29 +2,28 @@ package candyenk.android.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import candyenk.android.R;
 import candyenk.android.view.NimbleSwitch;
 
 /**
- * CDK项目Switch控件
+ * CDKSwitch项目控件
+ * 属性:
+ * title(String):标题文本
+ * summary(String):副标题文本
+ * icon(Reference):图标,默认无
+ * onSummary(String):开关打开时的副标题
+ * offSummary(String):开关关闭时的副标题
+ * checked(boolean):开关初始状态
  */
-public class ItemSwitch extends LinearLayout {
-    private Context context;
-    private TextView titleView, summaryView;
-    private ImageView iconView;
-    private NimbleSwitch switchView;
-
-    private CharSequence switchOn, switchOff, summary;
-
+public class ItemSwitch extends Item {
+    protected CharSequence summary, onSummary, offSummary;
+    protected NimbleSwitch switchView;
 
     /**********************************************************************************************/
     /*****************************************接口**************************************************/
@@ -35,33 +34,25 @@ public class ItemSwitch extends LinearLayout {
     /**********************************************************************************************/
 
     public ItemSwitch(Context context) {
-        this(context, null);
+        super(context);
     }
 
     public ItemSwitch(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
     }
 
     public ItemSwitch(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
+        super(context, attrs, defStyleAttr);
     }
 
     public ItemSwitch(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        this.context = context;
-        initLayout();
-        initAttrs(attrs);
-        initEvents();
     }
     /**********************************************************************************************/
     /******************************************重写方法*********************************************/
     /**********************************************************************************************/
-
-    /**********************************************************************************************/
-    /******************************************私有方法*********************************************/
-    /**********************************************************************************************/
-
-    private void initLayout() {
+    @Override
+    protected void initLayout() {
         LinearLayout.LayoutParams lp = new LayoutParams(-1, -2);
         setLayoutParams(lp);
         setOrientation(LinearLayout.HORIZONTAL);
@@ -98,104 +89,64 @@ public class ItemSwitch extends LinearLayout {
         addView(switchView);
     }
 
-    private void initAttrs(AttributeSet attrs) {
+    @Override
+    protected void initAttrs(AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CDKItemSwitch);
-        String title = typedArray.getString(R.styleable.CDKItemSwitch_title);
-        summary = typedArray.getString(R.styleable.CDKItemSwitch_summary);
-        switchOn = typedArray.getString(R.styleable.CDKItemSwitch_switchTextOn);
-        switchOff = typedArray.getString(R.styleable.CDKItemSwitch_switchTextOff);
-        boolean switchNF = typedArray.getBoolean(R.styleable.CDKItemSwitch_switchNF, false);
-        int icon = typedArray.getResourceId(R.styleable.CDKItemSwitch_icon, 0);
+        String title = typedArray.getString(R.styleable.CDKItemSwitch_android_title);
+        summary = typedArray.getString(R.styleable.CDKItemSwitch_android_summary);
+        onSummary = typedArray.getString(R.styleable.CDKItemSwitch_android_summaryOn);
+        offSummary = typedArray.getString(R.styleable.CDKItemSwitch_android_summaryOff);
+        boolean checked = typedArray.getBoolean(R.styleable.CDKItemSwitch_android_checked, false);
+        int icon = typedArray.getResourceId(R.styleable.CDKItemSwitch_android_icon, 0);
         typedArray.recycle();
 
+        setTitleText(title);
+        setChecked(checked);
+        setIconResource(icon);
+        setSummary(0, summary);
+        setSummary(-1, offSummary);
+        setSummary(1, onSummary);
+        setSummaryText();
+    }
 
-        if (title != null) {
-            titleView.setText(title);
-        }
+    @Override
+    protected void initEvents() {
+        super.setOnClickListener((v) -> {
+            setChecked(!isChecked());
+        });
+        switchView.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            setSummaryText();
+        });
+    }
 
-        if (summary != null) {
-            summaryView.setText(summary);
-            summaryView.setVisibility(View.VISIBLE);
-        } else if (switchOn != null && switchNF) {
-            summaryView.setText(switchOn);
-            summaryView.setVisibility(View.VISIBLE);
-        } else if (switchOff != null && !switchNF) {
-            summaryView.setText(switchOff);
-            summaryView.setVisibility(View.VISIBLE);
-        }
-
-        if (icon != 0) {
-            iconView.setImageResource(icon);
-        } else {
-            LayoutParams lp = (LayoutParams) iconView.getLayoutParams();
-            lp.height = -2;
-            iconView.setLayoutParams(lp);
-        }
-        switchView.setChecked(switchNF);
+    protected void setSummaryText() {
+        setSummaryText(isChecked() ? (onSummary == null ? summary : onSummary) : (offSummary == null ? summary : offSummary));
     }
 
     /**
-     * 控件事件初始化
+     * 设置本控件点击事件监听
      */
-    private void initEvents() {
-        super.setOnClickListener((v) -> {
-            switchView.setChecked(!switchView.isChecked());
+    @Override
+    public void setOnClickListener(OnClickListener l) {
+        super.setOnClickListener(v -> {
+            setChecked(!isChecked());
+            l.onClick(this);
         });
-        switchView.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked && switchOn != null) {
-                summaryView.setText(switchOn);
-            } else if (!isChecked && switchOff != null) {
-                summaryView.setText(switchOff);
-            } else if (summary != null) {
-                summaryView.setText(summary);
-            }
-        });
-    }
-
-    private int dp2px(double dpValue) {
-        float num = dpValue < 0 ? -1 : 1;
-        final double scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + (0.5f * num));
     }
     /**********************************************************************************************/
     /******************************************公共方法*********************************************/
     /**********************************************************************************************/
     /**
-     * 设置标题内容文字
+     * 设置副标题内容
+     *
+     * @param state -1:关闭状态
+     *              0:普通副标题
+     *              1:打开状态
      */
-    public void setTitleText(CharSequence title) {
-        titleView.setText(title);
-    }
-
-    /**
-     * 设置副标题内容文字
-     */
-    public void setSummaryText(CharSequence summary) {
-        this.summary = summary;
-        summaryView.setText(summary);
-        summaryView.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * 设置图标
-     */
-    public void setIconImage(int ResourceId) {
-        iconView.setImageResource(ResourceId);
-    }
-
-    public void setIconImage(Drawable drawable) {
-        iconView.setImageDrawable(drawable);
-    }
-
-    public void setIconImage(Bitmap bitmap) {
-        iconView.setImageBitmap(bitmap);
-    }
-
-    /**
-     * 获取当前Switch开关状态
-     */
-    public boolean isChecked() {
-        return switchView.isChecked();
+    public void setSummary(int state, CharSequence summary) {
+        if (state == 0) this.summary = summary;
+        else if (state == -1) this.offSummary = summary;
+        else if (state == 1) this.onSummary = summary;
     }
 
     /**
@@ -208,31 +159,29 @@ public class ItemSwitch extends LinearLayout {
     /**
      * 设置本控件Switch开关变动监听
      */
-    public void setOnCheckedChangeListener(NimbleSwitch.OnCheckedChangeListener swl) {
+    public void setOnCheckedChangeListener(NimbleSwitch.OnCheckedChangeListener l) {
         switchView.setOnCheckedChangeListener((nimbleSwitch, isChecked) -> {
-            if (swl != null) {
-                swl.onCheckedChanged(nimbleSwitch, isChecked);
-            }
-            if (switchOn != null && switchOff != null) {
-                summaryView.setText(isChecked ? switchOn : switchOff);
+            setSummaryText();
+            if (l != null) {
+                l.onCheckedChanged(nimbleSwitch, isChecked);
             }
         });
     }
 
     /**
-     * 设置本控件点击事件监听
+     * 获取当前Switch开关状态
      */
-    public void setOnClickListener(OnClickListener l) {
-        super.setOnClickListener(v -> {
-            switchView.setChecked(!switchView.isChecked());
-            l.onClick(this);
-        });
+    public boolean isChecked() {
+        return switchView.isChecked();
     }
 
     /**
-     * 获取Icon控件以便使用第三方图片加载器
+     * 获取Switch控件
      */
-    public ImageView getImageView() {
-        return iconView;
+    public NimbleSwitch getSwitchView() {
+        return switchView;
     }
+    /**********************************************************************************************/
+    /******************************************私有方法*********************************************/
+    /**********************************************************************************************/
 }

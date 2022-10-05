@@ -3,6 +3,7 @@ package candyenk.android.view;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -10,35 +11,32 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
-
 import androidx.annotation.Nullable;
-
 import candyenk.android.R;
 
 /**
- * <h1>灵动开关</h1>
- * 还凑合，挺顺滑的<br>
+ * CDK灵动Switch
  */
 public class NimbleSwitch extends View {
+    protected static final float switchRadiusStart = 0.3f;
+    protected static final float switchRadiusEnd = 0.45f;
+
     protected Context context;
     protected boolean checked;//当前开关状态
     protected int backgroundColor;//背景色
     protected int switchColor;//开关颜色
-    private Paint switchPaint;//进度条画笔
-    private Paint backgroundPaint;//背景画笔
+    protected Paint switchPaint;//进度条画笔
+    protected Paint backgroundPaint;//背景画笔
 
     protected int layoutHeight, layoutWidth;//控件宽高
     protected float startPoint;//绘制x起点
     protected float endPoint;//绘制x终点
     protected float switchPoint;//当前switch触点位置
     protected float switchRadius;//当前switch触点半径
-    private int touchState;//触摸状态0:直接滑动；1:按下后第一下滑动；2:按下后的持续滑动
-    private ValueAnimator downAnimator, upAnimator, checkAnimator;
+    protected int touchState;//触摸状态0:直接滑动；1:按下后第一下滑动；2:按下后的持续滑动
+    protected ValueAnimator downAnimator, upAnimator, checkAnimator;
+    protected OnCheckedChangeListener mOnCheckedChangeListener;
 
-    private OnCheckedChangeListener mOnCheckedChangeListener;
-
-    private static final float switchRadiusStart = 0.3f;
-    private static final float switchRadiusEnd = 0.45f;
     /**********************************************************************************************/
     /*****************************************接口**************************************************/
     /**********************************************************************************************/
@@ -148,15 +146,22 @@ public class NimbleSwitch extends View {
         }
         return true;
     }
-    /**********************************************************************************************/
-    /*****************************************私有方法**********************************************/
-    /**********************************************************************************************/
-    private void initAttrs(AttributeSet attrs) {
-        this.backgroundColor = context.getResources().getColor(R.color.background_1);
-        this.switchColor = context.getResources().getColor(R.color.mainGC4_1);
+
+    protected int dp2px(double dpValue) {
+        final double scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
     }
 
-    private void initPaints() {
+    protected void initAttrs(AttributeSet attrs) {
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CDKNimbleSwitch);
+        this.checked = typedArray.getBoolean(R.styleable.CDKNimbleSwitch_android_checked, false);
+        this.backgroundColor = context.getResources().getColor(R.color.background_1);
+        this.switchColor = context.getResources().getColor(R.color.mainGC4_1);
+        typedArray.recycle();
+
+    }
+
+    protected void initPaints() {
         //开关画笔
         switchPaint = new Paint();
         switchPaint.setColor(switchColor);
@@ -169,7 +174,7 @@ public class NimbleSwitch extends View {
         backgroundPaint.setAntiAlias(true);
     }
 
-    private void initLayout() {
+    protected void initLayout() {
         //开关高度25dp
         //开关宽度50dp
         layoutHeight = dp2px(25);
@@ -188,6 +193,54 @@ public class NimbleSwitch extends View {
         switchPaint.setColor(checked ? 0xFFFFFFFF : switchColor);
         backgroundPaint.setColor(checked ? switchColor : backgroundColor);
     }
+    /**********************************************************************************************/
+    /*****************************************公共方法**********************************************/
+    /**********************************************************************************************/
+    /**
+     * 设置开关状态
+     */
+    public void setChecked(boolean mChecked) {
+        if (layoutHeight == 0) this.checked = mChecked;
+        else if (this.checked != mChecked) {
+            float end = mChecked ? this.endPoint : this.startPoint;
+            this.checkAnimator = getValueAnimations(animation -> {
+                float value = (float) animation.getAnimatedValue();
+                if (this.touchState == 1) {//按下后后直接抬起
+                    if (this.downAnimator != null) {
+                        this.downAnimator.cancel();
+                        this.downAnimator = null;
+                    }
+                    changeSwitchSize(false, value);
+                }
+                changeSwitchPoint(this.switchPoint, end, value);
+                postInvalidate();
+                if (value > 0.5) {
+                    this.checked = mChecked;
+                    if (mOnCheckedChangeListener != null) {
+                        mOnCheckedChangeListener.onCheckedChanged(this, this.checked);
+                    }
+                }
+            });
+            this.checkAnimator.start();
+        }
+    }
+
+    /**
+     * 获取当前开关状态
+     */
+    public boolean isChecked() {
+        return this.checked;
+    }
+
+    /**
+     * 设置开关变动监听
+     */
+    public void setOnCheckedChangeListener(OnCheckedChangeListener listener) {
+        this.mOnCheckedChangeListener = listener;
+    }
+    /**********************************************************************************************/
+    /*****************************************私有方法**********************************************/
+    /**********************************************************************************************/
 
     private ValueAnimator getValueAnimations(ValueAnimator.AnimatorUpdateListener l) {
         ValueAnimator anim = ValueAnimator.ofFloat(0, 1);
@@ -223,46 +276,4 @@ public class NimbleSwitch extends View {
         float pointValue = value * num + start;
         this.switchPoint = pointValue;
     }
-
-    private int dp2px(double dpValue) {
-        final double scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
-    }
-    /**********************************************************************************************/
-    /*****************************************公共方法**********************************************/
-    /**********************************************************************************************/
-    public void setChecked(boolean checked) {
-        if (this.checked != checked) {
-            float end = checked ? this.endPoint : this.startPoint;
-            this.checkAnimator = getValueAnimations(animation -> {
-                float value = (float) animation.getAnimatedValue();
-                if (this.touchState == 1) {//按下后后直接抬起
-                    if (this.downAnimator != null) {
-                        this.downAnimator.cancel();
-                        this.downAnimator = null;
-                    }
-                    changeSwitchSize(false, value);
-                }
-                changeSwitchPoint(this.switchPoint, end, value);
-                postInvalidate();
-                if (value > 0.5) {
-                    this.checked = checked;
-                    if (mOnCheckedChangeListener != null) {
-                        mOnCheckedChangeListener.onCheckedChanged(this, this.checked);
-                    }
-                }
-            });
-            this.checkAnimator.start();
-        }
-
-    }
-
-    public boolean isChecked() {
-        return this.checked;
-    }
-
-    public void setOnCheckedChangeListener(OnCheckedChangeListener listener) {
-        this.mOnCheckedChangeListener = listener;
-    }
-
 }
