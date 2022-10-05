@@ -7,6 +7,7 @@ import java.util.function.*;
 
 /**
  * Java数组工具
+ * 数组判空
  * 自定义数组ToString
  * 基本数据类型数组ToString
  * 自定义数组转化
@@ -25,6 +26,13 @@ public class UArrays {
     /**********************************************************************************************/
     /***********************************公共静态方法*************************************************/
     /**********************************************************************************************/
+    /**
+     * 数组判空
+     */
+    public static <T> boolean isEmpty(T[] array) {
+        return array == null || array.length == 0;
+    }
+
     /**
      * 自定义数组转字符串
      * 可函数
@@ -130,13 +138,9 @@ public class UArrays {
 
     /**
      * 数组ForEach
-     *
-     * @param array
-     * @param consumer
-     * @param <T>
      */
     public static <T> void forEach(T[] array, ObjIntConsumer<T> consumer) {
-        if (array == null || array.length > 0) {
+        if (!isEmpty(array)) {
             for (int i = 0; i < array.length; i++) {
                 consumer.accept(array[i], i);
             }
