@@ -9,109 +9,85 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import candyenk.android.R;
+import candyenk.android.tools.V;
+import candyenk.java.io.FileInfo;
 import candyenk.java.utils.UArrays;
 import candyenk.java.utils.UData;
 import candyenk.java.utils.UTime;
-import candyenk.java.utils.UFile;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+/*** Android 媒体文件读取权限 READ_EXTERNAL_STORAGE ***/
+/*** Android 外部存储写入权限 WRITE_EXTERNAL_STORAGE ***/
+/*** Android 外部存储管理权限 MANAGE_EXTERNAL_STORAGE ***/
 
 /**
  * 文件选择器上拉弹窗
- * TODO:权限异常
  * 没有动画,遗憾
- * 注意事项:
- * 自定义文件会替代对应文件夹名称以及描述(我觉得这样挺好,就不改了)
  */
 public class DialogFileChooser extends DialogBottom {
-    private File rootFile;
-    private final List<FileInfo> infoList;
-    private final FileAdapter adapter;
 
+    /*************************************静态变量**************************************************/
+    private final List<FileInfo> infoList = new ArrayList<>();//当前展示Info列表
+    private final FileAdapter adapter = new FileAdapter();//文件适配器
+
+    /*************************************成员变量**************************************************/
+    private FileInfo rootInfo;//当前展示File对象
     private Comparator<FileInfo> sortOrder;//排序方式
     private Predicate<FileInfo> filter;//过滤方式
     private boolean isShowHide;//是否显示隐藏文件
 
-    public DialogFileChooser(Context context, File rootFile, boolean isShowHide) {
-        this(context, rootFile, null, null, isShowHide);
+    /**********************************************************************************************/
+    /***********************************公共静态方法*************************************************/
+    /**********************************************************************************************/
 
+    /**********************************************************************************************/
+    /***********************************私有静态方法*************************************************/
+    /**********************************************************************************************/
+
+    /**********************************************************************************************/
+    /***************************************接口****************************************************/
+    /**********************************************************************************************/
+
+    /**********************************************************************************************/
+    /*************************************构造方法**************************************************/
+    /**********************************************************************************************/
+    /**
+     * 以指定的File对象为父级展示子文件
+     */
+    public DialogFileChooser(Context context, File rootFile) {
+        this(context, FileInfo.create(rootFile));
     }
 
-    public DialogFileChooser(Context context, File... files) {
-        this(context, null, files, null, true);
-
-    }
-
-    public DialogFileChooser(Context context, FileInfo... infos) {
-        this(context, null, null, infos, true);
-
-    }
-
-
-    private DialogFileChooser(Context context, File rootFile, File[] files, FileInfo[] infos, boolean isShowHide) {
+    /**
+     * 以指定的FileInfo对象为父级展示子文件
+     */
+    public DialogFileChooser(Context context, FileInfo rootInfo) {
         super(context);
-        this.isShowHide = isShowHide;
-        this.rootFile = rootFile;//可能为NULL
-        this.infoList = new ArrayList<>();
-        addItem(rootFile);
-        addItem(files);
-        addItem(infos);
-        completionList();
-        this.adapter = new FileAdapter();
-        //listView.addItemDecoration(new RecycleItemsDecortion.SpaceItemDecoration(0, 15));
-        //this.adapter.setHasStableIds(true);
+        updateDialog(rootInfo);
         setContent(adapter);
         setTitle("选择文件");
     }
 
     /**
-     * 设置选择监听器
+     * 展示指定的自定义FileInfo对象组
      */
-    public void setItemOnCLickListener(Consumer<FileInfo> consumer) {
-        if (consumer != null) adapter.consumer = consumer;
+    public DialogFileChooser(Context context, FileInfo... infos) {
+        super(context);
+        updateDialog(infos);
+        setContent(adapter);
+        setTitle("选择文件");
     }
-
-    /**
-     * 设置文件排序方式
-     * 只在普通文件列表中有效
-     * 当文件1要排在文件2的前面时返回-1,排在后面返回1,相等返回0
-     */
-    public void setSortOrder(Comparator<FileInfo> sortOrder) {
-        this.sortOrder = sortOrder;
-        if (isShow) updateDialog(this.rootFile);
-    }
-
-    /**
-     * 设置文件过滤方式
-     * 返回false表示该文件被剔除,返回true表示改文件被保留
-     * 只在普通文件列表中有效
-     * 如果设置不显示隐藏文件,那么隐藏文件不会出现在过滤列表中
-     */
-    public void setFilter(Predicate<FileInfo> filter) {
-        this.filter = filter;
-        if (isShow) updateDialog(this.rootFile);
-    }
-
-    /**
-     * 设置是否显示隐藏文件
-     * 只在普通文件列表中有效
-     */
-    public void setShowHide(boolean isShowHide) {
-        this.isShowHide = isShowHide;
-        if (isShow) updateDialog(this.rootFile);
-    }
+    /**********************************************************************************************/
+    /*************************************继承方法**************************************************/
+    /**********************************************************************************************/
 
     /**
      * 设置标题显示内容
@@ -123,123 +99,183 @@ public class DialogFileChooser extends DialogBottom {
         titleView.setVisibility(View.VISIBLE);
     }
 
+    /**********************************************************************************************/
+    /*************************************公共方法**************************************************/
+    /**********************************************************************************************/
     /**
-     * 更新数据
+     * 设置文件排序方式
+     * 当文件1要排在文件2的前面时返回-1,排在后面返回1,相等返回0
+     * 自定义列表无效
      */
-    public void updateDialog(File rootFile) {
-        this.rootFile = rootFile;
-        infoList.clear();
-        addItem(rootFile);
-        setTitle(rootFile.getAbsolutePath());
-        updateAdapter();
+    public void setSortOrder(Comparator<FileInfo> sortOrder) {
+        if (this.rootInfo == null) return;
+        this.sortOrder = sortOrder;
+        updateDialog(this.rootInfo);
     }
 
-    public void updateDialog(File... files) {
-        this.rootFile = null;
-        infoList.clear();
-        addItem(files);
-        updateAdapter();
+    /**
+     * 设置文件过滤方式
+     * 返回false表示该文件被剔除,返回true表示改文件被保留
+     * 如果设置不显示隐藏文件,那么隐藏文件不会出现在过滤列表中
+     * 自定义列表无效
+     */
+    public void setFilter(Predicate<FileInfo> filter) {
+        if (this.rootInfo == null) return;
+        this.filter = filter;
+        updateDialog(this.rootInfo);
     }
 
+    /**
+     * 设置是否显示隐藏文件
+     * 自定义列表无效
+     */
+    public void setShowHideFile(boolean isShowHide) {
+        if (this.rootInfo == null) return;
+        this.isShowHide = isShowHide;
+        updateDialog(this.rootInfo);
+    }
+
+    /**
+     * 更新Dialog数据
+     */
+    public void updateDialog(FileInfo rootInfo) {
+        if (rootInfo.isCustom() || rootInfo == null || rootInfo.getFile() == null)
+            throw new NullPointerException("File地址不能为不存在");
+        this.rootInfo = rootInfo;
+        updateInfoList(rootInfo);
+        if (titleView.getVisibility() == View.VISIBLE) setTitle(rootInfo.getPath());
+        if (isShow) updateAdapter();
+    }
+
+    /**
+     * 更新自定义Dialog数据
+     */
     public void updateDialog(FileInfo... infos) {
-        this.rootFile = null;
-        infoList.clear();
-        addItem(infos);
-        updateAdapter();
+        if (infos == null || infos.length == 0)
+            throw new NullPointerException("Files地址不能不存在");
+        this.rootInfo = null;
+        updateInfoList(infos);
+        if (titleView.getVisibility() == View.VISIBLE) setTitle("选择文件");
+        if (isShow) updateAdapter();
     }
 
-
-    private void completionList() {
-        if (infoList.size() > 0 && rootFile != null && rootFile.getParentFile() != null) {
-            infoList.add(0, null);//添加一个空值代表上级
-        } else if (infoList.size() == 0 && rootFile != null && rootFile.getParentFile() != null) {
-            infoList.add(null);//添加一个空值代表上级
-            infoList.add(null);//再加一个空值代表空文件夹
-        } else if (infoList.size() == 0) {
-            infoList.add(null);//添加一个空值代表空文件夹
-        }
+    /**
+     * 设置选择点击监听器
+     */
+    public void setOnItemClickListener(BiConsumer<FileInfo, View> onClickListener) {
+        adapter.onClickListener = onClickListener;
     }
 
+    /**
+     * 设置选择长按监听器
+     */
+    public void setOnItemLongClickListener(BiConsumer<FileInfo, View> onLongClickListener) {
+        adapter.onLongClickListener = onLongClickListener;
+    }
+
+    /**
+     * 设置上级文件夹默认事件
+     */
+    public void setSuperDefault(View.OnClickListener l) {
+        this.adapter.superOnClick = l;
+    }
+
+    /**
+     * 设置空文件夹默认事件
+     */
+    public void setEmptyDefault(View.OnClickListener l) {
+        this.adapter.emptyOnClick = l;
+    }
+    /**********************************************************************************************/
+    /*************************************私有方法**************************************************/
+    /**********************************************************************************************/
+
+    /*** 更新 Adapter 数据 ***/
     private void updateAdapter() {
-        completionList();
         adapter.notifyDataSetChanged();
     }
 
-    private void addItem(File file) {
-        if (file != null) {
-            UArrays.addArrays(infoList, file.listFiles(), f -> {
-                if (isShowHide || !file.getName().startsWith(".")) {
-                    if (filter == null || filter.test(FileInfo.create(f))) {
-                        return FileInfo.create(f);
-                    }
-                }
-                return null;
+    /*** 更新数据列表***/
+    private void updateInfoList(FileInfo info) {
+        infoList.clear();
+        FileInfo[] list = info.listInfos(this.isShowHide, true);
+        if (list.length > 1) {
+            UArrays.addArrays(infoList, list, f -> {
+                if (f.equals(FileInfo.superInfo) || f.equals(FileInfo.emptyInfo)) return f;
+                if (!isShowHide && f.isHide()) return null;
+                if (filter != null && !filter.test(f)) return null;
+                return f;
             });
-            if (this.sortOrder == null) {
-                Collections.sort(infoList);
+            if (sortOrder == null) Collections.sort(infoList);
+            else Collections.sort(infoList, (o1, o2) -> {
+                if (o1.equals(FileInfo.superInfo)) return -1;
+                if (o2.equals(FileInfo.superInfo)) return 1;
+                return sortOrder.compare(o1, o2);
+            });
+        } else UArrays.addArrays(infoList, list, null);
+    }
+
+    /*** 更新自定义数据列表***/
+    private void updateInfoList(FileInfo[] infos) {
+        infoList.clear();
+        UArrays.addArrays(infoList, infos, null);
+    }
+    /**********************************************************************************************/
+    /**************************************内部类***************************************************/
+    /**********************************************************************************************/
+    /*** 私有内部适文件配器类 ***/
+    private class FileAdapter extends RecyclerView.Adapter<FileHolder> {
+        private BiConsumer<FileInfo, View> onClickListener;//选项点击监听
+        private BiConsumer<FileInfo, View> onLongClickListener;//选项长按监听
+        private View.OnClickListener superOnClick;//上级文件夹点击事件
+        private View.OnClickListener emptyOnClick;//空文件夹点击事件
+
+        @Override
+        public FileHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (viewType == 0) {
+                return new FileHolder(createEmptyLayout());
             } else {
-                Collections.sort(infoList, sortOrder);
-            }
-        }
-    }
-
-    private void addItem(File[] files) {
-        if (files != null && files.length > 0) {
-            UArrays.addArrays(infoList, files, FileInfo::create);
-        }
-    }
-
-    private void addItem(FileInfo[] infos) {
-        if (infos != null && infos.length > 0) {
-            UArrays.addArrays(infoList, infos, null);
-        }
-    }
-
-    private class FileAdapter extends RecyclerView.Adapter {
-        private Consumer<FileInfo> consumer;
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            switch (viewType) {
-                case 0:
-                    return new RecyclerView.ViewHolder(createLastLayout()) {
-                    };
-                case 1:
-                    return new RecyclerView.ViewHolder(createEmptyLayout()) {
-                    };
-                case 2:
-                    return new RecyclerView.ViewHolder(createDirectoryLayout()) {
-                    };
-                case 3:
-                default:
-                    return new RecyclerView.ViewHolder(createFileLayout()) {
-                    };
+                return new FileHolder(createFileLayout());
             }
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(FileHolder holder, int position) {
+            FileInfo info = infoList.get(position);
             switch (getItemViewType(position)) {
-                case 0:
-                    //返回上一级条目
-                    holder.itemView.setOnClickListener(v -> updateDialog(rootFile.getParentFile()));
+                case 0: //空文件夹
+                    if (emptyOnClick == null) holder.setEmptyDirectory();
+                    else holder.setOnClick(emptyOnClick);
                     break;
-                case 1:
-                    //空文件夹条目
-                    holder.itemView.setOnClickListener(v -> Toast.makeText(context, "什么都没有哦~", Toast.LENGTH_SHORT).show());
+                case 1://返回上一级条目
+                    holder.title.setText(info.getName());
+                    holder.summary.setVisibility(View.GONE);
+                    if (superOnClick == null) holder.setUpdateDialog(rootInfo.getParent());
+                    else holder.setOnClick(superOnClick);
                     break;
-                case 2:
-                case 3:
-                    //文件(夹)条目
-                    FileInfo info = infoList.get(position);
-                    ViewGroup vg = (ViewGroup) holder.itemView;
-                    ((ImageView) vg.getChildAt(0)).setImageResource(iconType(info));
-                    ViewGroup vg1 = (ViewGroup) vg.getChildAt(1);
-                    ((TextView) vg1.getChildAt(0)).setText(info.getName());
-                    ((TextView) vg1.getChildAt(1)).setText(getFileDescribe(info));
-                    holder.itemView.setOnClickListener(v -> {
-                        if (consumer != null) consumer.accept(info);
-                    });
+                case 2://文件夹
+                    holder.title.setText(info.getName());
+                    holder.summary.setText(getDirectoryDescribe(info));
+                    if (onClickListener == null) holder.setUpdateDialog(info);
+                    else holder.setOnClick(v -> onClickListener.accept(info, holder.itemView));
+                    if (onLongClickListener != null)
+                        holder.setOnLongClick(v -> {
+                            onLongClickListener.accept(info, holder.itemView);
+                            return true;
+                        });
+                    break;
+                case 3://文件
+                    holder.icon.setImageResource(iconType(info));
+                    holder.title.setText(info.getName());
+                    holder.summary.setText(getFileDescribe(info));
+                    holder.arrow.setVisibility(View.GONE);
+                    if (onClickListener == null) holder.setFileContent(info);
+                    else holder.setOnClick(v -> onClickListener.accept(info, holder.itemView));
+                    if (onLongClickListener != null)
+                        holder.setOnLongClick(v -> {
+                            onLongClickListener.accept(info, holder.itemView);
+                            return true;
+                        });
                     break;
             }
         }
@@ -251,17 +287,17 @@ public class DialogFileChooser extends DialogBottom {
 
         /**
          * 当前项目类型
-         * 0:上级文件夹
-         * 1:空文件夹
+         * 0:空文件夹
+         * 1:上级文件夹
          * 2:文件夹
          * 3:文件
          */
         @Override
         public int getItemViewType(int position) {
             FileInfo info = infoList.get(position);
-            if (info == null && position == 0) {
+            if (info == FileInfo.emptyInfo) {
                 return 0;
-            } else if (info == null) {
+            } else if (info == FileInfo.superInfo) {
                 return 1;
             } else if (info.isDirectory()) {
                 return 2;
@@ -270,33 +306,28 @@ public class DialogFileChooser extends DialogBottom {
             }
         }
 
-        //创建文件项目
+        /***创建文件项目布局***/
         private LinearLayout createFileLayout() {
             LinearLayout l1 = new LinearLayout(viewContext);
-            RecyclerView.LayoutParams p1 = new RecyclerView.LayoutParams(-1, -2);
-            l1.setLayoutParams(p1);
+            V.createRV(l1).setSize(-1, -2).setPaddingDP(5, 5, 5, 5).refresh();
             l1.setOrientation(LinearLayout.HORIZONTAL);
             l1.setGravity(Gravity.CENTER_VERTICAL);
-            l1.setPadding(dp2px(5), dp2px(5), dp2px(5), dp2px(5));
             l1.setBackgroundResource(R.drawable.bg_cdk);
 
             ImageView iv = new ImageView(viewContext);
-            LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(dp2px(60), dp2px(60));
-            iv.setLayoutParams(p2);
+            V.createLL(iv).setSizeDP(60, 60).refresh();
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            iv.setImageResource(R.drawable.file_folder);
             l1.addView(iv);
 
             LinearLayout l2 = new LinearLayout(viewContext);
-            LinearLayout.LayoutParams p3 = new LinearLayout.LayoutParams(-1, -1);
-            p3.weight = 1;
-            l2.setLayoutParams(p3);
+            V.createLL(l2).setSize(-1, -1).setWeight(1).refresh();
             l2.setOrientation(LinearLayout.VERTICAL);
             l2.setGravity(Gravity.CENTER_VERTICAL);
             l1.addView(l2);
 
             TextView tv = new TextView(viewContext);
-            LinearLayout.LayoutParams p4 = new LinearLayout.LayoutParams(-2, -2);
-            tv.setLayoutParams(p4);
+            V.createLL(tv).setSize(-2, -2).refresh();
             tv.setTextSize(20);
             tv.setEllipsize(TextUtils.TruncateAt.MARQUEE);
             tv.setSingleLine(true);
@@ -304,94 +335,75 @@ public class DialogFileChooser extends DialogBottom {
             l2.addView(tv);
 
             TextView tv1 = new TextView(viewContext);
-            LinearLayout.LayoutParams p5 = new LinearLayout.LayoutParams(-2, -2);
-            tv1.setLayoutParams(p5);
+            V.createLL(tv1).setSize(-2, -2).refresh();
             tv1.setTextSize(10);
             tv.setEllipsize(TextUtils.TruncateAt.MARQUEE);
             tv.setSingleLine(true);
             tv.setSelected(true);
             l2.addView(tv1);
+
+            ImageView iv2 = new ImageView(viewContext);
+            V.createLL(iv2).setSizeDP(20, 20).refresh();
+            iv2.setImageResource(R.drawable.ic_right_arrow);
+            l1.addView(iv2);
             return l1;
         }
 
-        //创建文件夹项目
-        private LinearLayout createDirectoryLayout() {
-            LinearLayout l1 = createFileLayout();
-            ((ImageView) l1.getChildAt(0)).setImageResource(R.drawable.file_folder);
-            TextView tv = new TextView(viewContext);
-            LinearLayout.LayoutParams p1 = new LinearLayout.LayoutParams(-2, -2);
-            tv.setLayoutParams(p1);
-            tv.setPadding(dp2px(15), dp2px(15), dp2px(15), dp2px(15));
-            tv.setTextSize(15);
-            tv.setText(">");
-            l1.addView(tv);
-            return l1;
-        }
-
-        //创建上一级项目
-        private LinearLayout createLastLayout() {
-            LinearLayout l1 = createDirectoryLayout();
-            LinearLayout l2 = (LinearLayout) l1.getChildAt(1);
-            ((TextView) l2.getChildAt(0)).setText("../");
-            l2.removeViewAt(1);
-            return l1;
-        }
-
-        //创建空文件夹项目
+        /*** 创建空文件夹项目 ***/
         private LinearLayout createEmptyLayout() {
             LinearLayout l1 = new LinearLayout(viewContext);
-            RecyclerView.LayoutParams p1 = new RecyclerView.LayoutParams(-1, -2);
-            l1.setLayoutParams(p1);
+            V.createRV(l1).setSize(-1, -2).refresh();
             l1.setOrientation(LinearLayout.VERTICAL);
             l1.setGravity(Gravity.CENTER_HORIZONTAL);
             l1.setBackgroundResource(R.drawable.bg_cdk);
 
             ImageView iv = new ImageView(viewContext);
-            LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(dp2px(120), dp2px(120));
-            iv.setLayoutParams(p2);
+            V.createLL(iv).setSizeDP(120, 120).refresh();
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
             iv.setImageResource(R.drawable.file_unknown);
             l1.addView(iv);
 
             TextView tv = new TextView(viewContext);
-            LinearLayout.LayoutParams p3 = new LinearLayout.LayoutParams(-2, -2);
-            p3.setMargins(0, 0, 0, dp2px(40));
-            tv.setLayoutParams(p3);
+            V.createLL(tv).setSize(-2, -2).setMarginDP(0, 0, 0, 40).refresh();
             tv.setTextSize(20);
             tv.setText(R.string.file_chooser_no_file);
             l1.addView(tv);
             return l1;
         }
 
-
+        /**
+         * 获取对应的图标资源值
+         */
         private int iconType(FileInfo info) {
             switch (info.getType()) {
-                case DIRECTORY:
-                    return R.drawable.file_folder;
-                case TEXT:
-                    return R.drawable.file_document;
-                case IMAGE:
-                    return R.drawable.file_picture;
-                case VIDEO:
-                    return R.drawable.file_video;
-                case COMPRESS:
-                    return R.drawable.file_zip;
-                case AUDIO:
-                    return R.drawable.file_audio;
-                default:
-                    return R.drawable.file_unknown;
+                case DIRECTORY: return R.drawable.file_folder;
+                case TEXT: return R.drawable.file_document;
+                case IMAGE: return R.drawable.file_picture;
+                case VIDEO: return R.drawable.file_video;
+                case COMPRESS: return R.drawable.file_zip;
+                case AUDIO: return R.drawable.file_audio;
+                default: return R.drawable.file_unknown;
             }
         }
 
+        /*** 获取文件描述内容 ***/
         private String getFileDescribe(FileInfo fileInfo) {
             StringBuilder sb = new StringBuilder();
             if (fileInfo.isCustom()) return fileInfo.getPath();
-            if (!fileInfo.isDirectory()) {
-                sb.append(context.getString(R.string.file_chooser_filesize))
-                        .append(":")
-                        .append(UData.B2A(fileInfo.getSize()))
-                        .append("      ");
-            }
+            sb.append(context.getString(R.string.file_chooser_filesize))
+                    .append(":")
+                    .append(UData.B2A(fileInfo.getSize()))
+                    .append("\t")
+                    .append(context.getString(R.string.file_chooser_lmd))
+                    .append(":")
+                    .append(UTime.D2S(fileInfo.getLmd()));
+            return sb.toString();
+        }
+
+        /*** 获取文件夹描述 ***/
+        private String getDirectoryDescribe(FileInfo fileInfo) {
+            StringBuilder sb = new StringBuilder();
+            if (fileInfo.isCustom()) return fileInfo.getPath();
             sb.append(context.getString(R.string.file_chooser_lmd))
                     .append(":")
                     .append(UTime.D2S(fileInfo.getLmd()));
@@ -399,118 +411,59 @@ public class DialogFileChooser extends DialogBottom {
         }
     }
 
-    /**
-     * 小小的方便自定义的文件信息
-     */
-    public static class FileInfo implements Comparable<FileInfo> {
-        private static final Map<String, FileInfo> infoMap = new HashMap<>();
-        private File file;
-        private String name;
-        private String path;
-        private long size;
-        private long lmd;
-        private boolean isCustom;
-        private UFile.TypeFile type;
+    /*** File项目视图 ***/
+    private class FileHolder extends RecyclerView.ViewHolder {
+        private ImageView icon;
+        private TextView title;
+        private TextView summary;
+        private ImageView arrow;
 
-        private FileInfo(File file) {
-            if (file != null) {
-                this.file = file;
-                this.name = file.getName();
-                this.path = file.getAbsolutePath();
-                this.size = file.length();
-                this.lmd = file.lastModified();
-                this.type = UFile.getTypeFile(file);
-            } else {
-                this.isCustom = true;
+        public FileHolder(View itemView) {
+            super(itemView);
+            try {
+                icon = V.getChild(itemView, 0, ImageView.class);
+                ViewGroup vg = V.getChild(itemView, 1, ViewGroup.class);
+                title = V.getChild(vg, 0, TextView.class);
+                summary = V.getChild(vg, 1, TextView.class);
+                arrow = V.getChild(itemView, 2, ImageView.class);
+            } catch (Exception e) {
+
             }
         }
 
-        public static FileInfo create(File file) {
-            if (file == null) return new FileInfo(null);
-            FileInfo info = infoMap.get(file.getAbsolutePath());
-            if (info == null || file.lastModified() != info.lmd) {
-                info = new FileInfo(file);
-                infoMap.put(info.path, info);
-            }
-            return info;
+        private void setOnClick(View.OnClickListener l) {
+            itemView.setOnClickListener(l);
         }
 
-        public File getFile() {
-            return file;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-            this.isCustom = true;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public void setPath(String path) {
-            infoMap.remove(this.path);
-            this.path = path;
-            this.isCustom = true;
-            infoMap.put(this.path, this);
-        }
-
-        public long getSize() {
-            return size;
-        }
-
-        public long getLmd() {
-            return lmd;
-        }
-
-        public UFile.TypeFile getType() {
-            return type;
-        }
-
-        public void setType(UFile.TypeFile type) {
-            this.type = type;
-            this.isCustom = true;
-        }
-
-        public boolean isCustom() {
-            return isCustom;
-        }
-
-        public boolean isDirectory() {
-            return getType() == UFile.TypeFile.DIRECTORY;
+        private void setOnLongClick(View.OnLongClickListener l) {
+            itemView.setOnLongClickListener(l);
         }
 
         /**
-         * 排序方案
-         * 目录优先
+         * 更新弹窗
          */
-        @Override
-        public int compareTo(FileInfo f) {
-            boolean tid = this.isDirectory();
-            boolean fid = f.isDirectory();
-            if (tid == fid) {
-                return getPath().compareTo(f.getPath());
-            } else {
-                return tid ? -1 : 1;
-            }
+        private void setUpdateDialog(FileInfo rootInfo) {
+            itemView.setOnClickListener(v -> updateDialog(rootInfo));
         }
 
-        @Override
-        public String toString() {
-            return "FileInfo{" +
-                    "file=" + file +
-                    ", name='" + name + '\'' +
-                    ", path='" + path + '\'' +
-                    ", size=" + size +
-                    ", lmd=" + lmd +
-                    ", type=" + type.name() +
-                    '}';
+        /**
+         * 空文件夹项目默认点击事件
+         */
+        private void setEmptyDirectory() {
+            itemView.setOnClickListener(v -> {
+                Toast.makeText(context, "什么都没有哦!", Toast.LENGTH_SHORT).show();
+            });
         }
 
-
+        /**
+         * 普通文件项目默认点击事件
+         */
+        private void setFileContent(FileInfo info) {
+            itemView.setOnClickListener(v -> {
+                Toast.makeText(context, "文件:" + info.getPath(), Toast.LENGTH_SHORT).show();
+            });
+        }
     }
+
+
 }
