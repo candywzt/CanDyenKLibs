@@ -1,4 +1,4 @@
-package candyenk.java.entity;
+package candyenk.java.io;
 
 import java.io.File;
 import java.util.Arrays;
