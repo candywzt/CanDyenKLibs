@@ -212,7 +212,7 @@ public class UArrays {
      * Collection中添加自定义数组
      *
      * @param action 自定义操作,为null则执行强转(危险)
-     *               action返回NULL则不添加
+     *               返回值为NULL则不添加
      */
     public static <T, R> void addArrays(Collection<R> list, T[] array, Function<T, R> action) {
         if (array == null || list == null) return;
