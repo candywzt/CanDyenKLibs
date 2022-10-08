@@ -19,6 +19,7 @@ import java.util.function.*;
  * byte数组转int数组
  * int数组转long数组
  * Collection添加自定义数组
+ * Arrays合并
  * 判断Object/int/long/Double数组内是否含有某元素
  * int/long/double数组求和/绝对和
  */
@@ -227,6 +228,25 @@ public class UArrays {
                 }
             }
         }
+    }
+
+    /**
+     * Arrays合并
+     * 该方法无法延伸合并多项泛型到数组的方法
+     */
+    public static <T> T[] merge(T[]... array) {
+        if (isEmpty(array)) return null;
+        int size = 0;
+        int index = 0;
+        for (T[] t : array) if (!isEmpty(t)) size += t.length;
+        T[] arrays = (T[]) Array.newInstance(array.getClass().getComponentType(), size);
+        for (T[] t : array) {
+            if (isEmpty(t)) continue;
+            System.arraycopy(t, 0, arrays, index, t.length);
+            index += t.length;
+        }
+        return arrays;
+
     }
 
     /**
