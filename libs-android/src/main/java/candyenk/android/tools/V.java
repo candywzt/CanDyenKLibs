@@ -135,7 +135,7 @@ public class V<T extends View> {
     /**
      * 设置控件Weight属性
      */
-    public static V setWeight(View v, double w) {
+    public static V setWeight(View v, int w) {
         return new V(v).setWeight(w);
     }
 
@@ -151,6 +151,13 @@ public class V<T extends View> {
      */
     public static V setPaddingDP(View v, int l, int t, int r, int b) {
         return new V(v).setPaddingDP(l, t, r, b);
+    }
+
+    /**
+     * 设置控件Elevation属性(厚度)
+     */
+    public static V setElevationDP(View v, int e) {
+        return new V(v).setElevationDP(e);
     }
 
     /**********************************************************************************************/
@@ -219,7 +226,7 @@ public class V<T extends View> {
     /**
      * 设置控件Weight属性
      */
-    public V setWeight(double w) {
+    public V setWeight(int w) {
         if (lp == null) throw new NullPointerException("控件没有LayoutParams,请先创建");
         if (lp instanceof LinearLayout.LayoutParams) {
             ((LinearLayout.LayoutParams) lp).weight = (float) w;
@@ -248,6 +255,14 @@ public class V<T extends View> {
                 (int) dp2px(t),
                 (int) dp2px(r),
                 (int) dp2px(b));
+        return this;
+    }
+
+    /**
+     * 设置控件Elevation属性(厚度)
+     */
+    public V setElevationDP(int e) {
+        view.setElevation((float) dp2px(e));
         return this;
     }
 
