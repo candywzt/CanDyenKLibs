@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import candyenk.java.entity.FileType;
+import candyenk.java.io.FileType;
 
 /**
  * Java文件工具

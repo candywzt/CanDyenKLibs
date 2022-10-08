@@ -7,15 +7,51 @@ import java.nio.charset.Charset;
 
 /**
  * Android文件工具
+ * 私有与共享目录获取
  * Raw资源文件读取
  * Assets资源文件读取
  * Data文件读写删
  * SD卡文件读写删改同Java
  */
 public class UFile extends candyenk.java.utils.UFile {
-    public static final String rootPath = "/";
-    public static final String sdcardPath = "/storage/emulated/0/";
-    public static final String systemPath = "/system/";
+    public static final String rootPath = "/";//根目录
+    public static final String sdcardPath = "/storage/emulated/0";//外部存储目录
+    public static final String systemPath = "/system";//System目录
+
+    /**
+     * 获取私有Data目录(/data/user/0/APPID)
+     */
+    public static String getDataPath(Context context) {
+        return context.getDataDir().getAbsolutePath();
+    }
+
+    /**
+     * 获取私有Files目录(/data/user/0/APPID/files)
+     */
+    public static String getFilesPath(Context context) {
+        return context.getFilesDir().getAbsolutePath();
+    }
+
+    /**
+     * 获取私有Cache目录(/data/user/0/APPID/cache)
+     */
+    public static String getCachePath(Context context) {
+        return context.getCacheDir().getAbsolutePath();
+    }
+
+    /**
+     * 获取共享Files目录(/storage/emulated/0/Android/data/APPID/files
+     */
+    public static String getEFilesPath(Context context) {
+        return context.getExternalFilesDir("").getAbsolutePath();
+    }
+
+    /**
+     * 获取共享Cache目录(/storage/emulated/0/Android/data/APPID/cache)
+     */
+    public static String getECachePath(Context context) {
+        return context.getExternalCacheDir().getAbsolutePath();
+    }
 
     /**
      * Raw资源文件读取(res/raw/文件夹)
