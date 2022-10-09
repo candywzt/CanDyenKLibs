@@ -80,7 +80,7 @@ public class FileInfo implements Comparable<FileInfo> {
      */
     public static FileInfo[] toInfos(File[] files) {
         if (UArrays.isEmpty(files)) return new FileInfo[0];
-        return UArrays.toArray(files, FileInfo::create);
+        return UArrays.toArray(files, FileInfo.class, FileInfo::create);
     }
 
     /**
@@ -88,7 +88,7 @@ public class FileInfo implements Comparable<FileInfo> {
      */
     public static FileInfo[] toInfos(String[] path) {
         if (UArrays.isEmpty(path)) return new FileInfo[0];
-        return UArrays.toArray(path, (Function<String, FileInfo>) FileInfo::custom);
+        return UArrays.toArray(path, FileInfo.class, FileInfo::custom);
     }
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/

@@ -90,9 +90,9 @@ public class UArrays {
      * 自定义数组间转化
      * 可函数
      */
-    public static <T, R> R[] toArray(T[] array, Function<T, R> action) {
+    public static <T, R> R[] toArray(T[] array, Class<R> type, Function<T, R> action) {
         if (array == null) return null;
-        R[] r = (R[]) Array.newInstance(action.apply(array[0]).getClass(), array.length);
+        R[] r = (R[]) Array.newInstance(type, array.length);
         for (int i = 0; i < array.length; i++) {
             r[i] = action.apply(array[i]);
         }
@@ -185,7 +185,7 @@ public class UArrays {
      * 数组转自定义List
      * 生成可变List
      * 若生成不可变List
-     * 请使用{@link UArrays#toArray(Object[], Function)}加Arrays.asList(array)
+     * 请使用{@link UArrays#toArray(Object[], Class, Function)}加Arrays.asList(array)
      */
     public static <T, R> List<R> toList(T[] array, Function<T, R> action) {
         if (array == null || action == null) return Collections.emptyList();
@@ -228,6 +228,10 @@ public class UArrays {
                 }
             }
         }
+    }
+
+    public static <T> void addArrays(Collection<T> list, T[] array) {
+        addArrays(list, array, null);
     }
 
     /**
