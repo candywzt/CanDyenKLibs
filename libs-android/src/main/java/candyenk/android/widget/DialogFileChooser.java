@@ -421,11 +421,11 @@ public class DialogFileChooser extends DialogBottom {
         public FileHolder(View itemView) {
             super(itemView);
             try {
-                icon = V.getChild(itemView, 0, ImageView.class);
-                ViewGroup vg = V.getChild(itemView, 1, ViewGroup.class);
-                title = V.getChild(vg, 0, TextView.class);
-                summary = V.getChild(vg, 1, TextView.class);
-                arrow = V.getChild(itemView, 2, ImageView.class);
+                icon = V.getChild(itemView, 0);
+                ViewGroup vg = V.getChild(itemView, 1);
+                title = V.getChild(vg, 0);
+                summary = V.getChild(vg, 1);
+                arrow = V.getChild(itemView, 2);
             } catch (Exception e) {
 
             }

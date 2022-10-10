@@ -103,7 +103,7 @@ public class V<T extends View> {
     /**
      * 获取子控件
      */
-    public static <T extends View> T getChild(View v, int i, Class<T> c) {
+    public static <T extends View> T getChild(View v, int i) {
         if (!(v instanceof ViewGroup)) return null;
         ViewGroup vg = (ViewGroup) v;
         return (T) vg.getChildAt(i);
