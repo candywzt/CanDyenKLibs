@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -18,7 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class V<T extends View> {
     /*************************************静态变量**************************************************/
-
+    private static final String TAG = "ViewHelper";
+    public static final int UNCHANG = Integer.MIN_VALUE;
     /*************************************成员变量**************************************************/
     private T view;
     private ViewGroup.LayoutParams lp;
@@ -65,8 +67,10 @@ public class V<T extends View> {
      */
     public static V createLL(View v) {
         V view = new V(v);
-        if (view.lp == null) view.lp = new LinearLayout.LayoutParams(-2, -2);
-        else view.lp = new LinearLayout.LayoutParams(view.lp);
+        if (view.lp == null) {
+            view.lp = new LinearLayout.LayoutParams(-2, -2);
+            L.e(TAG, "创建LL");
+        }
         return view;
     }
 
@@ -75,8 +79,10 @@ public class V<T extends View> {
      */
     public static V createFL(View v) {
         V view = new V(v);
-        if (view.lp == null) view.lp = new FrameLayout.LayoutParams(-2, -2);
-        else view.lp = new FrameLayout.LayoutParams(view.lp);
+        if (view.lp == null) {
+            view.lp = new FrameLayout.LayoutParams(-2, -2);
+            L.e(TAG, "创建FL");
+        }
         return view;
     }
 
@@ -85,8 +91,10 @@ public class V<T extends View> {
      */
     public static V createRL(View v) {
         V view = new V(v);
-        if (view.lp == null) view.lp = new RelativeLayout.LayoutParams(-2, -2);
-        else view.lp = new RelativeLayout.LayoutParams(view.lp);
+        if (view.lp == null) {
+            view.lp = new RelativeLayout.LayoutParams(-2, -2);
+            L.e(TAG, "创建RL");
+        }
         return view;
     }
 
@@ -95,8 +103,10 @@ public class V<T extends View> {
      */
     public static V createRV(View v) {
         V view = new V(v);
-        if (view.lp == null) view.lp = new RecyclerView.LayoutParams(-2, -2);
-        else view.lp = new RecyclerView.LayoutParams(view.lp);
+        if (view.lp == null) {
+            view.lp = new RecyclerView.LayoutParams(-2, -2);
+            L.e(TAG, "创建RV");
+        }
         return view;
     }
 
@@ -104,6 +114,12 @@ public class V<T extends View> {
      * 获取子控件
      */
     public static <T extends View> T getChild(View v, int i) {
+        if (!(v instanceof ViewGroup)) return null;
+        ViewGroup vg = (ViewGroup) v;
+        return (T) vg.getChildAt(i);
+    }
+
+    public static <T extends View> T getChild(View v, int i, Class<T> c) {
         if (!(v instanceof ViewGroup)) return null;
         ViewGroup vg = (ViewGroup) v;
         return (T) vg.getChildAt(i);
@@ -164,6 +180,7 @@ public class V<T extends View> {
     /***********************************私有静态方法*************************************************/
     /**********************************************************************************************/
     private double dp2px(double dp) {
+        if (dp == UNCHANG) return UNCHANG;
         float num = dp < 0 ? -1 : 1;
         final double scale = view.getContext().getResources().getDisplayMetrics().density;
         return (dp * scale + (0.5f * num));
@@ -193,8 +210,8 @@ public class V<T extends View> {
      */
     public V setSize(int w, int h) {
         if (lp == null) throw new NullPointerException("控件没有LayoutParams,请先创建");
-        lp.width = w;
-        lp.height = h;
+        lp.width = w == UNCHANG ? lp.width : w;
+        lp.height = h == UNCHANG ? lp.height : h;
         return this;
     }
 
@@ -210,7 +227,12 @@ public class V<T extends View> {
     public V setMargin(int l, int t, int r, int b) {
         if (lp == null) throw new NullPointerException("控件没有LayoutParams,请先创建");
         if (lp instanceof ViewGroup.MarginLayoutParams) {
-            ((ViewGroup.MarginLayoutParams) lp).setMargins(l, t, r, b);
+            ViewGroup.MarginLayoutParams lp1 = (ViewGroup.MarginLayoutParams) lp;
+            l = l == UNCHANG ? lp1.leftMargin : l;
+            t = t == UNCHANG ? lp1.topMargin : t;
+            r = r == UNCHANG ? lp1.rightMargin : r;
+            b = b == UNCHANG ? lp1.bottomMargin : b;
+            lp1.setMargins(l, t, r, b);
         }
         return this;
     }
@@ -249,9 +271,19 @@ public class V<T extends View> {
 
     /**
      * 设置控件Padding属性
+     * 无需刷新
      */
+    public V setPadding(int l, int t, int r, int b) {
+        l = l == UNCHANG ? view.getPaddingLeft() : l;
+        t = t == UNCHANG ? view.getPaddingTop() : t;
+        r = r == UNCHANG ? view.getPaddingRight() : r;
+        b = b == UNCHANG ? view.getPaddingBottom() : b;
+        view.setPadding(l, t, r, b);
+        return this;
+    }
+
     public V setPaddingDP(int l, int t, int r, int b) {
-        view.setPadding((int) dp2px(l),
+        setPadding((int) dp2px(l),
                 (int) dp2px(t),
                 (int) dp2px(r),
                 (int) dp2px(b));
@@ -263,6 +295,31 @@ public class V<T extends View> {
      */
     public V setElevationDP(int e) {
         view.setElevation((float) dp2px(e));
+        return this;
+    }
+
+    /**
+     * 设置控件圆角Radius
+     * 无需刷新
+     */
+    public V setRadiusDP(int r) {
+        if (view instanceof CardView) {
+            ((CardView) view).setRadius((float) dp2px(r));
+        }
+        return this;
+    }
+
+    /**
+     * 设置控件父级
+     */
+    public V setParent(ViewGroup p) {
+        return setParent(p, -1);
+    }
+
+    public V setParent(ViewGroup p, int i) {
+        if (p != null) {
+            p.addView(view, i);
+        }
         return this;
     }
 
