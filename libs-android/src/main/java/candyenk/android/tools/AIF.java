@@ -1,4 +1,4 @@
-package candyenk.android.viewframe;
+package candyenk.android.tools;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -7,14 +7,12 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
-import candyenk.android.tools.V;
 import candyenk.android.utils.ULay;
 
 /**
- * 图片自动滚动动画框架
+ * Android AutoImageView 帮助类
  */
-public class AutoImageFrame {
-
+public class AIF {
     /*************************************静态变量**************************************************/
     /*************************************成员变量**************************************************/
     private Context context;
@@ -33,8 +31,8 @@ public class AutoImageFrame {
     /**
      * 创建
      */
-    public static AutoImageFrame create() {
-        return new AutoImageFrame();
+    public static AIF create() {
+        return new AIF();
     }
     /**********************************************************************************************/
     /***********************************私有静态方法*************************************************/
@@ -55,7 +53,7 @@ public class AutoImageFrame {
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
 
-    private AutoImageFrame() {
+    private AIF() {
     }
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
@@ -68,7 +66,7 @@ public class AutoImageFrame {
      * 设置需要加载的ImageView
      * ImageView尺寸请设置为match
      */
-    public AutoImageFrame setImageView(ImageView imageView) {
+    public AIF setImageView(ImageView imageView) {
         this.imageView = imageView;
         this.context = imageView.getContext();
         return setImage(imageView.getDrawable());
@@ -77,7 +75,7 @@ public class AutoImageFrame {
     /**
      * 设置要显示的图片
      */
-    public AutoImageFrame setImage(Drawable drawable) {
+    public AIF setImage(Drawable drawable) {
         if (drawable != null) this.image = drawable;
         return this;
     }
