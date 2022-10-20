@@ -2,6 +2,7 @@ package candyenk.android.shell;
 
 /**
  * Shell命令执行器回调接口
+ * 需要那个重写哪个,方便快捷
  */
 public interface ShellCallBack {
 

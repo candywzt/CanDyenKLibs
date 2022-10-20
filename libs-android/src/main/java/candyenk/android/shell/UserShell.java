@@ -1,25 +1,18 @@
 package candyenk.android.shell;
 
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import candyenk.android.tools.L;
 
-import androidx.annotation.RequiresApi;
-
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.FileChannel;
-
-import candyenk.android.tools.L;
-import candyenk.android.utils.UFile;
 
 /**
  * 用户Shell,以应用的身份执行Shell命令
- * 部分命令取药对应权限
+ * 部分命令需要对应权限
+ * 不要尝试读取大文件,会被打断
  */
-@RequiresApi(api = Build.VERSION_CODES.O)
 public class UserShell implements Shell {
     protected String TAG = UserShell.class.getSimpleName();
     protected final byte[] exit = {101, 120, 105, 116, 10};
@@ -32,8 +25,6 @@ public class UserShell implements Shell {
     protected OutputStream in;
     protected InputStream out;
     protected InputStream err;
-    protected File outFile;
-    protected File errFile;
 
     public UserShell(Handler handler) {
         this.handler = handler;
@@ -46,16 +37,12 @@ public class UserShell implements Shell {
 
     @Override
     public boolean ready() {
-        if (!overSign) return true;
+        if (!overSign) close();
         try {
-            outFile = UFile.createTmp(TAG);
-            errFile = UFile.createTmp(TAG);
-            process = new ProcessBuilder(startCmd)
-                    .redirectOutput(outFile)
-                    .redirectError(errFile)
-                    .start();
+            process = new ProcessBuilder(startCmd).start();
             in = process.getOutputStream();
-
+            out = process.getInputStream();
+            err = process.getErrorStream();
             L.e(TAG, "Shell进程创建成功(" + hashCode() + ")");
             if (handler != null && overtime[0] != -1) {
                 outReader();
@@ -72,8 +59,11 @@ public class UserShell implements Shell {
 
     @Override
     public boolean writeCmd(String cmd) {
+        if (overSign) {
+            L.e(TAG, "未初始化或进程已回收(" + hashCode() + ")");
+            return false;
+        }
         allowRun(cmd);
-        if (process == null && !ready()) return false;
         try {
             byte[] bytes = cmd.getBytes();
             in.write(bytes);
@@ -100,13 +90,8 @@ public class UserShell implements Shell {
     }
 
     @Override
-    public int getShellPermissions() {
-        return SP_USER;
-    }
-
-    @Override
     public void close() {
-        L.e(TAG, "尝试关闭Shell进程(" + hashCode() + ")");
+        L.e(TAG, "关闭Shell进程(" + hashCode() + ")");
         try {
             if (in != null) in.close();
             if (out != null) out.close();
@@ -115,8 +100,6 @@ public class UserShell implements Shell {
         } catch (Exception e) {
         }
         overSign = true;//打开已回收标记
-        if (outFile != null) outFile.delete();
-        if (errFile != null) errFile.delete();
         if (process != null) process.destroy();
         process = null;
         in = null;
@@ -129,15 +112,15 @@ public class UserShell implements Shell {
     protected void outReader() {
         new Thread(() -> {
             try {
-                out = new FileInputStream(outFile);
-                FileChannel fc = ((FileInputStream) out).getChannel();
                 while (!overSign && out != null) {
-                    int size = Math.toIntExact(fc.size() - fc.position());
-                    if (size == 0) continue;
-                    Thread.sleep(size);
-                    byte[] bytes = new byte[Math.toIntExact(fc.size() - fc.position())];
-                    out.read(bytes);
-                    handler.sendMessage(handler.obtainMessage(Shell.CB_SUCCESS, bytes));
+                    if (out.available() == 0) continue;
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    while (out.available() > 0) {
+                        byte[] bytes = new byte[out.available()];
+                        int size = out.read(bytes);
+                        baos.write(bytes, 0, size);
+                    }
+                    handler.sendMessage(handler.obtainMessage(Shell.CB_SUCCESS, baos.toByteArray()));
                     if (overtime[0] > 0) close();
                 }
             } catch (Exception e) {
@@ -153,15 +136,15 @@ public class UserShell implements Shell {
     protected void errorReader() {
         new Thread(() -> {
             try {
-                err = new FileInputStream(errFile);
-                FileChannel fc = ((FileInputStream) err).getChannel();
                 while (!overSign && err != null) {
-                    int size = Math.toIntExact(fc.size() - fc.position());
-                    if (size == 0) continue;
-                    Thread.sleep(size);
-                    byte[] bytes = new byte[Math.toIntExact(fc.size() - fc.position())];
-                    err.read(bytes);
-                    handler.sendMessage(handler.obtainMessage(Shell.CB_FAILED, bytes));
+                    if (err.available() == 0) continue;
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    while (err.available() > 0) {
+                        byte[] bytes = new byte[err.available()];
+                        int size = err.read(bytes);
+                        baos.write(bytes, 0, size);
+                    }
+                    handler.sendMessage(handler.obtainMessage(Shell.CB_FAILED, baos.toByteArray()));
                     if (overtime[0] > 0) close();
                 }
             } catch (Exception e) {

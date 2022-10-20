@@ -19,52 +19,9 @@ public interface Shell {
     int OVER_DEFAULT = 5000;//默认超时时间
     int OVER_MAX = 360000;//允许设置的最大超时时间
     int OVER_INFINITY = 0;//不设置超时,永不关闭
-    /*** SH权限标志 ***/
-    int SP_USER = 1;//应用级别
-    int SP_ADB = 2000;//ADB权限
-    int SP_ROOT = 0;//Root权限
 
     List<Shell> shellList = new ArrayList<>();
 
-    /**
-     * 关闭所有有记录的Shell
-     */
-    static void closeAll() {
-        for (Shell shell : shellList) {
-            if (shell != null) shell.close();
-        }
-        shellList.clear();
-    }
-
-    /**
-     * 记录当前Shell实例
-     */
-    default void registerShell() {
-        if (!shellList.contains(this)) shellList.add(this);
-    }
-
-    /**
-     * 创建一个Handler的回调方法
-     */
-    static Handler.Callback createHandlerCallback(ShellCallBack callBack) {
-        return msg -> {
-            byte[] message = (byte[]) msg.obj;
-            if (!callBack.callBack(msg.what, message)) {
-                switch (msg.what) {
-                    case CB_SUCCESS:
-                        callBack.onSuccess(new String(message));
-                        break;
-                    case CB_FAILED:
-                        callBack.onFailed(new String(message));
-                        break;
-                    case CB_OVERTIME:
-                        callBack.onOverTime();
-                        break;
-                }
-            }
-            return true;
-        };
-    }
 
     /**
      * 准备初始化Shell
@@ -91,12 +48,6 @@ public interface Shell {
      */
     void setOverTime(int time);
 
-    /**
-     * 获取当前Shell拥有的权限级别
-     *
-     * @return
-     */
-    int getShellPermissions();
 
     /**
      * 关闭命令执行器,释放所有资源
@@ -104,5 +55,44 @@ public interface Shell {
      */
     void close();
 
+    /**
+     * 记录当前Shell实例
+     */
+    default void registerShell() {
+        if (!shellList.contains(this)) shellList.add(this);
+    }
+
+    /**
+     * 关闭所有有记录的Shell
+     */
+    static void closeAll() {
+        for (Shell shell : shellList) {
+            if (shell != null) shell.close();
+        }
+        shellList.clear();
+    }
+
+    /**
+     * 创建一个Handler的回调方法
+     */
+    static Handler.Callback createHandlerCallback(ShellCallBack callBack) {
+        return msg -> {
+            byte[] message = (byte[]) msg.obj;
+            if (!callBack.callBack(msg.what, message)) {
+                switch (msg.what) {
+                    case CB_SUCCESS:
+                        callBack.onSuccess(new String(message));
+                        break;
+                    case CB_FAILED:
+                        callBack.onFailed(new String(message));
+                        break;
+                    case CB_OVERTIME:
+                        callBack.onOverTime();
+                        break;
+                }
+            }
+            return true;
+        };
+    }
 
 }
