@@ -7,11 +7,13 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
-
 import androidx.annotation.ColorInt;
-
+import androidx.annotation.IntDef;
 import candyenk.android.R;
 import candyenk.java.utils.UData;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * 原生CDKProgressBar
@@ -20,13 +22,16 @@ import candyenk.java.utils.UData;
  * 讲究顺滑可以整1k
  */
 public class ProgressBar extends View {
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(flag = true, value = {DM_NONE, DM_EXTREMUM, DM_NUM, DM_PERCENT})
+    public @interface DisplayMode {}
 
-    public static final int DISPLAY_MODE_NONE = 1;//不显示进度
-    public static final int DISPLAY_MODE_EXTREMUM = 2;//显示极值
-    public static final int DISPLAY_MODE_NUM = 4;//显示进度数值
-    public static final int DISPLAY_MODE_PERCENT = 8;//显示进度百分比
+    public static final int DM_NONE = 1;//不显示进度
+    public static final int DM_EXTREMUM = 2;//显示极值
+    public static final int DM_NUM = 4;//显示进度数值
+    public static final int DM_PERCENT = 8;//显示进度百分比
 
-
+    protected String TAG;
     protected Context context;
     protected int max;//最大进度
     protected int min;//最小进度
@@ -49,14 +54,14 @@ public class ProgressBar extends View {
 
     protected int displayMode;//进度显示模式
 
-    private OnProgressChangedListener mOnProgressChangedListener;
+    private OnProgressChangedListener l;
 
     /**********************************************************************************************/
     /*****************************************接口**************************************************/
     /**********************************************************************************************/
 
     public interface OnProgressChangedListener {
-        void onProgressChanged(ProgressBar progressBar, int progress);
+        void onChanged(int progress, float percent);
     }
     /**********************************************************************************************/
     /*****************************************构造方法***********************************************/
@@ -72,6 +77,7 @@ public class ProgressBar extends View {
 
     public ProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.TAG = this.getClass().getSimpleName();
         this.context = context;
         initAttrs(attrs);
         initPaints();
@@ -110,7 +116,7 @@ public class ProgressBar extends View {
                 break;
             case 1:
                 progressPoint = (float) number;//当前坐标
-                progressPercent = (progressPoint - this.startPoint) * 1.0f / (this.endPoint - this.startPoint);//得到百分比
+                progressPercent = (progressPoint - this.startPoint) / (this.endPoint - this.startPoint);//得到百分比
                 progress = Math.round((this.max - this.min) * progressPercent + this.min);//转换成数值
                 if (this.progress == progress) return;
                 progressPercent = (progress - this.min) * 1.0f / (this.max - this.min);//重设百分比
@@ -128,9 +134,7 @@ public class ProgressBar extends View {
         this.progress = progress;
         this.progressPoint = progressPoint;
         postInvalidate();
-        if (mOnProgressChangedListener != null) {
-            mOnProgressChangedListener.onProgressChanged(this, this.progress);
-        }
+        if (l != null) l.onChanged(this.progress, this.progressPercent);
     }
     /**********************************************************************************************/
     /*****************************************私有方法***********************************************/
@@ -141,10 +145,10 @@ public class ProgressBar extends View {
         max = a.getInt(R.styleable.CDKProgressBar_android_max, 100);
         min = a.getInt(R.styleable.CDKProgressBar_android_min, 0);
         progress = a.getInt(R.styleable.CDKProgressBar_android_progress, min);
-        displayMode = a.getInt(R.styleable.CDKProgressBar_displayMode, DISPLAY_MODE_NONE);
+        displayMode = a.getInt(R.styleable.CDKProgressBar_displayMode, DM_NONE);
 
-        progressColor = context.getResources().getColor(R.color.mainGC4_1);
-        backgroundColor = context.getResources().getColor(R.color.background_1);
+        progressColor = context.getColor(R.color.main_01);
+        backgroundColor = context.getColor(R.color.back_view);
         a.recycle();
         //初始化进度值
     }
@@ -182,7 +186,7 @@ public class ProgressBar extends View {
         //进度条宽度取控件宽度
         layoutWidth = getWidth();
         //绘制内距
-        padding = (this.displayMode & DISPLAY_MODE_EXTREMUM) != 0 ? dp2px(20) : 0.0f;
+        padding = (this.displayMode & DM_EXTREMUM) != 0 ? dp2px(20) : 0.0f;
         //绘制y坐标
         yPoint = this.layoutHeight * 0.5f;
         //绘制x起点
@@ -208,8 +212,8 @@ public class ProgressBar extends View {
     }
 
     private void drawExtremum(Canvas canvas) {
-        if ((this.displayMode & DISPLAY_MODE_NONE) != 0) return;//不显示极值
-        if ((this.displayMode & DISPLAY_MODE_EXTREMUM) != 0) {//显示极值
+        if ((this.displayMode & DM_NONE) != 0) return;//不显示极值
+        if ((this.displayMode & DM_EXTREMUM) != 0) {//显示极值
             Paint.FontMetrics f = extremumPaint.getFontMetrics();
             float y = this.yPoint - ((f.ascent + f.descent) * 0.5f);
             //TODO:这里方法改了
@@ -231,12 +235,12 @@ public class ProgressBar extends View {
     }
 
     private void drawNumber(Canvas canvas) {
-        if ((this.displayMode & DISPLAY_MODE_NONE) != 0) return;//不显示进度
+        if ((this.displayMode & DM_NONE) != 0) return;//不显示进度
         String text = "";
-        if ((this.displayMode & DISPLAY_MODE_NUM) != 0) {//显示数值
+        if ((this.displayMode & DM_NUM) != 0) {//显示数值
             text = UData.L2A(progress, "", "%.1f");
             //TODO:这里方法改了
-        } else if ((this.displayMode & DISPLAY_MODE_PERCENT) != 0) {//显示百分数
+        } else if ((this.displayMode & DM_PERCENT) != 0) {//显示百分数
             text = (int) (progressPercent * 100) + "%";
         }
         Paint.FontMetrics f = numberPaint.getFontMetrics();
@@ -305,7 +309,7 @@ public class ProgressBar extends View {
      */
     public void setProgress(int progress) {
         if (progress < min) {
-            progress = 0;
+            progress = min;
         } else if (progress > max) {
             progress = max;
         }
@@ -411,18 +415,17 @@ public class ProgressBar extends View {
     /**
      * 设置进度显示模式
      */
-    public void setDisplayMode(int displayMode) {
+    public void setDisplayMode(@DisplayMode int displayMode) {
         this.displayMode = displayMode;
     }
 
     /**
      * 设置进度变化监听
      *
-     * @param onProgressChangedListener 进度值变化回调
+     * @param l 进度值变化回调
      */
-    public void setOnProgressChangedListener(OnProgressChangedListener
-                                                     onProgressChangedListener) {
-        this.mOnProgressChangedListener = onProgressChangedListener;
+    public void setOnProgressChangedListener(OnProgressChangedListener l) {
+        this.l = l;
     }
 
 

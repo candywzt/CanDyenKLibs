@@ -2,6 +2,7 @@ package candyenk.android.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import candyenk.android.R;
+import candyenk.android.tools.V;
 
 /**
  * CDK项目控件
@@ -58,56 +60,34 @@ public class Item extends LinearLayout {
     }
 
     protected void initLayout() {
-        LinearLayout.LayoutParams lp = new LayoutParams(-1, -2);
-        setLayoutParams(lp);
-        setOrientation(LinearLayout.HORIZONTAL);
-        setGravity(Gravity.CENTER);
-        setPadding(dp2px(10), dp2px(10), dp2px(10), dp2px(10));
-        setBackgroundResource(R.drawable.bg_pressed);
+        V.paddingDP(this, 10).orientation(0).gravity(Gravity.CENTER).backgroundRes(R.drawable.bg_cdk).refresh();
 
         iconView = new ImageView(context);
-        LinearLayout.LayoutParams lp2 = new LayoutParams(dp2px(60), dp2px(60));
-        iconView.setLayoutParams(lp2);
-        addView(iconView);
+        V.LL(iconView).sizeDP(60).parent(this).refresh();
 
-        LinearLayout ll2 = new LinearLayout(context);
-        LinearLayout.LayoutParams lp3 = new LayoutParams(-1, -2);
-        lp3.leftMargin = lp3.rightMargin = dp2px(8);
-        lp3.weight = 1;
-        ll2.setLayoutParams(lp3);
-        ll2.setOrientation(LinearLayout.VERTICAL);
-        addView(ll2);
+        LinearLayout ll = new LinearLayout(context);
+        V.LL(ll).size(-1, -2).orientation(1).marginDP(8, 0, 8, 0).weight(1).parent(this).refresh();
 
         titleView = new TextView(context);
-        LinearLayout.LayoutParams lp4 = new LayoutParams(-1, -2);
-        titleView.setLayoutParams(lp4);
-        titleView.setTextSize(18);
-        ll2.addView(titleView);
+        V.LL(titleView).size(-1, -2).textSize(18).textColorRes(R.color.text_main).parent(ll).refresh();
 
         summaryView = new TextView(context);
-        LinearLayout.LayoutParams lp5 = new LayoutParams(-1, -2);
-        summaryView.setLayoutParams(lp5);
-        summaryView.setTextSize(12);
-        summaryView.setVisibility(View.GONE);
-        ll2.addView(summaryView);
+        V.LL(summaryView).size(-1, -2).textSize(12).textColorRes(R.color.text_deputy).hide().parent(ll).refresh();
 
         arrowView = new ImageView(context);
-        LinearLayout.LayoutParams lp6 = new LayoutParams(dp2px(20), dp2px(20));
-        arrowView.setLayoutParams(lp6);
-        arrowView.setImageResource(R.drawable.ic_right_arrow);
-        addView(arrowView);
+        V.LL(arrowView).sizeDP(20).parent(this).drawable(R.drawable.ic_arrow_right).refresh();
     }
 
     protected void initAttrs(AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CDKItem);
         String title = typedArray.getString(R.styleable.CDKItem_android_title);
         String summary = typedArray.getString(R.styleable.CDKItem_android_summary);
-        int icon = typedArray.getResourceId(R.styleable.CDKItem_android_icon, 0);
+        Drawable icon = typedArray.getDrawable(R.styleable.CDKItem_android_icon);
         typedArray.recycle();
 
         setTitleText(title);
         setSummaryText(summary);
-        setIconResource(icon);
+        setIconDrawable(icon);
     }
 
     protected void initEvents() {
@@ -155,10 +135,22 @@ public class Item extends LinearLayout {
         if (rec > 0) {
             iconView.setImageResource(rec);
         } else {
-            LayoutParams lp = (LayoutParams) iconView.getLayoutParams();
-            lp.height = LayoutParams.WRAP_CONTENT;
-            iconView.setLayoutParams(lp);
+            V.LL(iconView).sizeDP(60, -2).refresh();
             iconView.setVisibility(rec == 0 ? View.INVISIBLE : View.GONE);
+        }
+    }
+
+    /**
+     * 设置图标
+     * 为null则不显示Icon控件(Invisible)
+     */
+    public void setIconDrawable(Drawable drawable) {
+        if (iconView == null) return;
+        if (drawable != null) {
+            iconView.setImageDrawable(drawable);
+        } else {
+            V.LL(iconView).sizeDP(60, -2).refresh();
+            iconView.setVisibility(View.INVISIBLE);
         }
     }
 

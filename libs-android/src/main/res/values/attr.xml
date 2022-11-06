@@ -31,9 +31,9 @@
             <enum name="left" value="0"/>
             <enum name="right" value="1"/>
         </attr>
-        <attr name="title"/>
-        <attr name="cardbackground" format="reference"/>
-        <attr name="image" format="reference"/><!--控件图片-->
+        <attr name="android:title"/>
+        <attr name="android:background"/>
+        <attr name="android:icon"/><!--控件图片-->
     </declare-styleable>
     <!--CDKNimbleSwitch-->
     <declare-styleable name="CDKNimbleSwitch">

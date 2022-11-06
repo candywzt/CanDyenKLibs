@@ -5,13 +5,13 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
-
+import candyenk.android.R;
+import candyenk.android.tools.V;
 import candyenk.android.view.LoadView;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.HashSet;
 
@@ -26,7 +26,7 @@ public class DialogLoading extends AlertDialog {
     private Context context;//拉起弹窗的Context
     private View parentView;//调用上拉弹窗的View对象
     private boolean isShow;//是否已经展示
-    private LinearLayout dialogView;//弹窗布局对象
+    private FrameLayout dialogView;//弹窗布局对象
     private TextView titleView; //标题文字控件
     private LoadView loadView;//加载动画控件
 
@@ -94,6 +94,7 @@ public class DialogLoading extends AlertDialog {
                 }
                 mList.remove(this.parentView);
                 super.dismiss();
+                isShow = false;
             });
         }
 
@@ -106,39 +107,20 @@ public class DialogLoading extends AlertDialog {
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/
     private void initLayout() {
-        dialogView = new LinearLayout(context);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, dp2px(220));
-        dialogView.setLayoutParams(lp);
-        dialogView.setGravity(Gravity.CENTER);
-        dialogView.setBackgroundResource(android.R.color.transparent);
+        dialogView = new FrameLayout(context);
+        V.LP(dialogView).sizeDP(-1, -2).backgroundRes(android.R.color.transparent).refresh();
 
-        CardView cv = new CardView(context);
-        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(dp2px(180), -1);
-        cv.setLayoutParams(lp2);
-        cv.setRadius(dp2px(20));
-        dialogView.addView(cv);
+        CardView cv = new MaterialCardView(context);
+        V.FL(cv).sizeDP(180, -1).lGravity(Gravity.CENTER).backgroundRes(R.color.back_view).radiusDP(20).parent(dialogView).refresh();
 
         loadView = new LoadView(context);
-        FrameLayout.LayoutParams lp3 = new FrameLayout.LayoutParams(-1, -1);
-        loadView.setLayoutParams(lp3);
-        cv.addView(loadView);
+        V.FL(loadView).sizeDP(180).lGravity(Gravity.CENTER_HORIZONTAL).parent(cv).refresh();
 
         titleView = new TextView(context);
-        FrameLayout.LayoutParams lp4 = new FrameLayout.LayoutParams(-1, -2);
-        lp4.gravity = Gravity.BOTTOM;
-        lp4.setMargins(0, 0, 0, dp2px(10));
-        titleView.setLayoutParams(lp4);
-        titleView.setTextSize(18);
-        titleView.setGravity(Gravity.CENTER);
-        titleView.setVisibility(View.GONE);
-        cv.addView(titleView);
+        V.FL(titleView).size(-2, -2).lGravity(Gravity.BOTTOM | Gravity.CENTER).marginDP(0, 180, 0, 10).textColorRes(R.color.text_main).textSize(18).parent(cv).hide().refresh();
+
     }
 
-    private int dp2px(double dpValue) {
-        float num = dpValue < 0 ? -1 : 1;
-        final double scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + (0.5f * num));
-    }
     /**********************************************************************************************/
     /*************************************公开方法**************************************************/
     /**********************************************************************************************/
@@ -150,11 +132,9 @@ public class DialogLoading extends AlertDialog {
      * @param touchOff 外触是否关闭
      * @param backOff  返回键是否关闭
      */
-    public void setCancelable(boolean touchOff, boolean backOff) {
+    public void setCanceledable(boolean touchOff, boolean backOff) {
         if (!isShow) {
-            //设置外触关闭
             setCanceledOnTouchOutside(touchOff);
-            //设置返回键关闭
             setCancelable(backOff);
         }
     }
@@ -163,16 +143,13 @@ public class DialogLoading extends AlertDialog {
      * 设置标题文本
      * 调用该方法将显示标题栏
      * 不调用则隐藏标题栏
-     *
-     * @param title
      */
+    @Override
     public void setTitle(CharSequence title) {
-        if (!isShow) {
-            titleView.setText(title);
-            titleView.setVisibility(View.VISIBLE);
-        }
+        super.setTitle(title);
+        titleView.setText(title);
+        titleView.setVisibility(View.VISIBLE);
     }
-
 
 }
 

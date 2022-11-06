@@ -175,21 +175,16 @@ public class BottomBar extends LinearLayout {
     /*** 创建一个项目 ***/
     private LinearLayout createItem(CharSequence title, Drawable icon, View.OnClickListener v) {
         LinearLayout l1 = new LinearLayout(context);
-        V.createLL(l1).setSize(isLand ? -2 : -1, isLand ? -1 : -2).setWeight(1).refresh();
-        l1.setOrientation(LinearLayout.VERTICAL);
+        V.LL(l1).size(isLand ? -2 : -1, isLand ? -1 : -2).orientation(1).weight(1).refresh();
         if (v != null) l1.setOnClickListener(v);
 
         ImageView iv = new ImageView(context);
-        V.createLL(iv).setSizeDP(-1, 40).refresh();
+        V.LL(iv).sizeDP(-1, 40).parent(l1).refresh();
         if (icon == null) iv.setImageResource(android.R.drawable.ic_delete);
         else iv.setImageDrawable(icon);
-        l1.addView(iv);
 
         TextView tv = new TextView(context);
-        V.createLL(tv).setSize(-1, -2).refresh();
-        tv.setGravity(Gravity.CENTER);
-        if (title != null) tv.setText(title);
-        l1.addView(tv);
+        V.LL(tv).size(-1, -2).gravity(Gravity.CENTER).text(title).parent(l1).refresh();
         return l1;
     }
 

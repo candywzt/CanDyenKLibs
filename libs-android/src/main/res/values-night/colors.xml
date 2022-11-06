@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--主题渐变色-->
-    <color name="mainGC4_1">#FFFA9371</color>
-    <color name="mainGC4_2">#FFFA8A7A</color>
-    <color name="mainGC4_3">#FFFA7394</color>
-    <color name="mainGC4_4">#FFFA58B1</color>
-    <color name="light_night">#FFFFFFFF</color>
-    <!--背景色-->
-    <color name="background_1">#FFE6E6E6</color>
-    <!--文字颜色-->
+    <color name="main_01">#FFFA9371</color>
+    <color name="main_02">#FFFA8A7A</color>
+    <color name="main_03">#FFFA7394</color>
+    <color name="main_04">#FFFA58B1</color>
+    <!--主题透明色-->
+    <color name="main_11">#50FA9371</color>
+    <color name="main_12">#50FA8A7A</color>
+    <color name="main_13">#50FA7394</color>
+    <color name="main_14">#50FA58B1</color>
+    <!--额忘了这是啥来着-->
+    <color name="light_night">#FF000000</color>
+    <!--文字颜色,主,副,标题-->
     <color name="text_main">#FF222222</color>
     <color name="text_deputy">#FFA9A9A9</color>
     <color name="text_title">#FFFFFFFF</color>
-
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-
+    <!--背景色,页面背景,控件组背景,控件背景-->
+    <color name="back_all">#FFEEEEEE</color>
+    <color name="back_group">#FFFFFFFF</color>
+    <color name="back_view">#FFF2F2F2</color>
     <!--固定颜色-->
     <color name="transparent">#00000000</color><!--透明-->
     <color name="translucent">#33000000</color><!--半透明-->

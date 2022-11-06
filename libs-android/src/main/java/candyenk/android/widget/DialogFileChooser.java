@@ -16,6 +16,7 @@ import candyenk.java.io.FileInfo;
 import candyenk.java.utils.UArrays;
 import candyenk.java.utils.UData;
 import candyenk.java.utils.UTime;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,15 +31,16 @@ import java.util.function.Predicate;
 
 /**
  * 文件选择器上拉弹窗
+ * 同时只能存在一个弹窗
  * 没有动画,遗憾
  */
 public class DialogFileChooser extends DialogBottom {
 
     /*************************************静态变量**************************************************/
-    private final List<FileInfo> infoList = new ArrayList<>();//当前展示Info列表
-    private final FileAdapter adapter = new FileAdapter();//文件适配器
 
     /*************************************成员变量**************************************************/
+    private final List<FileInfo> infoList = new ArrayList<>();//当前展示Info列表
+    private final FileAdapter adapter = new FileAdapter();//文件适配器
     private FileInfo rootInfo;//当前展示File对象
     private Comparator<FileInfo> sortOrder;//排序方式
     private Predicate<FileInfo> filter;//过滤方式
@@ -89,16 +91,6 @@ public class DialogFileChooser extends DialogBottom {
     /*************************************继承方法**************************************************/
     /**********************************************************************************************/
 
-    /**
-     * 设置标题显示内容
-     * 调整为显示后也能修改标题
-     */
-    @Override
-    public void setTitle(CharSequence title) {
-        titleView.setText(title);
-        titleView.setVisibility(View.VISIBLE);
-    }
-
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
@@ -144,7 +136,7 @@ public class DialogFileChooser extends DialogBottom {
         this.rootInfo = rootInfo;
         updateInfoList(rootInfo);
         if (titleView.getVisibility() == View.VISIBLE) setTitle(rootInfo.getPath());
-        if (isShow) updateAdapter();
+        if (ok) updateAdapter();
     }
 
     /**
@@ -156,20 +148,20 @@ public class DialogFileChooser extends DialogBottom {
         this.rootInfo = null;
         updateInfoList(infos);
         if (titleView.getVisibility() == View.VISIBLE) setTitle("选择文件");
-        if (isShow) updateAdapter();
+        if (ok) updateAdapter();
     }
 
     /**
      * 设置选择点击监听器
      */
-    public void setOnItemClickListener(BiConsumer<FileInfo, View> onClickListener) {
+    public void setOnFileClickListener(BiConsumer<FileInfo, View> onClickListener) {
         adapter.onClickListener = onClickListener;
     }
 
     /**
      * 设置选择长按监听器
      */
-    public void setOnItemLongClickListener(BiConsumer<FileInfo, View> onLongClickListener) {
+    public void setOnFileLongClickListener(BiConsumer<FileInfo, View> onLongClickListener) {
         adapter.onLongClickListener = onLongClickListener;
     }
 
@@ -230,8 +222,9 @@ public class DialogFileChooser extends DialogBottom {
         private View.OnClickListener superOnClick;//上级文件夹点击事件
         private View.OnClickListener emptyOnClick;//空文件夹点击事件
 
+        @NotNull
         @Override
-        public FileHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public FileHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
             if (viewType == 0) {
                 return new FileHolder(createEmptyLayout());
             } else {
@@ -240,7 +233,7 @@ public class DialogFileChooser extends DialogBottom {
         }
 
         @Override
-        public void onBindViewHolder(FileHolder holder, int position) {
+        public void onBindViewHolder(@NotNull FileHolder holder, int position) {
             FileInfo info = infoList.get(position);
             switch (getItemViewType(position)) {
                 case 0: //空文件夹
@@ -309,65 +302,39 @@ public class DialogFileChooser extends DialogBottom {
         /***创建文件项目布局***/
         private LinearLayout createFileLayout() {
             LinearLayout l1 = new LinearLayout(viewContext);
-            V.createRV(l1).setSize(-1, -2).setPaddingDP(5, 5, 5, 5).refresh();
-            l1.setOrientation(LinearLayout.HORIZONTAL);
-            l1.setGravity(Gravity.CENTER_VERTICAL);
-            l1.setBackgroundResource(R.drawable.bg_cdk);
+            V.RV(l1).size(-1, -2).paddingDP(5).orientation(0).gravity(Gravity.CENTER_VERTICAL).backgroundRes(R.drawable.bg_cdk).refresh();
 
             ImageView iv = new ImageView(viewContext);
-            V.createLL(iv).setSizeDP(60, 60).refresh();
-            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            iv.setImageResource(R.drawable.file_folder);
-            l1.addView(iv);
+            V.LL(iv).sizeDP(60).scaleType(ImageView.ScaleType.CENTER_CROP).drawable(R.drawable.ic_file_folder).parent(l1).refresh();
 
             LinearLayout l2 = new LinearLayout(viewContext);
-            V.createLL(l2).setSize(-1, -1).setWeight(1).refresh();
-            l2.setOrientation(LinearLayout.VERTICAL);
-            l2.setGravity(Gravity.CENTER_VERTICAL);
-            l1.addView(l2);
+            V.LL(l2).size(-1).weight(1).orientation(1).gravity(Gravity.CENTER_VERTICAL).parent(l1).refresh();
 
             TextView tv = new TextView(viewContext);
-            V.createLL(tv).setSize(-2, -2).refresh();
-            tv.setTextSize(20);
+            V.LL(tv).size(-2).textSize(20).parent(l2).textColorRes(R.color.text_main).refresh();
             tv.setEllipsize(TextUtils.TruncateAt.MARQUEE);
             tv.setSingleLine(true);
-            tv.setSelected(true);
-            l2.addView(tv);
 
             TextView tv1 = new TextView(viewContext);
-            V.createLL(tv1).setSize(-2, -2).refresh();
-            tv1.setTextSize(10);
+            V.LL(tv1).size(-2).textSize(10).parent(l2).textColorRes(R.color.text_deputy).refresh();
             tv.setEllipsize(TextUtils.TruncateAt.MARQUEE);
             tv.setSingleLine(true);
-            tv.setSelected(true);
-            l2.addView(tv1);
 
             ImageView iv2 = new ImageView(viewContext);
-            V.createLL(iv2).setSizeDP(20, 20).refresh();
-            iv2.setImageResource(R.drawable.ic_right_arrow);
-            l1.addView(iv2);
+            V.LL(iv2).sizeDP(20).drawable(R.drawable.ic_arrow_right).parent(l1).refresh();
             return l1;
         }
 
         /*** 创建空文件夹项目 ***/
         private LinearLayout createEmptyLayout() {
             LinearLayout l1 = new LinearLayout(viewContext);
-            V.createRV(l1).setSize(-1, -2).refresh();
-            l1.setOrientation(LinearLayout.VERTICAL);
-            l1.setGravity(Gravity.CENTER_HORIZONTAL);
-            l1.setBackgroundResource(R.drawable.bg_cdk);
+            V.RV(l1).size(-1, -2).orientation(1).gravity(Gravity.CENTER_HORIZONTAL).backgroundRes(R.drawable.bg_cdk).refresh();
 
             ImageView iv = new ImageView(viewContext);
-            V.createLL(iv).setSizeDP(120, 120).refresh();
-            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            iv.setImageResource(R.drawable.file_unknown);
-            l1.addView(iv);
+            V.LL(iv).sizeDP(120).scaleType(ImageView.ScaleType.CENTER_CROP).drawable(R.drawable.ic_file_unknown).parent(l1).refresh();
 
             TextView tv = new TextView(viewContext);
-            V.createLL(tv).setSize(-2, -2).setMarginDP(0, 0, 0, 40).refresh();
-            tv.setTextSize(20);
-            tv.setText(R.string.file_chooser_no_file);
-            l1.addView(tv);
+            V.LL(tv).size(-2).marginDP(0, 0, 0, 40).textSize(20).textColorRes(R.color.text_main).text(R.string.file_chooser_no_file).parent(l1).refresh();
             return l1;
         }
 
@@ -376,13 +343,13 @@ public class DialogFileChooser extends DialogBottom {
          */
         private int iconType(FileInfo info) {
             switch (info.getType()) {
-                case DIRECTORY: return R.drawable.file_folder;
-                case TEXT: return R.drawable.file_document;
-                case IMAGE: return R.drawable.file_picture;
-                case VIDEO: return R.drawable.file_video;
-                case COMPRESS: return R.drawable.file_zip;
-                case AUDIO: return R.drawable.file_audio;
-                default: return R.drawable.file_unknown;
+                case DIRECTORY: return R.drawable.ic_file_folder;
+                case TEXT: return R.drawable.ic_file_document;
+                case IMAGE: return R.drawable.ic_file_picture;
+                case VIDEO: return R.drawable.ic_file_video;
+                case COMPRESS: return R.drawable.ic_file_zip;
+                case AUDIO: return R.drawable.ic_file_audio;
+                default: return R.drawable.ic_file_unknown;
             }
         }
 
@@ -426,9 +393,7 @@ public class DialogFileChooser extends DialogBottom {
                 title = V.getChild(vg, 0);
                 summary = V.getChild(vg, 1);
                 arrow = V.getChild(itemView, 2);
-            } catch (Exception e) {
-
-            }
+            } catch (Exception ignored) {}
         }
 
         private void setOnClick(View.OnClickListener l) {

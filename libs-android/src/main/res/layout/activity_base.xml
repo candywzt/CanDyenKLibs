@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:elevation="-100dp"
         android:scaleType="fitStart"
-        android:src="@drawable/background_head" />
+        android:src="@drawable/bg_cdk_head" />
     <!--标题栏-->
     <LinearLayout
         android:id="@+id/base_titleBar"

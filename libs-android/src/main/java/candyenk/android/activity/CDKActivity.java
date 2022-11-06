@@ -5,14 +5,17 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import candyenk.android.R;
+import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import candyenk.android.widget.BottomBar;
 import candyenk.java.utils.UArrays;
@@ -70,6 +73,7 @@ public abstract class CDKActivity extends AppCompatActivity {
     //Activity创建,启动的初始化
     @Override
     protected void onCreate(Bundle save) {
+        L.e(TAG, "启动创建-Create");
         contextInit(save);
         super.onCreate(save);
         intentInit();
@@ -81,41 +85,48 @@ public abstract class CDKActivity extends AppCompatActivity {
     //Activity前台可见
     @Override
     protected void onStart() {
+        L.e(TAG, "前台可见-Start");
         super.onStart();
     }
 
     //Activity可操作,处于栈顶
     @Override
     protected void onResume() {
+        L.e(TAG, "处于栈顶-Resume");
         super.onResume();
     }
 
     //Activity失去焦点,不再栈顶
     @Override
     protected void onPause() {
+        L.e(TAG, "退出栈顶-Pause");
         super.onPause();
     }
 
     //Activity不可见,被其他Activity覆盖
     @Override
     protected void onStop() {
+        L.e(TAG, "退出可见-Stop");
         super.onStop();
     }
 
     //Activity前台可见,从覆盖它的activity回来
     @Override
     protected void onRestart() {
+        L.e(TAG, "重新可见-Restart");
         super.onRestart();
     }
 
     //Activity被销毁,生命周期结束
     protected void onDestroy() {
+        L.e(TAG, "生命结束-Destroy");
         super.onDestroy();
     }
 
     //保存Activity状态
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        L.e(TAG, "保存状态-Save");
         Bundle save = saveData(outState);
         if (save == null) save = outState;
         save.putInt("sign0", sign[0]);
@@ -123,7 +134,9 @@ public abstract class CDKActivity extends AppCompatActivity {
     }
 
     //回调函数
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        L.e(TAG, "Activity回调:" + requestCode + "-" + resultCode + data);
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -132,8 +145,8 @@ public abstract class CDKActivity extends AppCompatActivity {
      * 与setFragment二选一
      */
     @Override
-    public void setContentView(int layoutResID) {
-        this.setContentView(getLayoutInflater().inflate(layoutResID, null));
+    public void setContentView(@LayoutRes int layoutResID) {
+        this.setContentView(LayoutInflater.from(viewContext).inflate(layoutResID, null));
     }
 
     @Override
@@ -231,41 +244,39 @@ public abstract class CDKActivity extends AppCompatActivity {
     /*** 创建根布局 ***/
     private void createRootLayout() {
         container = new FrameLayout(viewContext);
-        container.setId(12345678);
+        container.setId(31636368);
+        V.eleDP(container, -100);
         container.setBackgroundResource(R.color.back_all);
 
         ImageView iv = new ImageView(viewContext);
-        V.createFL(iv).setSize(-1, -1).setElevationDP(-100).refresh();
+        V.FL(iv).size(-1, -1).eleDP(-90).parent(container).refresh();
         iv.setScaleType(ImageView.ScaleType.FIT_START);
-        iv.setImageResource(R.drawable.background_head);
-        container.addView(iv);
+        iv.setImageResource(R.drawable.bg_cdk_head);
 
         titleBar = new LinearLayout(viewContext);
-        V.createFL(titleBar).setSize(-1, -2).setMarginDP(40, 60, 0, 40).setElevationDP(100).refresh();
+        V.FL(titleBar).size(-1, -2).marginDP(40, 60, 0, 40).eleDP(100).parent(container).refresh();
         titleBar.setOrientation(LinearLayout.VERTICAL);
         if (getTitle() == null) titleBar.setVisibility(View.GONE);
-        container.addView(titleBar);
 
         TextView tv = new TextView(viewContext);
-        V.createLL(tv).setSize(-2, -2).refresh();
+        V.LL(tv).size(-2, -2).parent(titleBar).refresh();
         if (getTitle() != null) tv.setText(getTitle());
         tv.setTextColor(getColor(R.color.text_title));
         tv.setTextSize(20);
         tv.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-        titleBar.addView(tv);
     }
 
     /*** 创建底栏布局 ***/
     private void createBottomLayout() {
         bottomBar = new BottomBar(viewContext);
-        V.createFL(bottomBar)
-                .setSize(-1, -2)
-                .setElevationDP(100)
-                .setLGravity(Gravity.BOTTOM)
-                .setPaddingDP(10, 10, 10, 10)
-                .setMarginDP(0, 0, 0, 40)
+        V.FL(bottomBar)
+                .size(-1, -2)
+                .eleDP(100)
+                .lGravity(Gravity.BOTTOM)
+                .paddingDP(10, 10, 10, 10)
+                .marginDP(0, 0, 0, 40)
+                .parent(container)
                 .refresh();
-        container.addView(bottomBar);
     }
 
     /*** 创建Fragment ***/
@@ -310,6 +321,7 @@ public abstract class CDKActivity extends AppCompatActivity {
         this.child = view;
         if (view == null) return;
         view.setElevation(0);
+        view.setBackgroundResource(R.color.transparent);
         container.addView(view);
     }
     /**********************************************************************************************/

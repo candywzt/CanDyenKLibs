@@ -105,7 +105,7 @@ public class WindowLayout2 extends FrameLayout {
         lp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
         horwView.setLayoutParams(lp);
         horwView.setElevation(100);//设置层级为最高
-        horwView.setImageDrawable(context.getResources().getDrawable(R.drawable.window_horw));
+        horwView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_window_horw));
         addView(horwView);
 
         //悬浮窗控制栏
@@ -124,7 +124,7 @@ public class WindowLayout2 extends FrameLayout {
         //lp.setMargins(0, 0, dp2px(5), dp2px(5));
         backView.setLayoutParams(lp);
         backView.setElevation(99);//设置层级99
-        backView.setBackgroundResource(R.drawable.window_back);
+        backView.setBackgroundResource(R.drawable.bg_window);
         backView.setVisibility(GONE);
         addView(backView);
         //初始化工具栏控件
@@ -143,7 +143,7 @@ public class WindowLayout2 extends FrameLayout {
     private void createToolbar() {
         //拖动控件
         ImageView dragView = createToolbarView();
-        dragView.setImageDrawable(context.getResources().getDrawable(R.drawable.window_bar));
+        dragView.setImageDrawable(context.getResources().getDrawable(R.drawable.bg_window_bar));
         setWindowPosition(dragView);//设置拖动控件的触摸事件
         toolbar.addView(dragView);
         //停靠

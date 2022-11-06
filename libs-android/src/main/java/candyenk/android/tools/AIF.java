@@ -87,7 +87,7 @@ public class AIF {
         createDrawable();
         measureMargin();
         createAnimation();
-        V.createML(imageView).setSize(w, h).setMargin(0, 0, ori < 0 ? margin : 0, ori > 0 ? margin : 0).refresh();
+        V.ML(imageView).size(w, h).margin(0, 0, ori < 0 ? margin : 0, ori > 0 ? margin : 0).refresh();
         imageView.setImageDrawable(image);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         if (ori != 0) imageView.startAnimation(autoAnim);
@@ -101,7 +101,7 @@ public class AIF {
         createDrawable();
         measureMargin();
         createAnimation();
-        V.createML(imageView).setSize(w, h).setMargin(0, 0, ori < 0 ? margin : 0, ori > 0 ? margin : 0).refresh();
+        V.ML(imageView).size(w, h).margin(0, 0, ori < 0 ? margin : 0, ori > 0 ? margin : 0).refresh();
         imageView.setImageDrawable(image);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.startAnimation(showAnim);
@@ -143,7 +143,7 @@ public class AIF {
         hideAnim = new AlphaAnimation(1, 0);//隐退
         hideAnim.setDuration(500);
         hideAnim.setAnimationListener((EAL) a -> {
-            V.createML(imageView).setSize(w, h).setMargin(0, 0, ori < 0 ? margin : 0, ori > 0 ? margin : 0).refresh();
+            V.ML(imageView).size(w, h).margin(0, 0, ori < 0 ? margin : 0, ori > 0 ? margin : 0).refresh();
             imageView.setImageDrawable(image);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.startAnimation(showAnim);

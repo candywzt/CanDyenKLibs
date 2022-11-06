@@ -2,12 +2,14 @@ package candyenk.java.utils;
 
 
 import candyenk.java.io.FileType;
+import candyenk.java.io.IO;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Java文件工具
@@ -76,60 +78,7 @@ public class UFile {
      * @return 文件无法读取返回空字符串
      */
     public static String readString(File file, Charset charset) {
-        return readString(getReader(file, charset));
-    }
-
-    /**
-     * 输入流读取字符串(默认编码)
-     * 底层采用Reader读取String
-     *
-     * @param in 输入流
-     * @return 流无法读取返回空字符串
-     */
-    public static String readString(InputStream in) {
-        return readString(in, Charset.defaultCharset());
-    }
-
-    /**
-     * 输入流读取字符串
-     * 底层采用Reader读取String
-     *
-     * @param in      输入流
-     * @param charset 字符编码
-     * @return 流无法读取返回空字符串
-     */
-    public static String readString(InputStream in, Charset charset) {
-        if (in == null) return "";
-        return readString(new InputStreamReader(in, charset));
-    }
-
-    /**
-     * Reader读取字符串
-     *
-     * @param reader 输入Reader
-     * @return Reader无法读取返回空字符串
-     */
-    public static String readString(Reader reader) {
-        StringBuilder sb = new StringBuilder();
-        return readString(reader, s -> sb.append(s).append("\n")) ? sb.toString() : "";
-    }
-
-    /**
-     * Reader按行读取字符串
-     *
-     * @param reader 输入Reader
-     * @param action 每一行的操作
-     * @return 读取是否成功
-     */
-    public static boolean readString(Reader reader, Consumer<String> action) {
-        if (reader == null) return false;
-        boolean result = false;
-        try (reader; BufferedReader br = reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader)) {
-            String line;
-            while ((line = br.readLine()) != null) action.accept(line);
-            result = true;
-        } catch (IOException ignored) {}
-        return result;
+        return IO.readString(getReader(file, charset));
     }
 
     /**
@@ -139,29 +88,9 @@ public class UFile {
      * @return 文件无法读取返回空数组
      */
     public static byte[] readBytes(File file) {
-        return readBytes(getInputStream(file));
+        return IO.readBytes(getInputStream(file));
     }
 
-
-    /**
-     * 输入流读取字节数组
-     *
-     * @param in 输入流
-     * @return 流无法读取返回空数组
-     */
-    public static byte[] readBytes(InputStream in) {
-        if (in == null) return new byte[0];
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (BufferedInputStream bis = in instanceof BufferedInputStream ? (BufferedInputStream) in : new BufferedInputStream(in)) {
-            byte[] b = new byte[1024];
-            int len = 0;
-            while (len != -1) {
-                len = bis.read(b);
-                baos.write(b, 0, len);
-            }
-        } catch (IOException ignored) {}
-        return baos.toByteArray();
-    }
 
     /**
      * 字符串写入到文件(默认编码)
@@ -187,51 +116,9 @@ public class UFile {
      * @return 写入成功与否
      */
     public static boolean writeString(File file, String text, Charset charset, boolean isAppend) {
-        return writeString(getWriter(file, charset, isAppend), text);
+        return IO.writeString(getWriter(file, charset, isAppend), text);
     }
 
-    /**
-     * 字符串写入到流(默认编码)
-     * 底层采用Writer写入char[]
-     *
-     * @param out  写入流
-     * @param text 写入内容
-     * @return 写入成功与否
-     */
-    public static boolean writeString(OutputStream out, String text) {
-        return writeString(out, text, Charset.defaultCharset());
-    }
-
-    /**
-     * 字符串写入到流
-     * 底层采用Writer写入char[]
-     *
-     * @param out     写入流
-     * @param text    写入内容
-     * @param charset 写入编码
-     * @return 写入成功与否
-     */
-    public static boolean writeString(OutputStream out, String text, Charset charset) {
-        if (out == null || text == null) return false;
-        return writeString(new OutputStreamWriter(out, charset), text);
-    }
-
-    /**
-     * 字符串写入到Writer
-     *
-     * @param writer 写入Writer
-     * @param text   写入内容
-     * @return 写入成功与否
-     */
-    public static boolean writeString(Writer writer, String text) {
-        if (writer == null || text == null) return false;
-        try (BufferedWriter bw = writer instanceof BufferedWriter ? (BufferedWriter) writer : new BufferedWriter(writer)) {
-            bw.write(text);
-            bw.close();
-            return true;
-        } catch (IOException ignored) {}
-        return false;
-    }
 
     /**
      * 字节数组写入到文件
@@ -242,24 +129,7 @@ public class UFile {
      * @return 写入成功与否
      */
     public static boolean writeBytes(File file, byte[] content, boolean isAppend) {
-        return writeBytes(getOutputStream(file, isAppend), content);
-    }
-
-    /**
-     * 字节数组写入到流
-     *
-     * @param out     写入流
-     * @param content 写入内容
-     * @return 写入成功与否
-     */
-    public static boolean writeBytes(OutputStream out, byte[] content) {
-        if (out == null || content == null) return false;
-        try (BufferedOutputStream bos = out instanceof BufferedOutputStream ? (BufferedOutputStream) out : new BufferedOutputStream(out)) {
-            bos.write(content);
-            bos.close();
-            return true;
-        } catch (IOException ignored) {}
-        return false;
+        return IO.writeBytes(getOutputStream(file, isAppend), content);
     }
 
 
@@ -271,8 +141,7 @@ public class UFile {
      * @return 文件无法读取返回NULL
      */
     public static Reader getReader(File file, Charset charset) {
-        if (isEmpty(file)) return null;
-        return new InputStreamReader(getInputStream(file), charset);
+        try {return new InputStreamReader(getInputStream(file), charset);} catch (Exception e) {return null;}
     }
 
     /**
@@ -282,8 +151,7 @@ public class UFile {
      * @return 文件无法读取返回NULL
      */
     public static InputStream getInputStream(File file) {
-        try {return new FileInputStream(file);} catch (FileNotFoundException ignored) {}
-        return null;
+        try {return Files.newInputStream(file.toPath());} catch (Exception e) {return null;}
     }
 
     /**
@@ -294,8 +162,9 @@ public class UFile {
      * @return 文件无法写入返回NULL
      */
     public static Writer getWriter(File file, Charset charset, boolean isAppend) {
-        if (isEmpty(file)) return null;
-        return new OutputStreamWriter(getOutputStream(file, isAppend), charset);
+        try {return new OutputStreamWriter(getOutputStream(file, isAppend), charset);} catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -305,8 +174,10 @@ public class UFile {
      * @return 文件无法写入返回NULL
      */
     public static OutputStream getOutputStream(File file, boolean isAppend) {
-        try {return new FileOutputStream(file, isAppend);} catch (FileNotFoundException ignored) {}
-        return null;
+        try {
+            return Files.newOutputStream(file.toPath(), isAppend ? StandardOpenOption.APPEND : StandardOpenOption.WRITE);
+        } catch (Exception e) {return null;}
+
     }
 
 
@@ -321,6 +192,24 @@ public class UFile {
     public static boolean createFolder(File file) {
         if (file == null) return false;
         return file.exists() || file.mkdirs();
+    }
+
+    /**
+     * 创建文件
+     * 自动创建所有父级文件夹
+     *
+     * @param file 文件对象
+     * @return 创建成功或已存在返回true, 创建失败返回false
+     */
+    public static boolean createFile(File file) {
+        if (file == null) return false;
+        if (file.exists()) return true;
+        if (file.getParentFile() != null && !createFolder(file.getParentFile())) return false;
+        try {
+            return file.createNewFile();
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     /**

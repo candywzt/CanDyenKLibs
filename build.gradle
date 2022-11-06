@@ -1,16 +1,27 @@
 buildscript {
     repositories {
         mavenLocal()
+        jcenter()
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.0'//Android Gradle插件
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0"//Kotlin Gradle插件
+        classpath 'com.android.tools.build:gradle:7.2.0'//Android Gradle插件
+        //classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10'//Kotlin Gradle插件
+        //classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'//Shadow打包插件
+    }
+}
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+        google()
+        mavenCentral()
     }
 }
 //Gradle缓存库移到Maven库
 task cacheToLocalMavenRepository(type: Copy) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE//去重
     from new File(gradle.gradleUserHomeDir, 'caches/modules-2/files-2.1')
     into repositories.mavenLocal().url
     eachFile {

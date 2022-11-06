@@ -1,34 +1,56 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
-    <style name="Theme.CDKActivity" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!--标题栏-->
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <!-- 主要颜色 -->
-        <item name="colorPrimary">@color/mainGC4_1</item>
-        <item name="colorPrimaryVariant">@color/mainGC4_4</item>
-        <item name="colorOnPrimary">@color/mainGC4_3</item>
-        <!-- 次要颜色 -->
-        <item name="colorSecondary">@color/mainGC4_1</item>
-        <item name="colorSecondaryVariant">@color/mainGC4_2</item>
-        <item name="colorOnSecondary">@color/mainGC4_3</item>
-        <!--刘海屏区域显示-->
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    <style name="Theme.CDKActivity" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- 状态栏颜色 -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <!--虚拟键和小白条-->
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowContentOverlay">@null</item>
+        <!--状态栏区域显示-->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <!--标题栏-->
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!-- 主要颜色 -->
+        <item name="android:colorPrimary">@color/main_01</item>
+        <item name="colorPrimary">@color/main_01</item>
+        <item name="colorPrimaryVariant">@color/main_02</item>
+        <item name="colorOnPrimary">@color/main_03</item>
+        <!-- 次要颜色 -->
+        <item name="android:colorSecondary">@color/main_03</item>
+        <item name="colorSecondary">@color/main_03</item>
+        <item name="colorSecondaryVariant">@color/main_04</item>
+        <item name="colorOnSecondary">@color/main_01</item>
+        <!--TextView控件-->
+        <item name="android:textViewStyle">@style/CDK.TextView</item>
+        <!--Button控件-->
+        <item name="android:buttonStyle">@style/CDK.Button.TextButton</item>
+        <!--Switch控件-->
+        <item name="android:switchStyle">@style/CDK.Switch</item>
+        <!--EditText控件(XML创建)-->
+        <item name="editTextStyle">@style/CDK.EditText</item>
+        <!--EditText控件(Java创建)-->
+        <item name="android:editTextStyle">@style/CDK.EditText</item>
+        <!--CheckBox控件(XML创建)-->
+        <item name="checkboxStyle">@style/CDK.CheckBox</item>
+        <!--CheckBox控件(Java创建)-->
+        <item name="android:checkboxStyle">@style/CDK.CheckBox</item>
+        <!--RadioButton控件(XML创建)-->
+        <item name="radioButtonStyle">@style/CDK.RadioButton</item>
+        <!--RadioButton控件(Java创建)-->
+        <item name="android:radioButtonStyle">@style/CDK.RadioButton</item>
         <!--MaterialButton控件-->
-        <item name="materialButtonStyle">@style/CDKWidget.Button.TextButton.Solid</item>
-        <item name="materialButtonOutlinedStyle">@style/CDKWidget.Button.TextButton.Outlined</item>
+        <item name="materialButtonStyle">@style/CDK.MaterialButton.TextButton</item>
+        <item name="materialButtonOutlinedStyle">@style/CDK.MaterialButton.TextButton.Outlined</item>
+        <!--Chip控件-->
+        <item name="chipStyle">@style/CDK.Chip</item>
         <!--RecyclerView控件-->
-        <item name="recyclerViewStyle">@style/CDKWidget.RecyclerView.FastScrollBars</item>
+        <item name="recyclerViewStyle">@style/CDK.RecyclerView</item>
     </style>
     <!--BottomSheetDialog上拉弹窗主题-->
     <style name="Theme.CDKDialog.Bottom" parent="Theme.Design.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/CDKWidget.Dialog.Bottom.Modal</item>
+        <item name="bottomSheetStyle">@style/CDK.DialogBottom</item>
     </style>
     <!--*****************************************************************************************-->
 

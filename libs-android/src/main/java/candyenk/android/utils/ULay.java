@@ -1,22 +1,67 @@
 package candyenk.android.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
-import android.util.Log;
+import android.graphics.Rect;
+import android.os.Build;
 import android.view.View;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import android.view.WindowManager;
 
 /**
  * Android布局工具
+ * 是不是横屏
  * 分辨率DP->PX
  * 分辨率PX->DP
  * View转Bitmap(截图形式,丢失功能)
  */
 public class ULay {
+    /**
+     * 是不是横屏
+     */
+    public static boolean isLand(Context context) {
+        return (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
+    }
+
+    /**
+     * 获取可显示屏幕分辨率(Android11以下不包括状态栏)
+     * TODO:分屏小窗似乎异常
+     */
+    public static Rect getSize(Context context) {
+        WindowManager wm;
+        Rect r;
+        if (context instanceof Activity) {
+            wm = ((Activity) context).getWindowManager();
+        } else {
+            wm = USys.getSystemService(context, Context.WINDOW_SERVICE);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            r = wm.getCurrentWindowMetrics().getBounds();
+        } else {
+            r = new Rect();
+            wm.getDefaultDisplay().getRectSize(r);
+        }
+        return r;
+    }
+
+    /**
+     * 获取可显示屏幕横向分辨率
+     * TODO:分屏小窗似乎异常
+     */
+    public static int getWidth(Context context) {
+        return getSize(context).width();
+    }
+
+    /**
+     * 获取可显示屏幕横向分辨率
+     *  TODO:分屏小窗似乎异常
+     */
+    public static int getHeight(Context context) {
+        return getSize(context).height();
+    }
+
+
     /**
      * 根据手机的分辨率
      * 从dp转成为px

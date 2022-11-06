@@ -2,13 +2,15 @@ package candyenk.android.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import candyenk.android.R;
+import candyenk.android.tools.V;
+import candyenk.android.view.ProgressBar;
 import candyenk.android.view.SeekBar;
 
 /**
@@ -53,76 +55,41 @@ public class ItemSeekBar extends Item {
     /**********************************************************************************************/
     @Override
     protected void initLayout() {
-        LayoutParams lp = new LayoutParams(-1, -2);
-        setLayoutParams(lp);
-        setOrientation(LinearLayout.VERTICAL);
-        setGravity(Gravity.CENTER);
-        setPadding(dp2px(10), dp2px(10), dp2px(10), dp2px(10));
-        setBackgroundResource(R.drawable.bg_pressed);
+        super.initLayout();
+        View ll = getChildAt(1);
+        removeView(iconView);
+        removeView(ll);
+        removeView(arrowView);
+        setOrientation(VERTICAL);
 
         LinearLayout ll2 = new LinearLayout(context);
-        LayoutParams lp2 = new LayoutParams(-1, -2);
-        ll2.setLayoutParams(lp2);
-        ll2.setOrientation(LinearLayout.HORIZONTAL);
-        ll2.setGravity(Gravity.CENTER);
-        addView(ll2);
-
-        iconView = new ImageView(context);
-        LayoutParams lp3 = new LayoutParams(dp2px(60), dp2px(60));
-        iconView.setLayoutParams(lp3);
+        V.LL(ll2).size(-1, -2).orientation(0).gravity(Gravity.CENTER).parent(this).refresh();
         ll2.addView(iconView);
-
-        LinearLayout ll3 = new LinearLayout(context);
-        LayoutParams lp4 = new LayoutParams(-1, -2);
-        lp4.leftMargin = lp4.rightMargin = dp2px(8);
-        lp4.weight = 1;
-        ll3.setLayoutParams(lp4);
-        ll3.setOrientation(LinearLayout.VERTICAL);
-        ll2.addView(ll3);
-
-        titleView = new TextView(context);
-        LayoutParams lp5 = new LayoutParams(-1, -2);
-        titleView.setLayoutParams(lp5);
-        titleView.setTextSize(18);
-        titleView.setText("标题");
-        ll3.addView(titleView);
-
-        summaryView = new TextView(context);
-        LayoutParams lp6 = new LayoutParams(-1, -2);
-        summaryView.setLayoutParams(lp6);
-        summaryView.setTextSize(12);
-        summaryView.setVisibility(View.GONE);
-        ll3.addView(summaryView);
+        ll2.addView(ll);
 
         progressTextView = new TextView(context);
-        LayoutParams lp7 = new LayoutParams(-2, -2);
-        lp7.gravity = Gravity.TOP;
-        lp7.setMargins(0, dp2px(5), 0, 0);
-        progressTextView.setLayoutParams(lp7);
-        ll2.addView(progressTextView);
+        V.LL(progressTextView).size(-2, -2).lGravity(Gravity.TOP).margin(0, 5, 0, 0).textColorRes(R.color.text_main).parent(ll2).refresh();
 
         seekBarView = new SeekBar(context);
-        LayoutParams lp8 = new LayoutParams(-1, -2);
-        lp8.setMargins(0, dp2px(10), 0, 0);
-        seekBarView.setLayoutParams(lp8);
-        seekBarView.setDisplayMode(SeekBar.DISPLAY_MODE_EXTREMUM | SeekBar.DISPLAY_MODE_PERCENT);
-        addView(seekBarView);
+        V.LL(seekBarView).size(-1, -2).margin(0, 10, 0, 0).parent(this).refresh();
+        seekBarView.setDisplayMode(SeekBar.DM_EXTREMUM | SeekBar.DM_PERCENT);
+
     }
 
     @Override
     protected void initAttrs(AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CDKItemSeekBar);
-        String title = typedArray.getString(R.styleable.CDKItemSeekBar_android_title);
-        String summary = typedArray.getString(R.styleable.CDKItemSeekBar_android_summary);
-        int max = typedArray.getInt(R.styleable.CDKItemSeekBar_android_max, 100);
-        int min = typedArray.getInt(R.styleable.CDKItemSeekBar_android_min, 0);
-        int progress = typedArray.getInt(R.styleable.CDKItemSeekBar_android_progress, min);
-        int icon = typedArray.getResourceId(R.styleable.CDKItemSeekBar_android_icon, 0);
-        typedArray.recycle();
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKItemSeekBar);
+        String title = ta.getString(R.styleable.CDKItemSeekBar_android_title);
+        String summary = ta.getString(R.styleable.CDKItemSeekBar_android_summary);
+        int max = ta.getInt(R.styleable.CDKItemSeekBar_android_max, 100);
+        int min = ta.getInt(R.styleable.CDKItemSeekBar_android_min, 0);
+        int progress = ta.getInt(R.styleable.CDKItemSeekBar_android_progress, min);
+        Drawable icon = ta.getDrawable(R.styleable.CDKItemSeekBar_android_icon);
+        ta.recycle();
 
         setTitleText(title);
         setSummaryText(summary);
-        setIconResource(icon);
+        setIconDrawable(icon);
         setMax(max);
         setMin(min);
         progressTextView.setText(String.valueOf(progress));
@@ -131,7 +98,7 @@ public class ItemSeekBar extends Item {
     @Override
     protected void initEvents() {
         super.setOnClickListener(v -> {});
-        seekBarView.setOnSeekBarChangeListener((seekBar, progress, percent, state) -> {
+        seekBarView.setOnProgressChangedListener((progress, percent) -> {
             progressTextView.setText(String.valueOf(progress));
         });
     }
@@ -174,8 +141,8 @@ public class ItemSeekBar extends Item {
      * 会重置进度显示内容
      * 需手动setProressText
      */
-    public void setOnSeekBarChangeListener(SeekBar.OnSeekBarChangeListener l) {
-        if (l != null) seekBarView.setOnSeekBarChangeListener(l);
+    public void setOnSeekBarChangeListener(ProgressBar.OnProgressChangedListener l) {
+        if (l != null) seekBarView.setOnProgressChangedListener(l);
     }
 
     /**

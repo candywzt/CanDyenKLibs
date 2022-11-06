@@ -103,7 +103,7 @@ public class WindowLayout extends MaterialCardView {
         lp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
         horwView.setLayoutParams(lp);
         horwView.setElevation(100);
-        horwView.setImageDrawable(context.getResources().getDrawable(R.drawable.window_horw));
+        horwView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_window_horw));
         addView(horwView);
 
         barView = new ImageView(context);
@@ -111,7 +111,7 @@ public class WindowLayout extends MaterialCardView {
         lp2.setMargins(dp2px(5), dp2px(5), 0, 0);
         barView.setLayoutParams(lp2);
         barView.setElevation(98);
-        barView.setBackgroundResource(R.drawable.window_bar);
+        barView.setBackgroundResource(R.drawable.bg_window_bar);
         addView(barView);
 
         backView = new View(context);
@@ -119,7 +119,7 @@ public class WindowLayout extends MaterialCardView {
         lp3.setMargins(0, 0, dp2px(5), dp2px(5));
         backView.setLayoutParams(lp3);
         backView.setElevation(99);
-        backView.setBackgroundResource(R.drawable.window_back);
+        backView.setBackgroundResource(R.drawable.bg_window);
         backView.setVisibility(GONE);
         addView(backView);
 

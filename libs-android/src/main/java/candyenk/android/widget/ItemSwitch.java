@@ -2,14 +2,11 @@ package candyenk.android.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Checkable;
 import candyenk.android.R;
-import candyenk.android.view.NimbleSwitch;
+import candyenk.android.view.Switch;
 
 /**
  * CDKSwitch项目控件
@@ -21,9 +18,9 @@ import candyenk.android.view.NimbleSwitch;
  * offSummary(String):开关关闭时的副标题
  * checked(boolean):开关初始状态
  */
-public class ItemSwitch extends Item {
+public class ItemSwitch extends Item implements Checkable {
     protected CharSequence summary, onSummary, offSummary;
-    protected NimbleSwitch switchView;
+    protected Switch switchView;
 
     /**********************************************************************************************/
     /*****************************************接口**************************************************/
@@ -53,39 +50,9 @@ public class ItemSwitch extends Item {
     /**********************************************************************************************/
     @Override
     protected void initLayout() {
-        LinearLayout.LayoutParams lp = new LayoutParams(-1, -2);
-        setLayoutParams(lp);
-        setOrientation(LinearLayout.HORIZONTAL);
-        setGravity(Gravity.CENTER);
-        setPadding(dp2px(10), dp2px(10), dp2px(10), dp2px(10));
-        setBackgroundResource(R.drawable.bg_pressed);
-        iconView = new ImageView(context);
-        LinearLayout.LayoutParams lp2 = new LayoutParams(dp2px(60), dp2px(60));
-        iconView.setLayoutParams(lp2);
-        addView(iconView);
-
-        LinearLayout ll2 = new LinearLayout(context);
-        LinearLayout.LayoutParams lp3 = new LayoutParams(-1, -2);
-        lp3.leftMargin = lp3.rightMargin = dp2px(8);
-        lp3.weight = 1;
-        ll2.setLayoutParams(lp3);
-        ll2.setOrientation(LinearLayout.VERTICAL);
-        addView(ll2);
-
-        titleView = new TextView(context);
-        LinearLayout.LayoutParams lp4 = new LayoutParams(-1, -2);
-        titleView.setLayoutParams(lp4);
-        titleView.setTextSize(18);
-        ll2.addView(titleView);
-
-        summaryView = new TextView(context);
-        LinearLayout.LayoutParams lp5 = new LayoutParams(-1, -2);
-        summaryView.setLayoutParams(lp5);
-        summaryView.setTextSize(12);
-        summaryView.setVisibility(View.GONE);
-        ll2.addView(summaryView);
-
-        switchView = new NimbleSwitch(context);
+        super.initLayout();
+        removeView(arrowView);
+        switchView = new Switch(context);
         addView(switchView);
     }
 
@@ -97,12 +64,12 @@ public class ItemSwitch extends Item {
         onSummary = typedArray.getString(R.styleable.CDKItemSwitch_android_summaryOn);
         offSummary = typedArray.getString(R.styleable.CDKItemSwitch_android_summaryOff);
         boolean checked = typedArray.getBoolean(R.styleable.CDKItemSwitch_android_checked, false);
-        int icon = typedArray.getResourceId(R.styleable.CDKItemSwitch_android_icon, 0);
+        Drawable icon = typedArray.getDrawable(R.styleable.CDKItemSwitch_android_icon);
         typedArray.recycle();
 
         setTitleText(title);
         setChecked(checked);
-        setIconResource(icon);
+        setIconDrawable(icon);
         setSummary(0, summary);
         setSummary(-1, offSummary);
         setSummary(1, onSummary);
@@ -133,6 +100,21 @@ public class ItemSwitch extends Item {
             l.onClick(this);
         });
     }
+
+    @Override
+    public void setChecked(boolean checked) {
+        switchView.setChecked(checked);
+    }
+
+    @Override
+    public boolean isChecked() {
+        return switchView.isChecked();
+    }
+
+    @Override
+    public void toggle() {
+        switchView.toggle();
+    }
     /**********************************************************************************************/
     /******************************************公共方法*********************************************/
     /**********************************************************************************************/
@@ -150,35 +132,21 @@ public class ItemSwitch extends Item {
     }
 
     /**
-     * 设置当前Switch开关状态
-     */
-    public void setChecked(boolean checked) {
-        switchView.setChecked(checked);
-    }
-
-    /**
      * 设置本控件Switch开关变动监听
      */
-    public void setOnCheckedChangeListener(NimbleSwitch.OnCheckedChangeListener l) {
-        switchView.setOnCheckedChangeListener((nimbleSwitch, isChecked) -> {
+    public void setOnCheckedChangeListener(Switch.OnCheckedChangeListener l) {
+        switchView.setOnCheckedChangeListener((aSwitch, isChecked) -> {
             setSummaryText();
             if (l != null) {
-                l.onCheckedChanged(nimbleSwitch, isChecked);
+                l.onCheckedChanged(aSwitch, isChecked);
             }
         });
     }
 
     /**
-     * 获取当前Switch开关状态
-     */
-    public boolean isChecked() {
-        return switchView.isChecked();
-    }
-
-    /**
      * 获取Switch控件
      */
-    public NimbleSwitch getSwitchView() {
+    public Switch getSwitchView() {
         return switchView;
     }
     /**********************************************************************************************/

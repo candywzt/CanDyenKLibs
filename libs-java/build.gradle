@@ -1,30 +1,42 @@
 plugins {
-    id 'java'
+    id('java')
+    //id 'com.github.johnrengelman.shadow'
 }
-
-version '0.1'
-
-repositories {
-    mavenLocal()
-    mavenCentral()
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
+version('0.1')
+
 dependencies {
-    implementation 'com.google.code.gson:gson:2.9.1'
-    //implementation 'org.commonmark:commonmark:0.19.0'//MD解析
-    implementation fileTree(dir:'libs',includes:['*jar'])
+    implementation 'com.google.code.gson:gson:2.10'
+    implementation fileTree(dir: 'libs', includes: ['*jar'])
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+    zip64 true
+    archiveClassifier.set('')//分类?
+    archiveBaseName.set('sources')//指定jar名字
+    archiveVersion.set('')//版本
 }
 
 jar {
     duplicatesStrategy DuplicatesStrategy.EXCLUDE
-    archiveBaseName.set "CanDyenKLibs-Java"
     from {
         configurations.runtimeClasspath.collect {
             it.isDirectory() ? it : zipTree(it)
         }
     }
     manifest {
-        attributes 'Implementation-Title': '标题'
-        attributes 'Manifest-Version': '1.0'
-        attributes 'Main-Class': 'candyenk.java.Test'
+        attributes('Implementation-Title': 'CDKLibs-Java')
+        attributes('Manifest-Version': '1.0')
+        attributes('Main-Class': 'candyenk.java.Test')
     }
+    zip64 true
+    archiveClassifier.set('')//分类?
+    archiveBaseName.set('CDKLibs-java')//指定jar名字
+    archiveVersion.set('')//版本
+
 }

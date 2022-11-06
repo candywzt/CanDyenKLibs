@@ -59,7 +59,7 @@ public abstract class CDKFragment extends Fragment {
      * 子类重写该方法
      */
     public Drawable getIcon() {
-        return activity.getDrawable(R.drawable.file_picture);
+        return activity.getDrawable(R.drawable.ic_file_picture);
     }
 
     /**

@@ -6,23 +6,24 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.view.Gravity;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import candyenk.android.R;
-import candyenk.android.viewgroup.NimbleFrameLayout;
-import com.google.android.material.card.MaterialCardView;
+import candyenk.android.tools.V;
+import com.google.android.material.imageview.ShapeableImageView;
 
 
 /**
  * 灵动动画卡片项目控件
  */
-public final class ItemNimble extends NimbleFrameLayout {
+public final class ItemNimble extends FrameLayout {
+    public static final int LEFT = 0;
+    public static final int RIGHT = 1;
     private Context context;
     private TextView titleView; //文字控件
-    private ImageView imageView; //图片控件
-    private ImageView cardimage;//卡片图控件
+    private ImageView iconView; //图片控件
+    private ShapeableImageView backView;//背景图图控件
 
 
     /**********************************************************************************************/
@@ -62,79 +63,41 @@ public final class ItemNimble extends NimbleFrameLayout {
      * 内部控件初始化
      */
     private void initLayout() {
-        LayoutParams lp = new LayoutParams(-1, -2);
-        setLayoutParams(lp);
-        setPadding(dp2px(10), 0, dp2px(10), 0);
+        V.ML(this).size(-1, -2).backgroundRes(0).nimble().refresh();
 
-        MaterialCardView cv = new MaterialCardView(context);
-        LayoutParams lp2 = new LayoutParams(-1, -1);
-        lp2.setMargins(dp2px(20), dp2px(20), dp2px(20), dp2px(20));
-        cv.setLayoutParams(lp2);
-        cv.setElevation(dp2px(1));
-        cv.setRadius(dp2px(20));
-        addView(cv);
+        backView = new ShapeableImageView(context);
+        V.FL(backView).size(-2, -2).marginDP(20).ele(0).scaleType(ImageView.ScaleType.CENTER_CROP).radiusDP(20).parent(this).refresh();
 
-        cardimage = new ImageView(context);
-        LayoutParams lp3 = new LayoutParams(-1, -1);
-        cardimage.setLayoutParams(lp3);
-        cv.addView(cardimage);
-
-        imageView = new ImageView(context);
-        LayoutParams lp4 = new LayoutParams(-2, -1);
-        lp4.gravity = Gravity.LEFT;
-        imageView.setLayoutParams(lp4);
-        imageView.setElevation(dp2px(2));
-        imageView.setScaleType(ImageView.ScaleType.FIT_START);
-        addView(imageView);
+        iconView = new ImageView(context);
+        V.FL(iconView).size(-2, -2).ele(1).scaleType(ImageView.ScaleType.FIT_START).parent(this).refresh();
 
         titleView = new TextView(context);
-        LayoutParams lp5 = new LayoutParams(dp2px(200), -1);
-        lp5.gravity = Gravity.LEFT;
-        lp5.setMargins(dp2px(30), 0, dp2px(30), 0);
-        titleView.setLayoutParams(lp5);
-        titleView.setElevation(dp2px(3));
-        titleView.setGravity(Gravity.CENTER);
-        titleView.setTextSize(20);
-        titleView.setTextColor(context.getResources().getColor(R.color.text_title));
-        addView(titleView);
+        V.FL(titleView).sizeDP(-2, -2).ele(2).textSize(20).textColorRes(R.color.text_title).parent(this).refresh();
     }
 
     private void initAttrs(AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CDKItemNimble);
-        int iconLocation = typedArray.getInt(R.styleable.CDKItemNimble_iconLocation, 0);
-        String title = typedArray.getString(R.styleable.CDKItemNimble_title);
-        int cardBackground = typedArray.getResourceId(R.styleable.CDKItemNimble_cardbackground, 0);
-        int image = typedArray.getResourceId(R.styleable.CDKItemNimble_image, 0);
-        typedArray.recycle();
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CDKItemNimble);
+        int l = a.getInt(R.styleable.CDKItemNimble_iconLocation, 0);
+        String title = a.getString(R.styleable.CDKItemNimble_android_title);
+        Drawable back = a.getDrawable(R.styleable.CDKItemNimble_android_background);
+        Drawable image = a.getDrawable(R.styleable.CDKItemNimble_android_icon);
+        a.recycle();
 
-        if (iconLocation == 1) {
-            LayoutParams lp = (LayoutParams) imageView.getLayoutParams();
-            lp.gravity = Gravity.RIGHT;
-            imageView.setLayoutParams(lp);
-
-            LayoutParams lp2 = (LayoutParams) titleView.getLayoutParams();
-            lp2.gravity = Gravity.RIGHT;
-            titleView.setLayoutParams(lp2);
-        }
+        setImageLocation(l);
         if (title != null) {
             titleView.setText(title);
         }
-        if (image != 0) {
-            imageView.setImageResource(image);
+        if (image != null) {
+            iconView.setImageDrawable(image);
         }
-        if (cardBackground != 0) {
-            cardimage.setImageResource(cardBackground);
+        if (back != null) {
+            backView.setImageDrawable(back);
         }
     }
 
     private void initEvents() {
     }
 
-    private int dp2px(double dpValue) {
-        float num = dpValue < 0 ? -1 : 1;
-        final double scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + (0.5f * num));
-    }
 
     /**********************************************************************************************/
     /******************************************公共方法*********************************************/
@@ -150,30 +113,26 @@ public final class ItemNimble extends NimbleFrameLayout {
      * 设置上层图片
      */
     public void setImage(int resourceId) {
-        imageView.setImageResource(resourceId);
+        iconView.setImageResource(resourceId);
     }
 
     public void setImage(Drawable drawable) {
-        imageView.setImageDrawable(drawable);
+        iconView.setImageDrawable(drawable);
     }
 
     public void setImage(Bitmap bitmap) {
-        imageView.setImageBitmap(bitmap);
+        iconView.setImageBitmap(bitmap);
     }
 
     /**
      * 设置卡片背景图
      */
     public void setCardBackground(int resourceId) {
-        cardimage.setImageResource(resourceId);
+        backView.setImageResource(resourceId);
     }
 
     public void setCardBackground(Drawable drawable) {
-        cardimage.setImageDrawable(drawable);
-    }
-
-    public void setCardBackground(Bitmap bitmap) {
-        cardimage.setImageBitmap(bitmap);
+        backView.setImageDrawable(drawable);
     }
 
     /**
@@ -181,32 +140,29 @@ public final class ItemNimble extends NimbleFrameLayout {
      * 0:左
      * 1:右
      */
-    public void setImageLocation(int imageLocation) {
-        LayoutParams lp = (LayoutParams) imageView.getLayoutParams();
-        LayoutParams lp2 = (LayoutParams) titleView.getLayoutParams();
-        if (imageLocation == 0) {
-            lp.gravity = Gravity.LEFT;
-            lp2.gravity = Gravity.LEFT;
-        } else if (imageLocation == 1) {
-            lp.gravity = Gravity.RIGHT;
-            lp2.gravity = Gravity.RIGHT;
+    public void setImageLocation(int l) {
+        if (l == RIGHT) {
+            V.FL(iconView).lGravity(21).refresh();
+            V.FL(titleView).lGravity(21).marginDP(0, 0, 100, 0).refresh();
+        } else {
+            V.FL(iconView).lGravity(19).refresh();
+            V.FL(titleView).lGravity(19).marginDP(200, 0, 0, 0).refresh();
+
         }
-        imageView.setLayoutParams(lp);
-        titleView.setLayoutParams(lp2);
     }
 
     /**
      * 获取Icon控件以便使用第三方图片加载器
      */
-    public ImageView getImageView() {
-        return imageView;
+    public ImageView getIconView() {
+        return iconView;
     }
 
     /**
      * 获取卡片背景图控件以便使用第三方图片加载器
      */
-    public ImageView getCardBackgroundView() {
-        return cardimage;
+    public ShapeableImageView getBackgroundView() {
+        return backView;
     }
 }
 

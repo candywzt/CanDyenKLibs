@@ -88,7 +88,7 @@ public class LoadView extends View {
 
     private void initAttrs(AttributeSet attrs) {
         //TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CDKProgressBar);
-        color = context.getResources().getColor(R.color.mainGC4_1);
+        color = context.getColor(R.color.main_01);
         //a.recycle();
     }
 

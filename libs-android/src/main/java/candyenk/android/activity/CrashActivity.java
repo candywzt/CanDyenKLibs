@@ -48,7 +48,7 @@ public class CrashActivity extends CDKActivity {
         button3 = findViewById(R.id.crash_button3);
         button4 = findViewById(R.id.crash_button4);
         reportView = findViewById(R.id.crash_report_text);
-        setTitleText(R.string.crash_title_text);
+        setTitle(R.string.crash_title_text);
     }
 
     @Override
