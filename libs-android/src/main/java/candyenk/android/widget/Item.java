@@ -1,5 +1,6 @@
 package candyenk.android.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -79,6 +80,7 @@ public class Item extends LinearLayout {
     }
 
     protected void initAttrs(AttributeSet attrs) {
+        @SuppressLint("CustomViewStyleable")
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CDKItem);
         String title = typedArray.getString(R.styleable.CDKItem_android_title);
         String summary = typedArray.getString(R.styleable.CDKItem_android_summary);

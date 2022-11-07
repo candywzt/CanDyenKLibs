@@ -117,8 +117,7 @@ public class DialogBottomItemText extends DialogBottom {
      */
     public void setContent(CharSequence... stringList) {
         if (!ok) return;
-        this.adapter = new ItemAdapter(stringList);
-        listView.setAdapter(adapter);
+        super.setContent(new ItemAdapter(stringList));
     }
 
     /**

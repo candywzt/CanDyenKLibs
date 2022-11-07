@@ -3,6 +3,7 @@ package candyenk.android.widget;
 import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
+import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 
@@ -16,6 +17,7 @@ public class DialogBottomText extends DialogBottomView {
     /*************************************静态变量**************************************************/
     /*************************************成员变量**************************************************/
     protected CharSequence text;
+    protected TextView tv;
     /**********************************************************************************************/
     /***********************************公共静态方法*************************************************/
     /**********************************************************************************************/
@@ -59,17 +61,23 @@ public class DialogBottomText extends DialogBottomView {
     public void setContent(View view) {
         L.e("TAG", "不允许使用setContent(View)");
     }
+
+    @Override
+    public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
+        L.e("TAG", "不允许使用setContent(Adapter)");
+    }
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
     /**
      * 设置内容-纯文本
-     * 弹窗显示后不可用
+     * 可重复调用以修改文本内容
      */
     public void setContent(CharSequence text) {
         if (!ok) return;
         this.text = text;
-        super.setContent(createTextView(text));
+        if (this.tv != null) this.tv.setText(text);
+        else super.setContent(createTextView(text));
     }
 
     /**
@@ -83,7 +91,7 @@ public class DialogBottomText extends DialogBottomView {
     /**********************************************************************************************/
     /*** 创建纯文本控件 ***/
     private View createTextView(CharSequence text) {
-        TextView tv = new TextView(viewContext);
+        tv = new TextView(viewContext);
         V.RV(tv).size(-1, -2).paddingDP(10).text(text).refresh();
         tv.setTextIsSelectable(true);
         return tv;

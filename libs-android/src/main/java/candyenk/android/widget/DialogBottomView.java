@@ -72,7 +72,7 @@ public class DialogBottomView extends DialogBottom {
         if (!ok) return;
         this.contentView = view;
         adapter = new ViewAdapter(view);
-        setContent(adapter);
+        super.setContent(adapter);
     }
 
     /**
