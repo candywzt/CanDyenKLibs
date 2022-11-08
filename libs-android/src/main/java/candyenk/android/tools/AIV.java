@@ -12,7 +12,7 @@ import candyenk.android.utils.ULay;
 /**
  * Android AutoImageView 帮助类
  */
-public class AIF {
+public class AIV {
     /*************************************静态变量**************************************************/
     /*************************************成员变量**************************************************/
     private Context context;
@@ -31,8 +31,8 @@ public class AIF {
     /**
      * 创建
      */
-    public static AIF create() {
-        return new AIF();
+    public static AIV create() {
+        return new AIV();
     }
     /**********************************************************************************************/
     /***********************************私有静态方法*************************************************/
@@ -53,7 +53,7 @@ public class AIF {
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
 
-    private AIF() {
+    private AIV() {
     }
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
@@ -66,7 +66,7 @@ public class AIF {
      * 设置需要加载的ImageView
      * ImageView尺寸请设置为match
      */
-    public AIF setImageView(ImageView imageView) {
+    public AIV setImageView(ImageView imageView) {
         this.imageView = imageView;
         this.context = imageView.getContext();
         return setImage(imageView.getDrawable());
@@ -75,7 +75,7 @@ public class AIF {
     /**
      * 设置要显示的图片
      */
-    public AIF setImage(Drawable drawable) {
+    public AIV setImage(Drawable drawable) {
         if (drawable != null) this.image = drawable;
         return this;
     }

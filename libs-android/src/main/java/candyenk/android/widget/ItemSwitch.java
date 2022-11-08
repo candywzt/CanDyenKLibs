@@ -1,12 +1,13 @@
 package candyenk.android.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.Checkable;
+import android.widget.CompoundButton;
 import candyenk.android.R;
-import candyenk.android.view.Switch;
+import candyenk.android.view.SwitchCDK;
 
 /**
  * CDKSwitch项目控件
@@ -20,7 +21,7 @@ import candyenk.android.view.Switch;
  */
 public class ItemSwitch extends Item implements Checkable {
     protected CharSequence summary, onSummary, offSummary;
-    protected Switch switchView;
+    protected SwitchCDK switchView;
 
     /**********************************************************************************************/
     /*****************************************接口**************************************************/
@@ -52,28 +53,25 @@ public class ItemSwitch extends Item implements Checkable {
     protected void initLayout() {
         super.initLayout();
         removeView(arrowView);
-        switchView = new Switch(context);
+        switchView = new SwitchCDK(context);
         addView(switchView);
     }
 
     @Override
     protected void initAttrs(AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CDKItemSwitch);
-        String title = typedArray.getString(R.styleable.CDKItemSwitch_android_title);
-        summary = typedArray.getString(R.styleable.CDKItemSwitch_android_summary);
-        onSummary = typedArray.getString(R.styleable.CDKItemSwitch_android_summaryOn);
-        offSummary = typedArray.getString(R.styleable.CDKItemSwitch_android_summaryOff);
-        boolean checked = typedArray.getBoolean(R.styleable.CDKItemSwitch_android_checked, false);
-        Drawable icon = typedArray.getDrawable(R.styleable.CDKItemSwitch_android_icon);
-        typedArray.recycle();
-
-        setTitleText(title);
-        setChecked(checked);
-        setIconDrawable(icon);
-        setSummary(0, summary);
-        setSummary(-1, offSummary);
-        setSummary(1, onSummary);
-        setSummaryText();
+        @SuppressLint("CustomViewStyleable")
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKItemSwitch);
+        summary = ta.getString(R.styleable.CDKItemSwitch_android_summary);
+        onSummary = ta.getString(R.styleable.CDKItemSwitch_android_summaryOn);
+        offSummary = ta.getString(R.styleable.CDKItemSwitch_android_summaryOff);
+        setTitleText(ta.getString(R.styleable.CDKItemSwitch_android_title));
+        setChecked(ta.getBoolean(R.styleable.CDKItemSwitch_android_checked, false));
+        setIconDrawable(ta.getDrawable(R.styleable.CDKItemSwitch_android_icon));
+        updateSummary(0, summary);
+        updateSummary(-1, offSummary);
+        updateSummary(1, onSummary);
+        updateSummary();
+        ta.recycle();
     }
 
     @Override
@@ -82,11 +80,12 @@ public class ItemSwitch extends Item implements Checkable {
             setChecked(!isChecked());
         });
         switchView.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            setSummaryText();
+            updateSummary();
         });
     }
 
-    protected void setSummaryText() {
+    /*** 刷新副标题文本 ***/
+    protected void updateSummary() {
         setSummaryText(isChecked() ? (onSummary == null ? summary : onSummary) : (offSummary == null ? summary : offSummary));
     }
 
@@ -125,7 +124,7 @@ public class ItemSwitch extends Item implements Checkable {
      *              0:普通副标题
      *              1:打开状态
      */
-    public void setSummary(int state, CharSequence summary) {
+    public void updateSummary(int state, CharSequence summary) {
         if (state == 0) this.summary = summary;
         else if (state == -1) this.offSummary = summary;
         else if (state == 1) this.onSummary = summary;
@@ -134,9 +133,9 @@ public class ItemSwitch extends Item implements Checkable {
     /**
      * 设置本控件Switch开关变动监听
      */
-    public void setOnCheckedChangeListener(Switch.OnCheckedChangeListener l) {
+    public void setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener l) {
         switchView.setOnCheckedChangeListener((aSwitch, isChecked) -> {
-            setSummaryText();
+            updateSummary();
             if (l != null) {
                 l.onCheckedChanged(aSwitch, isChecked);
             }
@@ -146,7 +145,7 @@ public class ItemSwitch extends Item implements Checkable {
     /**
      * 获取Switch控件
      */
-    public Switch getSwitchView() {
+    public SwitchCDK getSwitchView() {
         return switchView;
     }
     /**********************************************************************************************/

@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.view.View;
+import android.widget.ProgressBar;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import candyenk.android.R;
@@ -16,12 +16,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * 原生CDKProgressBar
+ * CDK ProgressBar
  * 支持负数的
- * 别超过10k啊秋梨膏
- * 讲究顺滑可以整1k
+ * 1k以下不顺滑
  */
-public class ProgressBar extends View {
+public class ProgressBarCDK extends ProgressBar {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef(flag = true, value = {DM_NONE, DM_EXTREMUM, DM_NUM, DM_PERCENT})
     public @interface DisplayMode {}
@@ -67,15 +66,15 @@ public class ProgressBar extends View {
     /*****************************************构造方法***********************************************/
     /**********************************************************************************************/
 
-    public ProgressBar(Context context) {
+    public ProgressBarCDK(Context context) {
         this(context, null);
     }
 
-    public ProgressBar(Context context, AttributeSet attrs) {
+    public ProgressBarCDK(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ProgressBarCDK(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.TAG = this.getClass().getSimpleName();
         this.context = context;
@@ -100,6 +99,50 @@ public class ProgressBar extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(widthMeasureSpec, dp2px(25));
+    }
+
+    public int getMax() {
+        return max;
+    }
+
+
+    public void setMax(int max) {
+        this.max = max;
+        if (this.progress > max) this.progress = max;
+        invalidate();
+    }
+
+
+    public int getMin() {
+        return this.min;
+    }
+
+
+    public void setMin(int min) {
+        this.min = min;
+        if (this.progress < min) this.progress = min;
+        invalidate();
+    }
+
+
+    public int getProgress() {
+        return progress;
+    }
+
+
+    public void setProgress(int progress) {
+        if (progress < min) {
+            progress = min;
+        } else if (progress > max) {
+            progress = max;
+        }
+        changeProgress(0, progress);
+    }
+
+    public void setBackgroundColor(@ColorInt int backgroundColor) {
+        this.backgroundColor = backgroundColor;
+        backgroundPaint.setColor(backgroundColor);
+        invalidate();
     }
 
     protected void changeProgress(int type, Object number) {
@@ -258,65 +301,6 @@ public class ProgressBar extends View {
     /**********************************************************************************************/
 
     /**
-     * 获取最大进度
-     *
-     * @return 最大值
-     */
-    public int getMax() {
-        return max;
-    }
-
-    /**
-     * 设置最大进度
-     *
-     * @param max 最大值
-     */
-    public void setMax(int max) {
-        this.max = max;
-        if (this.progress > max) this.progress = max;
-        invalidate();
-    }
-
-    /**
-     * @return 最小值
-     */
-    public int getMin() {
-        return this.min;
-    }
-
-    /**
-     * 设置最小进度
-     */
-    public void setMin(int min) {
-        this.min = min;
-        if (this.progress < min) this.progress = min;
-        invalidate();
-    }
-
-    /**
-     * 获取当前进度值
-     *
-     * @return 进度值
-     */
-    public int getProgress() {
-        return progress;
-    }
-
-    /**
-     * 设置当前进度值
-     *
-     * @param progress 进度值
-     */
-    public void setProgress(int progress) {
-        if (progress < min) {
-            progress = min;
-        } else if (progress > max) {
-            progress = max;
-        }
-        changeProgress(0, progress);
-    }
-
-    /**
      * 获取进度百分比
      *
      * @return percentage value
@@ -377,17 +361,6 @@ public class ProgressBar extends View {
      */
     public int getBackgroundColor() {
         return backgroundColor;
-    }
-
-    /**
-     * 设置背景色
-     *
-     * @param backgroundColor 颜色值
-     */
-    public void setBackgroundColor(@ColorInt int backgroundColor) {
-        this.backgroundColor = backgroundColor;
-        backgroundPaint.setColor(backgroundColor);
-        invalidate();
     }
 
 

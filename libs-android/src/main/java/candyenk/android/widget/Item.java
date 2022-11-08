@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import candyenk.android.R;
 import candyenk.android.tools.V;
+import com.google.android.material.textview.MaterialTextView;
 
 /**
  * CDK项目控件
@@ -69,10 +70,10 @@ public class Item extends LinearLayout {
         LinearLayout ll = new LinearLayout(context);
         V.LL(ll).size(-1, -2).orientation(1).marginDP(8, 0, 8, 0).weight(1).parent(this).refresh();
 
-        titleView = new TextView(context);
+        titleView = new MaterialTextView(context);
         V.LL(titleView).size(-1, -2).textSize(18).textColorRes(R.color.text_main).parent(ll).refresh();
 
-        summaryView = new TextView(context);
+        summaryView = new MaterialTextView(context);
         V.LL(summaryView).size(-1, -2).textSize(12).textColorRes(R.color.text_deputy).hide().parent(ll).refresh();
 
         arrowView = new ImageView(context);
@@ -81,20 +82,15 @@ public class Item extends LinearLayout {
 
     protected void initAttrs(AttributeSet attrs) {
         @SuppressLint("CustomViewStyleable")
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CDKItem);
-        String title = typedArray.getString(R.styleable.CDKItem_android_title);
-        String summary = typedArray.getString(R.styleable.CDKItem_android_summary);
-        Drawable icon = typedArray.getDrawable(R.styleable.CDKItem_android_icon);
-        typedArray.recycle();
-
-        setTitleText(title);
-        setSummaryText(summary);
-        setIconDrawable(icon);
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKItem);
+        setTitleText(ta.getString(R.styleable.CDKItem_android_title));
+        setSummaryText(ta.getString(R.styleable.CDKItem_android_summary));
+        setIconDrawable(ta.getDrawable(R.styleable.CDKItem_android_icon));
+        ta.recycle();
     }
 
     protected void initEvents() {
-        //用来触发点按效果的
-        super.setOnClickListener(v -> {});
+        super.setOnClickListener(v -> {}); //用来触发点按效果的
     }
 
     @Override
@@ -128,7 +124,7 @@ public class Item extends LinearLayout {
     }
 
     /**
-     * 设置图标
+     * 设置图标(默认0)
      * 为0则不显示Icon控件(Invisible)
      * 为-1则隐藏控件(Gone)
      */

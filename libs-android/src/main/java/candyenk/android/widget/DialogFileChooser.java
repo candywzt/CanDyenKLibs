@@ -16,6 +16,7 @@ import candyenk.java.io.FileInfo;
 import candyenk.java.utils.UArrays;
 import candyenk.java.utils.UData;
 import candyenk.java.utils.UTime;
+import com.google.android.material.textview.MaterialTextView;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -310,12 +311,12 @@ public class DialogFileChooser extends DialogBottom {
             LinearLayout l2 = new LinearLayout(viewContext);
             V.LL(l2).size(-1).weight(1).orientation(1).gravity(Gravity.CENTER_VERTICAL).parent(l1).refresh();
 
-            TextView tv = new TextView(viewContext);
+            TextView tv = new MaterialTextView(viewContext);
             V.LL(tv).size(-2).textSize(20).parent(l2).textColorRes(R.color.text_main).refresh();
             tv.setEllipsize(TextUtils.TruncateAt.MARQUEE);
             tv.setSingleLine(true);
 
-            TextView tv1 = new TextView(viewContext);
+            TextView tv1 = new MaterialTextView(viewContext);
             V.LL(tv1).size(-2).textSize(10).parent(l2).textColorRes(R.color.text_deputy).refresh();
             tv.setEllipsize(TextUtils.TruncateAt.MARQUEE);
             tv.setSingleLine(true);
@@ -333,7 +334,7 @@ public class DialogFileChooser extends DialogBottom {
             ImageView iv = new ImageView(viewContext);
             V.LL(iv).sizeDP(120).scaleType(ImageView.ScaleType.CENTER_CROP).drawable(R.drawable.ic_file_unknown).parent(l1).refresh();
 
-            TextView tv = new TextView(viewContext);
+            TextView tv = new MaterialTextView(viewContext);
             V.LL(tv).size(-2).marginDP(0, 0, 0, 40).textSize(20).textColorRes(R.color.text_main).text(R.string.file_chooser_no_file).parent(l1).refresh();
             return l1;
         }

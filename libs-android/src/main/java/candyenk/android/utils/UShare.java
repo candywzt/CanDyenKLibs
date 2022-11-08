@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 /**
@@ -29,6 +30,16 @@ public class UShare {
     public static void startActivity(Activity activity, Class<? extends Activity> classz, Bundle b) {
         Intent intent = new Intent(activity, classz);
         activity.startActivityForResult(intent, classz.hashCode(), b);
+    }
+
+    /**
+     * 通用浏览器打开页面
+     */
+    public static void startBrowser(Context context, String url) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        context.startActivity(intent);
     }
 
     /**

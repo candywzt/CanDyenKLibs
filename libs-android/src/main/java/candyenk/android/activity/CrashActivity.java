@@ -10,10 +10,9 @@ import android.text.SpannableStringBuilder;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import candyenk.android.CDKApplication;
 import candyenk.android.R;
-import candyenk.android.handle.TextHandler;
+import candyenk.android.tools.TH;
 
 
 public class CrashActivity extends CDKActivity {
@@ -117,11 +116,11 @@ public class CrashActivity extends CDKActivity {
         report.append("Version:");
         report.append("版本名" + "(" + "版本号" + ")\n");
         report.append("Android:");
-        report.append(android.os.Build.VERSION.RELEASE + "(" + android.os.Build.MODEL + ")\n");
+        report.append(android.os.Build.VERSION.RELEASE).append("(").append(android.os.Build.MODEL).append(")\n");
         if (currentActivity == null) {
             report.append("崩溃活动:未知\n");
         } else {
-            report.append("崩溃活动:" + currentActivity + "\n");
+            report.append("崩溃活动:").append(String.valueOf(currentActivity)).append("\n");
         }
 
         if (crashReport == null) {
@@ -136,16 +135,11 @@ public class CrashActivity extends CDKActivity {
      * 获取APP崩溃异常报告
      */
     private Spannable getCrashReport(Throwable ex) {
-        SpannableStringBuilder exceptionStr = new SpannableStringBuilder();
-        exceptionStr.append(ex.getClass() + ":")
-                .append(TextHandler.setTextColor(ex.getMessage(), getResources().getColor(R.color.red)) + "\n");
+        SpannableStringBuilder sb = new SpannableStringBuilder();
+        sb.append(ex.getClass().toString()).append(":").append(String.valueOf(TH.color(ex.getMessage(), getColor(R.color.red)))).append("\n");
         StackTraceElement[] elements = ex.getStackTrace();
-        for (StackTraceElement ste : elements) {
-            exceptionStr.append(ste.toString() + "\n");
-        }
-        return exceptionStr;
-
-
+        for (StackTraceElement ste : elements) sb.append(ste.toString()).append("\n");
+        return sb;
     }
 
 }

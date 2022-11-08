@@ -1,4 +1,4 @@
-package candyenk.android.handle;
+package candyenk.android.tools;
 
 import android.app.Application;
 import android.content.Intent;
@@ -17,9 +17,9 @@ import java.lang.Thread.UncaughtExceptionHandler;
  * 错误异常 crashReport(Throwable)<br>
  * 错误异常产生的Activity CurrentActivity(Class<?>)<br>
  */
-public class CrashHandler implements UncaughtExceptionHandler {
+public class CH implements UncaughtExceptionHandler {
     // CrashHandler实例
-    private static CrashHandler Instance;
+    private static CH Instance;
     // 系统默认的UncaughtException处理类
     private Thread.UncaughtExceptionHandler mDefaultHandler;
     // 程序的Context对象
@@ -29,9 +29,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
 
 
     //获取CrashHandler实例 ,单例模式
-    public static CrashHandler INSTANCE() {
+    public static CH INSTANCE() {
         if (Instance == null)
-            Instance = new CrashHandler();
+            Instance = new CH();
         return Instance;
     }
 

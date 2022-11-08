@@ -1,11 +1,15 @@
 package candyenk.android.widget;
 
 import android.content.Context;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.tools.L;
+import candyenk.android.tools.TH;
 import candyenk.android.tools.V;
+import candyenk.android.utils.UShare;
+import com.google.android.material.textview.MaterialTextView;
 
 
 /**
@@ -75,9 +79,10 @@ public class DialogBottomText extends DialogBottomView {
      */
     public void setContent(CharSequence text) {
         if (!ok) return;
-        this.text = text;
-        if (this.tv != null) this.tv.setText(text);
-        else super.setContent(createTextView(text));
+        if (this.tv == null) super.setContent(createTextView());
+        this.text = TH.create(text).setURLClick((v, url) -> UShare.startBrowser(v.getContext(), url)).out();
+        this.tv.setText(this.text);
+        this.tv.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     /**
@@ -90,9 +95,9 @@ public class DialogBottomText extends DialogBottomView {
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/
     /*** 创建纯文本控件 ***/
-    private View createTextView(CharSequence text) {
-        tv = new TextView(viewContext);
-        V.RV(tv).size(-1, -2).paddingDP(10).text(text).refresh();
+    private View createTextView() {
+        tv = new MaterialTextView(viewContext);
+        V.RV(tv).size(-1, -2).paddingDP(10).refresh();
         tv.setTextIsSelectable(true);
         return tv;
     }

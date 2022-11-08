@@ -1,10 +1,15 @@
 package candyenk.android.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-public class SeekBar extends ProgressBar {
+/**
+ * 这个东西不是继承自SeekBar
+ * SeekBar那套我不吃
+ */
+public class SeekBarCDK extends ProgressBarCDK {
     public static final int SEEK_FREE = 0;//空闲状态
     public static final int SEEK_DOWN = -1;//按下瞬间
     public static final int SEEK_SLIDE = 2;//拖动中
@@ -16,23 +21,23 @@ public class SeekBar extends ProgressBar {
     /**********************************************************************************************/
     /*****************************************构造方法***********************************************/
     /**********************************************************************************************/
-    public SeekBar(Context context) {
+    public SeekBarCDK(Context context) {
         this(context, null);
     }
 
-    public SeekBar(Context context, AttributeSet attrs) {
+    public SeekBarCDK(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public SeekBar(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SeekBarCDK(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
     /**********************************************************************************************/
     /*****************************************重写方法***********************************************/
     /**********************************************************************************************/
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //设置父容器不拦截事件
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: // 手指按下(0)
                 getParent().requestDisallowInterceptTouchEvent(true);

@@ -2,23 +2,23 @@ package candyenk.android.view;
 
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.animation.OvershootInterpolator;
-import android.widget.Checkable;
 import androidx.annotation.Nullable;
 import candyenk.android.R;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 /**
  * CDK灵动Switch
+ * 按钮尺寸固定(DP 25x20)
  */
-public class Switch extends View implements Checkable {
+public class SwitchCDK extends SwitchMaterial {
     protected static final float switchRadiusStart = 0.3f;
     protected static final float switchRadiusEnd = 0.45f;
 
@@ -41,27 +41,21 @@ public class Switch extends View implements Checkable {
     /**********************************************************************************************/
     /*****************************************接口**************************************************/
     /**********************************************************************************************/
-    public interface OnCheckedChangeListener {
-        void onCheckedChanged(Switch mSwitch, boolean isChecked);
-    }
+
     /**********************************************************************************************/
     /*****************************************构造方法**********************************************/
     /**********************************************************************************************/
 
-    public Switch(Context context) {
+    public SwitchCDK(Context context) {
         this(context, null);
     }
 
-    public Switch(Context context, @Nullable AttributeSet attrs) {
+    public SwitchCDK(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public Switch(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
-    }
-
-    public Switch(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+    public SwitchCDK(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         this.context = context;
         initAttrs(attrs);
         initPaints();
@@ -78,11 +72,11 @@ public class Switch extends View implements Checkable {
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         setMeasuredDimension(dp2px(50), dp2px(25));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
@@ -108,7 +102,6 @@ public class Switch extends View implements Checkable {
                         this.touchState = 2;
                         break;
                     case 2://按下后的持续滑动
-
                         float x = event.getX();
                         if (x < this.startPoint) x = this.startPoint;
                         if (x > this.endPoint)
@@ -148,18 +141,55 @@ public class Switch extends View implements Checkable {
         return true;
     }
 
-    protected int dp2px(double dpValue) {
-        final double scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
+    @Override
+    public void setChecked(boolean mChecked) {
+        if (layoutHeight == 0) this.checked = mChecked;
+        else if (this.checked != mChecked) {
+            float end = mChecked ? this.endPoint : this.startPoint;
+            this.checkAnimator = getValueAnimations(animation -> {
+                float value = (float) animation.getAnimatedValue();
+                if (this.touchState == 1) {//按下后后直接抬起
+                    if (this.downAnimator != null) {
+                        this.downAnimator.cancel();
+                        this.downAnimator = null;
+                    }
+                    changeSwitchSize(false, value);
+                }
+                changeSwitchPoint(this.switchPoint, end, value);
+                postInvalidate();
+                if (value > 0.5) {
+                    this.checked = mChecked;
+                    if (mOnCheckedChangeListener != null) {
+                        mOnCheckedChangeListener.onCheckedChanged(this, this.checked);
+                    }
+                }
+            });
+            this.checkAnimator.start();
+        }
+    }
+
+    @Override
+    public boolean isChecked() {
+        return this.checked;
+    }
+
+    @Override
+    public void toggle() {
+        setChecked(!isChecked());
+    }
+
+    @Override
+    public void setOnCheckedChangeListener(OnCheckedChangeListener listener) {
+        this.mOnCheckedChangeListener = listener;
     }
 
     protected void initAttrs(AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CDKNimbleSwitch);
-        this.checked = typedArray.getBoolean(R.styleable.CDKNimbleSwitch_android_checked, false);
+        //@SuppressLint("CustomViewStyleable")
+        //TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.);
+        this.checked = super.isChecked();
         this.backgroundColor = context.getColor(R.color.back_view);
         this.switchColor = context.getColor(R.color.main_01);
-        typedArray.recycle();
-
+        //ta.recycle();
     }
 
     protected void initPaints() {
@@ -195,50 +225,15 @@ public class Switch extends View implements Checkable {
         backgroundPaint.setColor(checked ? switchColor : backgroundColor);
     }
 
-    @Override
-    public void setChecked(boolean mChecked) {
-        if (layoutHeight == 0) this.checked = mChecked;
-        else if (this.checked != mChecked) {
-            float end = mChecked ? this.endPoint : this.startPoint;
-            this.checkAnimator = getValueAnimations(animation -> {
-                float value = (float) animation.getAnimatedValue();
-                if (this.touchState == 1) {//按下后后直接抬起
-                    if (this.downAnimator != null) {
-                        this.downAnimator.cancel();
-                        this.downAnimator = null;
-                    }
-                    changeSwitchSize(false, value);
-                }
-                changeSwitchPoint(this.switchPoint, end, value);
-                postInvalidate();
-                if (value > 0.5) {
-                    this.checked = mChecked;
-                    if (mOnCheckedChangeListener != null) {
-                        mOnCheckedChangeListener.onCheckedChanged(this, this.checked);
-                    }
-                }
-            });
-            this.checkAnimator.start();
-        }
-    }
-    @Override
-    public boolean isChecked() {
-        return this.checked;
+    protected int dp2px(double dpValue) {
+        final double scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
     }
 
-    @Override
-    public void toggle() {
-        setChecked(!isChecked());
-    }
     /**********************************************************************************************/
     /*****************************************公共方法**********************************************/
     /**********************************************************************************************/
-    /**
-     * 设置开关变动监听
-     */
-    public void setOnCheckedChangeListener(OnCheckedChangeListener listener) {
-        this.mOnCheckedChangeListener = listener;
-    }
+
     /**********************************************************************************************/
     /*****************************************私有方法**********************************************/
     /**********************************************************************************************/
@@ -267,14 +262,13 @@ public class Switch extends View implements Checkable {
 
     private void changeSwitchSize(boolean isDown, float value) {
         if (!isDown) value = 1 - value;
-        float num = this.switchRadiusEnd - this.switchRadiusStart;
-        float radiusValue = value * num + this.switchRadiusStart;
+        float num = switchRadiusEnd - switchRadiusStart;
+        float radiusValue = value * num + switchRadiusStart;
         this.switchRadius = radiusValue * this.layoutHeight;
     }
 
     private void changeSwitchPoint(float start, float end, float value) {
         float num = end - start;
-        float pointValue = value * num + start;
-        this.switchPoint = pointValue;
+        this.switchPoint = value * num + start;
     }
 }

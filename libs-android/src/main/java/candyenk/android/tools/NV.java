@@ -9,10 +9,11 @@ import android.view.animation.OvershootInterpolator;
 
 /**
  * <h2>灵动卡片效果</h2>
+ * Nimble
  * 集天下之大成
  * 现在所有控件都能用了
  */
-public class Nimble implements View.OnTouchListener {
+public class NV implements View.OnTouchListener {
     private ObjectAnimator animator;
     private int touchState;//触摸状态0:直接滑动；1:按下后第一下滑动；2:按下后的持续滑动
 
@@ -23,7 +24,7 @@ public class Nimble implements View.OnTouchListener {
      */
     public static void apply(View view) {
         if (view == null) return;
-        view.setOnTouchListener(new Nimble());
+        view.setOnTouchListener(new NV());
     }
 
     @Override

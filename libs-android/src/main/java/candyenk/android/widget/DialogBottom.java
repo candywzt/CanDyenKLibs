@@ -10,17 +10,19 @@ import android.view.WindowManager;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.R;
 import candyenk.android.tools.GD;
-import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.textview.MaterialTextView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -29,7 +31,7 @@ import java.util.function.Consumer;
 
 /**
  * 自定义Adapter上拉弹窗
- * 自动拦截重复调用
+ * 拦截层叠创建
  * 四次重构
  */
 public class DialogBottom extends BottomSheetDialog {
@@ -84,7 +86,6 @@ public class DialogBottom extends BottomSheetDialog {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && context instanceof Service) {//悬浮窗模式(API26)
             getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
         }
-        L.e(TAG, "View(" + view + ")创建DialogBottom" + (ok ? "失败" : "成功"));
     }
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
@@ -232,10 +233,10 @@ public class DialogBottom extends BottomSheetDialog {
     /**********************************************************************************************/
     /*** 创建弹窗根布局 ***/
     private void initLayout() {
-        dialogView = new CardView(viewContext);
+        dialogView = new MaterialCardView(viewContext);
         V.LL(dialogView).size(-1, -2).backgroundRes(R.color.back_all).radiusDP(20).refresh();
 
-        ImageView iv = new ImageView(viewContext);
+        ImageView iv = new AppCompatImageView(viewContext);
         V.FL(iv).sizeDP(-1, 120).parent(dialogView).drawable(R.drawable.background_transparent_gradual_change).scaleType(ImageView.ScaleType.FIT_XY).refresh();
 
         LinearLayout ll = new LinearLayout(viewContext);
@@ -244,7 +245,7 @@ public class DialogBottom extends BottomSheetDialog {
         titleView = new FrameLayout(viewContext);
         V.LL(titleView).size(-1, -2).marginDP(0, 20, 0, 0).hide().parent(ll).refresh();
 
-        TextView tv = new TextView(viewContext);
+        TextView tv = new MaterialTextView(viewContext);
         V.FL(tv).size(-2).lGravity(Gravity.LEFT | Gravity.BOTTOM).textSize(20).textColorRes(R.color.text_title).hide().marginDP(20, 0, 0, 0).parent(titleView).refresh();
 
         ImageView iv1 = new ImageView(viewContext);

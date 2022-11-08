@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.R;
 import candyenk.android.tools.V;
 import candyenk.android.viewgroup.NoLinearLayout;
+import com.google.android.material.textview.MaterialTextView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
@@ -166,7 +167,7 @@ public class DialogBottomItemText extends DialogBottom {
             nl.setClickable(true);
             nl.setFocusable(true);
 
-            TextView tv = new TextView(viewContext);
+            TextView tv = new MaterialTextView(viewContext);
             V.LL(tv).size(-1).parent(nl).textColorRes(R.color.text_main).refresh();
             if (itemCenter) tv.setGravity(Gravity.CENTER);
             else {

@@ -448,7 +448,7 @@ public class V<T extends View> {
      * 设置灵动效果
      */
     public V nimble() {
-        Nimble.apply(view);
+        NV.apply(view);
         return this;
     }
 

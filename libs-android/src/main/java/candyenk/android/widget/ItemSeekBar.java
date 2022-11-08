@@ -1,5 +1,6 @@
 package candyenk.android.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -10,8 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import candyenk.android.R;
 import candyenk.android.tools.V;
-import candyenk.android.view.ProgressBar;
-import candyenk.android.view.SeekBar;
+import candyenk.android.view.ProgressBarCDK;
+import candyenk.android.view.SeekBarCDK;
+import com.google.android.material.textview.MaterialTextView;
 
 /**
  * CDKSeekBar项目控件
@@ -25,7 +27,7 @@ import candyenk.android.view.SeekBar;
  */
 public class ItemSeekBar extends Item {
     protected TextView progressTextView;
-    protected SeekBar seekBarView;
+    protected SeekBarCDK seekBarView;
 
     /**********************************************************************************************/
     /*****************************************接口**************************************************/
@@ -67,17 +69,18 @@ public class ItemSeekBar extends Item {
         ll2.addView(iconView);
         ll2.addView(ll);
 
-        progressTextView = new TextView(context);
+        progressTextView = new MaterialTextView(context);
         V.LL(progressTextView).size(-2, -2).lGravity(Gravity.TOP).margin(0, 5, 0, 0).textColorRes(R.color.text_main).parent(ll2).refresh();
 
-        seekBarView = new SeekBar(context);
+        seekBarView = new SeekBarCDK(context);
         V.LL(seekBarView).size(-1, -2).margin(0, 10, 0, 0).parent(this).refresh();
-        seekBarView.setDisplayMode(SeekBar.DM_EXTREMUM | SeekBar.DM_PERCENT);
+        seekBarView.setDisplayMode(SeekBarCDK.DM_EXTREMUM | SeekBarCDK.DM_PERCENT);
 
     }
 
     @Override
     protected void initAttrs(AttributeSet attrs) {
+        @SuppressLint("CustomViewStyleable")
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKItemSeekBar);
         String title = ta.getString(R.styleable.CDKItemSeekBar_android_title);
         String summary = ta.getString(R.styleable.CDKItemSeekBar_android_summary);
@@ -141,7 +144,7 @@ public class ItemSeekBar extends Item {
      * 会重置进度显示内容
      * 需手动setProressText
      */
-    public void setOnSeekBarChangeListener(ProgressBar.OnProgressChangedListener l) {
+    public void setOnSeekBarChangeListener(ProgressBarCDK.OnProgressChangedListener l) {
         if (l != null) seekBarView.setOnProgressChangedListener(l);
     }
 
@@ -169,7 +172,7 @@ public class ItemSeekBar extends Item {
     /**
      * 获取SeekBar控件
      */
-    public SeekBar getSeekBarView() {
+    public SeekBarCDK getSeekBarView() {
         return seekBarView;
     }
 

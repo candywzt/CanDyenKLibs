@@ -35,10 +35,6 @@
         <attr name="android:background"/>
         <attr name="android:icon"/><!--控件图片-->
     </declare-styleable>
-    <!--CDKNimbleSwitch-->
-    <declare-styleable name="CDKNimbleSwitch">
-        <attr name="android:checked"/>
-    </declare-styleable>
     <!--CDKAutoImageView微动背景图-->
     <declare-styleable name="CDKAutoImageView">
         <attr name="android:src" format="reference"/>
