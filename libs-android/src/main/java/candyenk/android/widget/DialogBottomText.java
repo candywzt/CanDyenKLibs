@@ -4,11 +4,10 @@ import android.content.Context;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
+import androidx.annotation.LayoutRes;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.tools.L;
-import candyenk.android.tools.TH;
 import candyenk.android.tools.V;
-import candyenk.android.utils.UShare;
 import com.google.android.material.textview.MaterialTextView;
 
 
@@ -57,7 +56,7 @@ public class DialogBottomText extends DialogBottomView {
     /*************************************继承方法**************************************************/
     /**********************************************************************************************/
     @Override
-    public void setContent(int viewid) {
+    public void setContent(@LayoutRes int viewid) {
         L.e("TAG", "不允许使用setContent(int)");
     }
 
@@ -73,6 +72,7 @@ public class DialogBottomText extends DialogBottomView {
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
+
     /**
      * 设置内容-纯文本
      * 可重复调用以修改文本内容
@@ -80,7 +80,7 @@ public class DialogBottomText extends DialogBottomView {
     public void setContent(CharSequence text) {
         if (!ok) return;
         if (this.tv == null) super.setContent(createTextView());
-        this.text = TH.create(text).setURLClick((v, url) -> UShare.startBrowser(v.getContext(), url)).out();
+        this.text = text;
         this.tv.setText(this.text);
         this.tv.setMovementMethod(LinkMovementMethod.getInstance());
     }

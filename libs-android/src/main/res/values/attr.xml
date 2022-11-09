@@ -44,6 +44,7 @@
         <attr name="android:max"/>
         <attr name="android:min"/>
         <attr name="android:progress"/>
+        <attr name="smoothSliding" format="boolean"/>
         <attr name="displayMode" format="integer">
             <flag name="none" value="1"/>
             <flag name="extremum" value="2"/>

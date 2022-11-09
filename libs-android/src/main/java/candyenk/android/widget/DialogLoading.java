@@ -12,6 +12,7 @@ import candyenk.android.R;
 import candyenk.android.tools.V;
 import candyenk.android.view.LoadView;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.HashSet;
 
@@ -23,9 +24,9 @@ public class DialogLoading extends AlertDialog {
     private static final String TAG = DialogLoading.class.getSimpleName();
     private static final HashSet<View> mList = new HashSet<>();//拉起的控件列表
 
-    private Context context;//拉起弹窗的Context
-    private View parentView;//调用上拉弹窗的View对象
-    private boolean isShow;//是否已经展示
+    private final Context context;//拉起弹窗的Context
+    private final View parentView;//调用上拉弹窗的View对象
+    private boolean ok;//是否初始化成功
     private FrameLayout dialogView;//弹窗布局对象
     private TextView titleView; //标题文字控件
     private LoadView loadView;//加载动画控件
@@ -42,6 +43,10 @@ public class DialogLoading extends AlertDialog {
         this(context, null);
     }
 
+    public DialogLoading(View view) {
+        this(view.getContext(), view);
+    }
+
     /**
      * 构造函数
      * 无法使用同一View拉起多个Dialog,可使用null拉起一个dialog
@@ -53,10 +58,8 @@ public class DialogLoading extends AlertDialog {
         super(context, 0);
         this.context = context;
         this.parentView = view;
-        this.isShow = !mList.add(view);
-        if (!this.isShow) {
-            initLayout();
-        }
+        this.ok = mList.add(view);
+        if (this.ok) initLayout();
     }
     /**********************************************************************************************/
     /*************************************重写方法**************************************************/
@@ -65,8 +68,6 @@ public class DialogLoading extends AlertDialog {
     @Override
     protected void onStart() {
         super.onStart();
-        this.isShow = true;
-        //添加布局
         setContentView(dialogView);
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         loadView.start();
@@ -76,47 +77,32 @@ public class DialogLoading extends AlertDialog {
      * 拉起弹窗
      */
     public void show() {
-        if (!isShow) {
-            super.show();
-        } else {
-            Log.e(TAG, "拦截重复调用");
-        }
+        if (ok) super.show();
+        else Log.e(TAG, "拦截重复调用");
     }
 
-    /**
-     * 结束并销毁弹窗
-     */
-    public void dismiss(OnDismissListener l) {
-        if (isShow) {
-            loadView.dismiss(() -> {
-                if (l != null) {
-                    setOnDismissListener(l);
-                }
-                mList.remove(this.parentView);
-                super.dismiss();
-                isShow = false;
-            });
-        }
-
-    }
 
     public void dismiss() {
-        this.dismiss(null);
+        mList.remove(this.parentView);
+        loadView.dismiss();
     }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/
     private void initLayout() {
         dialogView = new FrameLayout(context);
+        dialogView.setOnClickListener(v -> dismiss());
         V.LP(dialogView).sizeDP(-1, -2).backgroundRes(android.R.color.transparent).refresh();
 
         CardView cv = new MaterialCardView(context);
         V.FL(cv).sizeDP(180, -1).lGravity(Gravity.CENTER).backgroundRes(R.color.back_view).radiusDP(20).parent(dialogView).refresh();
 
         loadView = new LoadView(context);
+        loadView.setCloseListener(DialogLoading.super::dismiss);
+        loadView.setOnClickListener(v -> {});
         V.FL(loadView).sizeDP(180).lGravity(Gravity.CENTER_HORIZONTAL).parent(cv).refresh();
 
-        titleView = new TextView(context);
+        titleView = new MaterialTextView(context);
         V.FL(titleView).size(-2, -2).lGravity(Gravity.BOTTOM | Gravity.CENTER).marginDP(0, 180, 0, 10).textColorRes(R.color.text_main).textSize(18).parent(cv).hide().refresh();
 
     }
@@ -133,10 +119,9 @@ public class DialogLoading extends AlertDialog {
      * @param backOff  返回键是否关闭
      */
     public void setCanceledable(boolean touchOff, boolean backOff) {
-        if (!isShow) {
-            setCanceledOnTouchOutside(touchOff);
-            setCancelable(backOff);
-        }
+        setCanceledOnTouchOutside(touchOff);
+        setCancelable(backOff);
+        dialogView.setOnClickListener(touchOff ? v -> dismiss() : null);
     }
 
     /**
@@ -150,6 +135,5 @@ public class DialogLoading extends AlertDialog {
         titleView.setText(title);
         titleView.setVisibility(View.VISIBLE);
     }
-
 }
 

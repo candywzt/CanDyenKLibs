@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Java文件工具
@@ -141,7 +142,7 @@ public class UFile {
      * @return 文件无法读取返回NULL
      */
     public static Reader getReader(File file, Charset charset) {
-        try {return new InputStreamReader(getInputStream(file), charset);} catch (Exception e) {return null;}
+        try {return new InputStreamReader(Objects.requireNonNull(getInputStream(file)), charset);} catch (Exception e) {return null;}
     }
 
     /**
@@ -162,7 +163,7 @@ public class UFile {
      * @return 文件无法写入返回NULL
      */
     public static Writer getWriter(File file, Charset charset, boolean isAppend) {
-        try {return new OutputStreamWriter(getOutputStream(file, isAppend), charset);} catch (Exception e) {
+        try {return new OutputStreamWriter(Objects.requireNonNull(getOutputStream(file, isAppend)), charset);} catch (Exception e) {
             return null;
         }
     }

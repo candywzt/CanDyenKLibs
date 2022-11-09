@@ -32,7 +32,7 @@ public class UHttp extends candyenk.java.utils.UHttp {
                 uc.setRequestMethod("GET");
                 uc.connect();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                IO.streamReadWrite(uc.getInputStream(), baos);
+                IO.streamRW(uc.getInputStream(), baos);
                 response = uc.getResponseCode();
                 in = new ByteArrayInputStream(baos.toByteArray());
             } catch (Exception e) {
@@ -62,7 +62,7 @@ public class UHttp extends candyenk.java.utils.UHttp {
                 IO.writeString(uc.getOutputStream(), parames);
                 uc.connect();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                IO.streamReadWrite(uc.getInputStream(), baos);
+                IO.streamRW(uc.getInputStream(), baos);
                 response = uc.getResponseCode();
                 in = new ByteArrayInputStream(baos.toByteArray());
             } catch (Exception e) {

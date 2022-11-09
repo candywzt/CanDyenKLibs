@@ -32,6 +32,5 @@ public class NoLinearLayout extends LinearLayout {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         return true;
-
     }
 }

@@ -1,15 +1,16 @@
 package candyenk.android.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import candyenk.android.R;
+import candyenk.android.utils.ULay;
 import candyenk.java.utils.UData;
 
 import java.lang.annotation.Retention;
@@ -18,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * CDK ProgressBar
  * 支持负数的
- * 1k以下不顺滑
+ * 控件高度固定DP25
  */
 public class ProgressBarCDK extends ProgressBar {
     @Retention(RetentionPolicy.SOURCE)
@@ -52,7 +53,7 @@ public class ProgressBarCDK extends ProgressBar {
     protected float progressPoint;//当前进度坐标
 
     protected int displayMode;//进度显示模式
-
+    protected boolean ss;//是否启用流畅滑动
     private OnProgressChangedListener l;
 
     /**********************************************************************************************/
@@ -131,12 +132,10 @@ public class ProgressBarCDK extends ProgressBar {
 
 
     public void setProgress(int progress) {
-        if (progress < min) {
-            progress = min;
-        } else if (progress > max) {
-            progress = max;
-        }
-        changeProgress(0, progress);
+        progress = Math.max(this.min, Math.min(this.max, progress));
+        if (progress < min) progress = min;
+        else if (progress > max) progress = max;
+        updateProgress(progress);
     }
 
     public void setBackgroundColor(@ColorInt int backgroundColor) {
@@ -145,49 +144,23 @@ public class ProgressBarCDK extends ProgressBar {
         invalidate();
     }
 
-    protected void changeProgress(int type, Object number) {
-        //0:progress;1:progressPoint;2:progressParcent
-        int progress = 0;
-        float progressPoint = 0;
-        float progressPercent = 0;
-        switch (type) {
-            case 0:
-                progress = (int) number;//当前数值
-                if (this.progress == progress) return;
-                progressPercent = (progress - this.min) * 1.0f / (this.max - this.min);//得到百分比
-                progressPoint = (this.endPoint - this.startPoint) * progressPercent + this.startPoint;//转换成坐标
-                break;
-            case 1:
-                progressPoint = (float) number;//当前坐标
-                progressPercent = (progressPoint - this.startPoint) / (this.endPoint - this.startPoint);//得到百分比
-                progress = Math.round((this.max - this.min) * progressPercent + this.min);//转换成数值
-                if (this.progress == progress) return;
-                progressPercent = (progress - this.min) * 1.0f / (this.max - this.min);//重设百分比
-                progressPoint = (this.endPoint - this.startPoint) * progressPercent + this.startPoint;//重设坐标
-                break;
-            case 2:
-                progressPercent = (float) number;//当前百分比
-                progress = Math.round((this.max - this.min) * progressPercent) + this.min;//得到数值
-                if (this.progress == progress) return;
-                progressPercent = (progress - this.min) * 1.0f / (this.max - this.min);//重设百分比
-                progressPoint = (this.endPoint - this.startPoint) * progressPercent + this.startPoint;//转换成坐标
-                break;
-        }
-        this.progressPercent = progressPercent;
-        this.progress = progress;
-        this.progressPoint = progressPoint;
-        postInvalidate();
-        if (l != null) l.onChanged(this.progress, this.progressPercent);
+    /*** 设置进度条X轴坐标 ***/
+    protected void setProgressPoint(float progressPoint) {
+        progressPoint = Math.max(this.startPoint, Math.min(this.endPoint, progressPoint));
+        if (this.progressPoint != progressPoint) updateProgress(progressPoint);
     }
+
     /**********************************************************************************************/
     /*****************************************私有方法***********************************************/
     /**********************************************************************************************/
 
     private void initAttrs(AttributeSet attrs) {
+        @SuppressLint("CustomViewStyleable")
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CDKProgressBar);
         max = a.getInt(R.styleable.CDKProgressBar_android_max, 100);
         min = a.getInt(R.styleable.CDKProgressBar_android_min, 0);
         progress = a.getInt(R.styleable.CDKProgressBar_android_progress, min);
+        ss = a.getBoolean(R.styleable.CDKProgressBar_smoothSliding, false);
         displayMode = a.getInt(R.styleable.CDKProgressBar_displayMode, DM_NONE);
 
         progressColor = context.getColor(R.color.main_01);
@@ -224,34 +197,21 @@ public class ProgressBarCDK extends ProgressBar {
     }
 
     private void initLayout() {
-        //进度条高度固定25dp
         layoutHeight = dp2px(25);
-        //进度条宽度取控件宽度
         layoutWidth = getWidth();
-        //绘制内距
         padding = (this.displayMode & DM_EXTREMUM) != 0 ? dp2px(20) : 0.0f;
-        //绘制y坐标
         yPoint = this.layoutHeight * 0.5f;
-        //绘制x起点
         startPoint = yPoint + padding;
-        //绘制终点
         endPoint = this.layoutWidth - this.startPoint;
-        //进度百分比
-        if (progressPercent == 0)
-            progressPercent = (this.progress - this.min) * 1.0f / (this.max - this.min);
-        //进度条坐标
+        if (progressPercent == 0) progressPercent = (this.progress - this.min) * 1.0f / (this.max - this.min);
         if (progressPoint == 0)
             this.progressPoint = (this.endPoint - this.startPoint) * this.progressPercent + this.startPoint;
     }
 
     private void drawBackground(Canvas canvas) {
-        //左侧半圆
         canvas.drawCircle(this.startPoint, this.yPoint, this.yPoint, backgroundPaint);
-        //右侧半圆
         canvas.drawCircle(this.endPoint, this.yPoint, this.yPoint, backgroundPaint);
-        //中间方形
-        RectF rectF = new RectF(this.startPoint, 0, endPoint, layoutHeight);
-        canvas.drawRect(rectF, backgroundPaint);
+        canvas.drawRect(this.startPoint, 0, endPoint, layoutHeight, backgroundPaint);
     }
 
     private void drawExtremum(Canvas canvas) {
@@ -266,15 +226,9 @@ public class ProgressBarCDK extends ProgressBar {
     }
 
     private void drawProgress(Canvas canvas) {
-        //左侧圆形
         canvas.drawCircle(this.startPoint, this.yPoint, this.yPoint, progressPaint);
-        if (progress != this.min) {
-            //右侧圆形
-            canvas.drawCircle(this.progressPoint, this.yPoint, this.yPoint, progressPaint);
-            //中间方形
-            RectF rectF = new RectF(this.startPoint, 0, this.progressPoint, this.layoutHeight);
-            canvas.drawRect(rectF, progressPaint);
-        }
+        canvas.drawCircle(this.progressPoint, this.yPoint, this.yPoint, progressPaint);
+        canvas.drawRect(this.startPoint, 0, this.progressPoint, this.layoutHeight, progressPaint);
     }
 
     private void drawNumber(Canvas canvas) {
@@ -291,19 +245,60 @@ public class ProgressBarCDK extends ProgressBar {
         canvas.drawText(text, this.progressPoint, y, numberPaint);
     }
 
+    private void updateProgress(Number number) {
+        int op = this.progress;//旧进度
+        if (number instanceof Integer) {
+            this.progress = (int) number;//进度
+            if (op == this.progress) return;
+            this.progressPoint = c2b(a2c(this.progress));//进度转百分比转坐标
+        } else {
+            float b = (float) number;//坐标
+            this.progress = c2a(b2c(b));//坐标转百分比转进度
+            if (!ss && op == this.progress) return;
+            this.progressPoint = ss ? b : c2b(a2c(this.progress));//进度转百分比转坐标
+        }
+        this.progressPercent = a2c(this.progress);
+        postInvalidate();
+        if (l != null && op != this.progress) l.onChanged(this.progress, this.progressPercent);
+    }
+
+
+    /*** 进度转百分比 ***/
+    private float a2c(int a) {
+        return (a - this.min) * 1.0f / (this.max - this.min);
+    }
+
+    /*** 坐标转百分比 ***/
+    private float b2c(float b) {
+        return (b - this.startPoint) / (this.endPoint - this.startPoint);
+    }
+
+    /*** 百分比转坐标 ***/
+    private float c2b(float c) {
+        return (this.endPoint - this.startPoint) * c + this.startPoint;
+    }
+
+    /*** 百分比转进度 ***/
+    private int c2a(float c) {
+        return Math.round((this.max - this.min) * c + this.min);
+    }
+
+
     private int dp2px(double dpValue) {
-        float num = dpValue < 0 ? -1 : 1;
-        final double scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + (0.5f * num));
+        return ULay.dp2px(context, dpValue);
     }
     /**********************************************************************************************/
     /*****************************************公共方法***********************************************/
     /**********************************************************************************************/
+    /**
+     * 启用流畅滑动
+     */
+    public void enableSmoothSliding(boolean enable) {
+        this.ss = enable;
+    }
 
     /**
      * 获取进度百分比
-     *
-     * @return percentage value
      */
     public float getProgressPercent() {
         return progressPercent;
@@ -311,42 +306,19 @@ public class ProgressBarCDK extends ProgressBar {
 
     /**
      * 设置进度百分比
+     * 开启流畅滑动后精度飙升
      */
     public void setProgressPercent(float progressPercent) {
-        if (progressPercent < 0) {
-            progressPercent = 0;
-        } else if (progressPercent > 1) {
-            progressPercent = 1;
-        }
-        changeProgress(2, progressPercent);
-    }
-
-    /**
-     * 设置进度条X轴坐标
-     */
-    public void setProgressPoint(float progressPoint) {
-        if (progressPoint < this.startPoint) {
-            progressPoint = this.startPoint;
-        } else if (progressPoint > this.endPoint) {
-            progressPoint = this.endPoint;
-        }
-        changeProgress(1, progressPoint);
+        progressPercent = Math.max(0, Math.min(1, progressPercent));
+        if (!ss) setProgress(c2a(progressPercent));
+        else setProgressPoint(c2b(progressPercent));
     }
 
     /**
      * 增加进度值
-     *
-     * @param progress 增加的进度值
      */
     public void addProgress(int progress) {
-        progress = this.progress + progress;
-        if (progress > max) {
-            progress = max;
-        } else if (progress < min) {
-            progress = min;
-        }
-        changeProgress(0, progress);
-
+        setProgress(getProgress() + progress);
     }
 
     public void addProgress() {
@@ -394,8 +366,7 @@ public class ProgressBarCDK extends ProgressBar {
 
     /**
      * 设置进度变化监听
-     *
-     * @param l 进度值变化回调
+     * 只会在进度改变时回调,百分比改变不管
      */
     public void setOnProgressChangedListener(OnProgressChangedListener l) {
         this.l = l;

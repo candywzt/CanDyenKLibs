@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 import candyenk.android.tools.V;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -183,7 +184,7 @@ public class BottomBar extends LinearLayout {
         if (icon == null) iv.setImageResource(android.R.drawable.ic_delete);
         else iv.setImageDrawable(icon);
 
-        TextView tv = new TextView(context);
+        TextView tv = new MaterialTextView(context);
         V.LL(tv).size(-1, -2).gravity(Gravity.CENTER).text(title).parent(l1).refresh();
         return l1;
     }

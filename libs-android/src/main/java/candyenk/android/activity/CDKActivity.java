@@ -19,6 +19,7 @@ import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import candyenk.android.widget.BottomBar;
 import candyenk.java.utils.UArrays;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -258,7 +259,7 @@ public abstract class CDKActivity extends AppCompatActivity {
         titleBar.setOrientation(LinearLayout.VERTICAL);
         if (getTitle() == null) titleBar.setVisibility(View.GONE);
 
-        TextView tv = new TextView(viewContext);
+        TextView tv = new MaterialTextView(viewContext);
         V.LL(tv).size(-2, -2).parent(titleBar).refresh();
         if (getTitle() != null) tv.setText(getTitle());
         tv.setTextColor(getColor(R.color.text_title));

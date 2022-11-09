@@ -10,10 +10,6 @@ import android.view.MotionEvent;
  * SeekBar那套我不吃
  */
 public class SeekBarCDK extends ProgressBarCDK {
-    public static final int SEEK_FREE = 0;//空闲状态
-    public static final int SEEK_DOWN = -1;//按下瞬间
-    public static final int SEEK_SLIDE = 2;//拖动中
-    public static final int SEEK_UP = 1;//抬起瞬间
     /**********************************************************************************************/
     /*****************************************接口**************************************************/
     /**********************************************************************************************/
@@ -42,17 +38,11 @@ public class SeekBarCDK extends ProgressBarCDK {
             case MotionEvent.ACTION_DOWN: // 手指按下(0)
                 getParent().requestDisallowInterceptTouchEvent(true);
             case MotionEvent.ACTION_MOVE://手指滑动(2)
-                float x = event.getX();
-                if (x < super.startPoint) x = super.startPoint;
-                else if (x > super.endPoint) x = super.endPoint;
-                if (x != super.progressPoint)
-                    super.setProgressPoint(x);
+                super.setProgressPoint(event.getX());
                 break;
             case MotionEvent.ACTION_UP:// 手指抬起(1)
             case MotionEvent.ACTION_CANCEL:// 触摸动作取消
                 getParent().requestDisallowInterceptTouchEvent(false);
-                break;
-            default:
                 break;
         }
         return true;
@@ -64,5 +54,4 @@ public class SeekBarCDK extends ProgressBarCDK {
     /**********************************************************************************************/
     /*****************************************公共方法***********************************************/
     /**********************************************************************************************/
-
 }

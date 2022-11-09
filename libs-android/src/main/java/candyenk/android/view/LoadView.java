@@ -5,26 +5,24 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.CycleInterpolator;
-
 import androidx.annotation.ColorInt;
-
 import candyenk.android.R;
 
 /**
  * 呼吸动态控件
+ * 控件尺寸为正方形,边长取短边
  */
 public class LoadView extends View {
-    protected static final float startPercent = 0.6f;//绘制起点百分比
-    protected static final float endPercent = 0.4f;//绘制终点百分比
+    protected static final float startPercent = 0.6f;//呼吸起点百分比
+    protected static final float endPercent = 0.4f;//呼吸终点百分比
 
     protected Context context;
     protected int color;//颜色
     private Paint loadPaint;//画笔
     private ValueAnimator loadAnim, startAnim, closeAnim;//加载动画
-    private OnLoadDismissListener onLoadDismissListener;
+    private OnLoadCloseListener onLoadCloseListener;
 
     protected int layoutWidth;//控件宽高
     protected float radius;//可绘制总半径
@@ -36,7 +34,7 @@ public class LoadView extends View {
     /**********************************************************************************************/
     /*****************************************接口**************************************************/
     /**********************************************************************************************/
-    public interface OnLoadDismissListener {
+    public interface OnLoadCloseListener {
         void onLoadDismiss();
     }
 
@@ -71,9 +69,9 @@ public class LoadView extends View {
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = Math.min(widthMeasureSpec, heightMeasureSpec);
+    protected void onMeasure(int w, int h) {
+        super.onMeasure(w, h);
+        int width = Math.min(w, h);
         setMeasuredDimension(width, width);
     }
 
@@ -114,7 +112,7 @@ public class LoadView extends View {
     }
 
     private void initAnimations() {
-        loadAnim = ValueAnimator.ofFloat(this.startPercent, this.endPercent);
+        loadAnim = ValueAnimator.ofFloat(startPercent, endPercent);
         loadAnim.setDuration(4000);
         loadAnim.setRepeatMode(ValueAnimator.RESTART);
         loadAnim.setRepeatCount(-1);
@@ -149,20 +147,15 @@ public class LoadView extends View {
     }
 
     private void pauseAndResume(ValueAnimator anim) {
-        if (!anim.isPaused()) {
-            anim.pause();
-        } else {
-            anim.resume();
-        }
+        if (!anim.isPaused()) anim.pause();
+        else anim.resume();
     }
 
     private void startAnimation() {
-        if (this.percent == this.startPercent) return;
-        this.startAnim = getAnimator(this.percent, this.startPercent, anim -> {
+        if (this.percent == startPercent) return;
+        this.startAnim = getAnimator(this.percent, startPercent, anim -> {
             float value = (float) anim.getAnimatedValue();
-            if (value == this.startPercent) {
-                this.loadAnim.start();
-            }
+            if (value == startPercent) this.loadAnim.start();
             changeRadius(value);
         });
         this.startAnim.start();
@@ -172,20 +165,14 @@ public class LoadView extends View {
         if (this.percent == 0) return;
         this.closeAnim = getAnimator(this.percent, 0, anim -> {
             float value = (float) anim.getAnimatedValue();
-            Log.e("ccc", "" + value);
-            if (value == 0 && onLoadDismissListener != null) {
-                onLoadDismissListener.onLoadDismiss();
-                Log.e("aaa", "关闭回调被调用");
+            if (value == 0 && onLoadCloseListener != null) {
+                onLoadCloseListener.onLoadDismiss();
             }
             changeRadius(value);
         });
         this.closeAnim.start();
     }
 
-    private int dp2px(double dpValue) {
-        final double scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
-    }
     /**********************************************************************************************/
     /*****************************************公共方法***********************************************/
     /**********************************************************************************************/
@@ -208,6 +195,13 @@ public class LoadView extends View {
         this.color = color;
         loadPaint.setColor(color);
         return this;
+    }
+
+    /**
+     * 设置结束监听
+     */
+    public void setCloseListener(OnLoadCloseListener l) {
+        this.onLoadCloseListener = l;
     }
 
     /**
@@ -241,10 +235,5 @@ public class LoadView extends View {
         this.loadAnim.cancel();
         closeAnimation();
 
-    }
-
-    public void dismiss(OnLoadDismissListener l) {
-        this.onLoadDismissListener = l;
-        this.dismiss();
     }
 }
