@@ -106,7 +106,7 @@ public class IO {
      */
     public static byte[] readBytes(InputStream in, boolean isClose) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        streamRW(in, baos, isClose);
+        streamRW(in, baos, isClose, false);
         return baos.toByteArray();
     }
 
@@ -115,18 +115,19 @@ public class IO {
      * 输出流不会关闭(关了还怎么输出)
      */
     public static boolean streamRW(InputStream in, OutputStream out) {
-        return streamRW(in, out, true);
+        return streamRW(in, out, true, false);
     }
 
     /**
      * 流间读写
      *
-     * @param in      输入流
-     * @param out     输出流
-     * @param isClose 是否关闭输入流
+     * @param in         输入流
+     * @param out        输出流
+     * @param isCloseIn  是否关闭输入流
+     * @param isCloseOut 是否关闭输出流
      * @return 读写成功与否
      */
-    public static boolean streamRW(InputStream in, OutputStream out, boolean isClose) {
+    public static boolean streamRW(InputStream in, OutputStream out, boolean isCloseIn, boolean isCloseOut) {
         if (in == null || out == null) return false;//必要,所有的判空都靠这个
         try {
             BufferedInputStream bis = in instanceof BufferedInputStream ? (BufferedInputStream) in : new BufferedInputStream(in);
@@ -136,7 +137,10 @@ public class IO {
             while ((size = bis.read(b)) != -1) bos.write(b, 0, size);
             bos.flush();
             return true;
-        } catch (IOException e) {return false;} finally {if (isClose) close(in);}
+        } catch (IOException e) {return false;} finally {
+            if (isCloseIn) close(in);
+            if (isCloseOut) close(out);
+        }
     }
 
 

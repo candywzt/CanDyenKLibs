@@ -76,10 +76,10 @@ public class DialogBottom extends BottomSheetDialog {
     }
 
     protected DialogBottom(Context context, View view) {
-        super(context, R.style.Theme_CDKDialog_Bottom);
+        super(context, R.style.Theme_CDK_Dialog);
         this.TAG = this.getClass().getSimpleName();
         this.context = context;
-        this.viewContext = new ContextThemeWrapper(context, R.style.Theme_CDKActivity);
+        this.viewContext = new ContextThemeWrapper(context, R.style.Theme_CDK);
         this.parentView = view;
         this.ok = mList.add(view);
         if (ok) initLayout();

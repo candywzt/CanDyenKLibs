@@ -45,8 +45,8 @@ public class UShare {
     /**
      * 写入字符数据到系统剪切板
      */
-    public static void writeClipboard(Activity activity, CharSequence text) {
-        ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+    public static void writeClipboard(Context context, CharSequence text) {
+        ClipboardManager cm = USys.getSystemService(context, Context.CLIPBOARD_SERVICE);
         ClipData cd = ClipData.newPlainText("label", text);
         cm.setPrimaryClip(cd);
     }
@@ -54,15 +54,22 @@ public class UShare {
     /**
      * 读取系统剪切板最近一项(字符序列形式)
      */
-    public static CharSequence readClipboard(Activity activity) {
+    public static CharSequence readClipboard(Context context) {
         CharSequence text = "";
         try {
-            ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipboardManager cm = USys.getSystemService(context, Context.CLIPBOARD_SERVICE);
             ClipData clip = cm.getPrimaryClip();
             ClipData.Item item = clip.getItemAt(0);
-            text = item.coerceToText(activity);
-        } catch (Exception e) {
-        }
+            text = item.coerceToText(context);
+        } catch (Exception ignored) {}
         return text;
+    }
+
+    public static ClipData.Item[] readAllClipboard(Context context) {
+        ClipboardManager cm = USys.getSystemService(context, Context.CLIPBOARD_SERVICE);
+        ClipData clip = cm.getPrimaryClip();
+        ClipData.Item[] items = new ClipData.Item[clip.getItemCount()];
+        for (int i = 0; i < items.length; i++) items[i] = clip.getItemAt(i);
+        return items;
     }
 }

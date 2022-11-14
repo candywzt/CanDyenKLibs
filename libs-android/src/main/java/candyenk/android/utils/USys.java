@@ -42,6 +42,13 @@ public class USys {
     }
 
     /**
+     * 获取系统服务(强转为指定服务)
+     */
+    public static <T> T getSystemService(Context context, String name, Class<T> c) {
+        return getSystemService(context, name);
+    }
+
+    /**
      * 弹出输入法
      */
     public static void showIM(Activity activity, View edit) {

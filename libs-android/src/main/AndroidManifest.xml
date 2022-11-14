@@ -1,21 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="candyenk.android">
-<!--    &lt;!&ndash;允许联网 &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.INTERNET" />-->
-<!--    &lt;!&ndash;获取GSM（2g）、WCDMA（联通3g）等网络状态的信息  &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
-<!--    &lt;!&ndash;获取wifi网络状态的信息 &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
-<!--    &lt;!&ndash;保持CPU 运转，屏幕和键盘灯有可能是关闭的,用于文件上传和下载 &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.WAKE_LOCK" />-->
-<!--    &lt;!&ndash;允许读取手机状态 用于创建BmobInstallation&ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+          package="candyenk.android">
+
     <application>
-        <!-- 默认崩溃捕捉页 -->
         <activity
-            android:name="candyenk.android.activity.CrashActivity"
-            android:process=":error_activity" />
+                android:name="candyenk.android.activity.CrashActivity"
+                android:process=":error_activity"/>
     </application>
 </manifest>

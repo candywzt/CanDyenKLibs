@@ -235,7 +235,7 @@ public abstract class CDKActivity extends AppCompatActivity {
     private void contextInit(Bundle save) {
         this.TAG = this.getClass().getSimpleName();
         this.saveData = save;
-        this.viewContext = new ContextThemeWrapper(this, R.style.Theme_CDKActivity);
+        this.viewContext = new ContextThemeWrapper(this, R.style.Theme_CDK);
         setTitle(null);
         if (save != null) {
             sign[0] = save.getInt("sign0", 0);

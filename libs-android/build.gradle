@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.library'
-    //id 'com.github.johnrengelman.shadow'
+    //id 'com.kezong.fat-aar'
 }
 android {
     compileSdk 32
@@ -22,14 +22,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    signingConfigs {
-        config {
-            v1SigningEnabled true
-            v2SigningEnabled true
-            enableV3Signing true
-            enableV4Signing true
-        }
-    }
+//    signingConfigs {
+//        config {
+//            v1SigningEnabled true
+//            v2SigningEnabled true
+//            enableV3Signing true
+//            enableV4Signing true
+//        }
+//    }
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
@@ -43,38 +43,23 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/NOTICE.md'
     }
-
 }
 
 dependencies {
-    implementation project(path: ':libs-java')
-    //implementation 'androidx.appcompat:appcompat:1.6.1'
-
+    api project(path: ':libs-java')
+    implementation fileTree(dir: 'libs', includes: ['*.aar'])
     implementation 'com.google.android.material:material:1.6.1'
-    implementation 'com.google.code.gson:gson:2.10'//Gson
-
     implementation 'com.squareup.okio:okio:3.2.0'
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.8'//OkHttp3
-
     implementation 'com.sun.mail:android-mail:1.6.7'//邮件
     implementation 'com.sun.mail:android-activation:1.6.7'
-
     implementation 'dev.rikka.shizuku:api:12.2.0'//Sui
     implementation 'dev.rikka.shizuku:provider:12.2.0'//Shizuku
-
-    implementation 'io.github.bmob:android-sdk:3.8.17'//bmob
-//    implementation 'io.reactivex.rxjava2:rxjava:2.2.21'//RXJava(Bmob前置)
-//    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'//RXAndroid(Bmob前置)
-
     compileOnly 'de.robv.android.xposed:api:82'
     compileOnly 'de.robv.android.xposed:api:82:sources'
 }
-
-task sourcesJar(type: Jar) {
+task androidSourcesJar(type: Jar) {
     classifier = 'sources'
     from android.sourceSets.main.java.sourceFiles
-    zip64 true
-    archiveClassifier.set('')//分类?
-    archiveBaseName.set('sources')//指定jar名字
-    archiveVersion.set('')//版本
 }
+

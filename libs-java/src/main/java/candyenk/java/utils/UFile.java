@@ -15,18 +15,7 @@ import java.util.Objects;
 /**
  * Java文件工具
  * 注意权限问题
- * <p>
- * 文件判空
- * 文件读写String和Bytes(功能超丰富)
- * 文件(夹)增删
- * 文件(夹)重命名
- * 列出所有文件(包括子文件夹)
- * 文件(夹)路径拼接
- * 文件(夹)路径分割
- * 当前jar运行路径
- * 创建缓存文件
- * 获取文件后缀
- * 判断文件类型
+ * 功能衡多就不写了
  */
 public class UFile {
     /**********************************************************************************************/
@@ -89,7 +78,24 @@ public class UFile {
      * @return 文件无法读取返回空数组
      */
     public static byte[] readBytes(File file) {
-        return IO.readBytes(getInputStream(file));
+        return IO.readBytes(getInStream(file));
+    }
+
+    /**
+     * 文件读取到输出流(自动关闭输出流)
+     */
+    public static boolean readStream(File file, OutputStream out) {
+        return readStream(file, out, true);
+    }
+
+    /**
+     * 文件读取到输出流
+     *
+     * @param isClose 是否关闭输出流
+     * @return 读取成功与否
+     */
+    public static boolean readStream(File file, OutputStream out, boolean isClose) {
+        return IO.streamRW(getInStream(file), out, true, isClose);
     }
 
 
@@ -130,9 +136,25 @@ public class UFile {
      * @return 写入成功与否
      */
     public static boolean writeBytes(File file, byte[] content, boolean isAppend) {
-        return IO.writeBytes(getOutputStream(file, isAppend), content);
+        return IO.writeBytes(getOutStream(file, isAppend), content);
     }
 
+    /**
+     * 输入流写入到文件(自动关闭输入流)
+     */
+    public static boolean writeStream(File file, InputStream in) {
+        return writeStream(file, in, true);
+    }
+
+    /**
+     * 输入流写入到文件
+     *
+     * @param isClose 是否关闭输入流
+     * @return 写入成功与否
+     */
+    public static boolean writeStream(File file, InputStream in, boolean isClose) {
+        return IO.streamRW(in, getOutStream(file, true), isClose, true);
+    }
 
     /**
      * 获取文件Reader
@@ -142,7 +164,9 @@ public class UFile {
      * @return 文件无法读取返回NULL
      */
     public static Reader getReader(File file, Charset charset) {
-        try {return new InputStreamReader(Objects.requireNonNull(getInputStream(file)), charset);} catch (Exception e) {return null;}
+        try {return new InputStreamReader(Objects.requireNonNull(getInStream(file)), charset);} catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -151,7 +175,7 @@ public class UFile {
      * @param file 输入文件
      * @return 文件无法读取返回NULL
      */
-    public static InputStream getInputStream(File file) {
+    public static InputStream getInStream(File file) {
         try {return Files.newInputStream(file.toPath());} catch (Exception e) {return null;}
     }
 
@@ -163,7 +187,8 @@ public class UFile {
      * @return 文件无法写入返回NULL
      */
     public static Writer getWriter(File file, Charset charset, boolean isAppend) {
-        try {return new OutputStreamWriter(Objects.requireNonNull(getOutputStream(file, isAppend)), charset);} catch (Exception e) {
+        try {return new OutputStreamWriter(Objects.requireNonNull(getOutStream(file, isAppend)), charset);} catch (
+                Exception e) {
             return null;
         }
     }
@@ -171,10 +196,11 @@ public class UFile {
     /**
      * 获取文件输出流
      *
-     * @param file 输出文件
+     * @param file     输出文件
+     * @param isAppend 是否累加
      * @return 文件无法写入返回NULL
      */
-    public static OutputStream getOutputStream(File file, boolean isAppend) {
+    public static OutputStream getOutStream(File file, boolean isAppend) {
         try {
             return Files.newOutputStream(file.toPath(), isAppend ? StandardOpenOption.APPEND : StandardOpenOption.WRITE);
         } catch (Exception e) {return null;}

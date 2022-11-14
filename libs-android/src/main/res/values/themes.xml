@@ -1,13 +1,13 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.CDKActivity" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.CDK" parent="Theme.MaterialComponents.Light">
         <!-- 状态栏颜色 -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <!--虚拟键和小白条-->
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <!--状态栏区域显示-->
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="o_mr1">shortEdges</item>
         <!--标题栏-->
         <item name="android:windowTranslucentStatus">true</item>
         <item name="windowActionBar">false</item>
@@ -17,11 +17,15 @@
         <item name="colorPrimary">@color/main_01</item>
         <item name="colorPrimaryVariant">@color/main_02</item>
         <item name="colorOnPrimary">@color/main_03</item>
+        <item name="android:colorAccent">@color/main_04</item>
+        <item name="colorAccent">@color/main_04</item>
         <!-- 次要颜色 -->
-        <item name="android:colorSecondary">@color/main_03</item>
+        <item name="android:colorSecondary" tools:targetApi="n_mr1">@color/main_03</item>
         <item name="colorSecondary">@color/main_03</item>
         <item name="colorSecondaryVariant">@color/main_04</item>
         <item name="colorOnSecondary">@color/main_01</item>
+        <!--其他颜色-->
+        <item name="android:textColorLink">@color/main_01</item>
         <!--TextView控件-->
         <item name="android:textViewStyle">@style/CDK.TextView</item>
         <!--Button控件-->
@@ -49,7 +53,7 @@
         <item name="recyclerViewStyle">@style/CDK.RecyclerView</item>
     </style>
     <!--BottomSheetDialog上拉弹窗主题-->
-    <style name="Theme.CDKDialog.Bottom" parent="Theme.Design.Light.BottomSheetDialog">
+    <style name="Theme.CDK.Dialog" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/CDK.DialogBottom</item>
     </style>
     <!--*****************************************************************************************-->

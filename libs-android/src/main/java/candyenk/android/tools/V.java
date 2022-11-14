@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.*;
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
@@ -31,7 +32,7 @@ public class V<T extends View> {
     private static final String TAG = "ViewHelper";
     private static final Map<View, V> map = new HashMap<>();
     public static final int UN = Integer.MIN_VALUE;
-    public static final int SUPER = -1;
+    public static final int SUPER = Integer.MAX_VALUE;
     /*************************************成员变量**************************************************/
     private final T view;
     private final Context context;
@@ -78,16 +79,40 @@ public class V<T extends View> {
      * 获取子控件
      */
     public static <T extends View> T getChild(View v, int i) {
-        if (v == null || i < 0 || !(v instanceof ViewGroup)) return null;
+        if (i < 0 || !(v instanceof ViewGroup)) return null;
         return (T) ((ViewGroup) v).getChildAt(i);
     }
 
-    public static <T extends View> T getChild(View v, Class<T> c, int i) {
+    /**
+     * 获取子控件
+     * 强转为指定类型,方便链式调用
+     * 这个判定条件是int i
+     */
+    public static <T extends View> T getChild(View v, int i, Class<T> c) {
         return getChild(v, i);
     }
 
     /**
      * 获取子控件
+     * 获取第一个指定类型的控件
+     */
+    public static <T extends View> T getChild(View v, Class<T> c) {
+        return getChild(v, c, 0);
+    }
+
+    /**
+     * 获取子控件
+     * 获取第i个指定类型的控件
+     * 从0开始
+     * 这个判定条件是Class
+     */
+    public static <T extends View> T getChild(View v, Class<T> c, int i) {
+        for (View view : getChilds(v)) if (view.getClass() == c) {if (i == 0) return (T) view; i--;}
+        return null;
+    }
+
+    /**
+     * 获取嵌套子控件
      * i.length==1为子控件
      * i.length==2为子控件的子控件
      * ...
@@ -101,6 +126,10 @@ public class V<T extends View> {
         return (T) view;
     }
 
+    /**
+     * 获取子孙控件
+     * 强转为指定类型,方便链式调用
+     */
     public static <T extends View> T getChild(View v, Class<T> c, int... i) {
         return getChild(v, i);
     }
@@ -125,8 +154,7 @@ public class V<T extends View> {
      * 获取父控件
      */
     public static <T extends ViewGroup> T getParent(View v) {
-        if (v == null) return null;
-        return (T) v.getParent();
+        return getParent(v, 0);
     }
 
     public static <T extends ViewGroup> T getParent(View v, Class<T> c) {
@@ -135,10 +163,11 @@ public class V<T extends View> {
 
     /**
      * 获取祖宗控件
-     * i==0为父级
-     * i==1为父级的父级
-     * ...
-     * i==SUPER()-1为最顶级
+     * 0为父级
+     * 1为父级的父级
+     * 2为父级的父级的父级
+     * SUPER为最顶级
+     * i过大会返回最顶级
      */
     public static <T extends ViewGroup> T getParent(View v, Class<T> c, int i) {
         return getParent(v, i);
@@ -146,19 +175,9 @@ public class V<T extends View> {
 
     public static <T extends ViewGroup> T getParent(View v, int i) {
         if (i < -1 || v == null) return null;
-        View view = v;
-        for (int ii = 0; ii < i; ii++) {
-            view = getParent(view);
-        }
-        if (i == SUPER) {
-            while (true) {
-                View vv = getParent(view);
-                if (vv == null) break;
-                else view = vv;
-            }
-        }
-
-        return (T) view;
+        ViewParent vp = v.getParent();
+        while (i-- != -1 && vp != null && vp.getParent() != null) vp = vp.getParent();
+        return (T) vp;
     }
 
     /**

@@ -1,5 +1,6 @@
 package candyenk.android.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
@@ -151,7 +152,7 @@ public class DialogBottomItemText extends DialogBottom {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             CharSequence text = ((CharSequence[]) items)[position];
-            V.getChild(holder.itemView, TextView.class, 0).setText(text);
+            V.getChild(holder.itemView, 0, TextView.class).setText(text);
             V.getChild(holder.itemView, 1).setVisibility(position + 1 == getItemCount() ? 8 : 0);
         }
 
@@ -161,6 +162,7 @@ public class DialogBottomItemText extends DialogBottom {
         }
 
         /*** 创建文本列表控件 ***/
+        @SuppressLint("RtlHardcoded")
         private View initLayoutStrings() {
             NoLinearLayout nl = new NoLinearLayout(viewContext);
             V.RV(nl).sizeDP(-1, 60).backgroundRes(R.drawable.bg_cdk).orientation(1).refresh();
