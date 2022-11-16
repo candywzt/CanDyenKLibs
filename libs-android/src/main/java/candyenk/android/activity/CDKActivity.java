@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import candyenk.android.R;
@@ -20,9 +21,12 @@ import candyenk.android.tools.V;
 import candyenk.android.widget.BottomBar;
 import candyenk.java.utils.UArrays;
 import com.google.android.material.textview.MaterialTextView;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * CDKActivity
@@ -32,9 +36,10 @@ public abstract class CDKActivity extends AppCompatActivity {
     /*************************************静态变量**************************************************/
     //public static boolean useAnimation = true;
     /*************************************成员变量**************************************************/
-    protected String TAG;
-    protected Context viewContext;//创建控件使用的Context
+    protected String TAG;//TAG
     protected Bundle saveData;//保存的数据
+    private final Map<Integer, ActivityCallBack> acbMap = new HashMap<>();//Activity回调表
+    private final Map<Integer, PermissionsCallBack> pcbMap = new HashMap<>();//权限申请回调表
     private FrameLayout container;//根布局
     private LinearLayout titleBar;//标题栏控件
     private BottomBar bottomBar;//底栏控件
@@ -53,6 +58,28 @@ public abstract class CDKActivity extends AppCompatActivity {
     /**********************************************************************************************/
     /***************************************接口****************************************************/
     /**********************************************************************************************/
+    /**
+     * Activity回调
+     */
+    public interface ActivityCallBack {
+        /**
+         * @param code 返回结果
+         * @param data 返回内容
+         * @return 返回false则用后即焚
+         */
+        boolean callback(int code, Intent data);
+    }
+
+    /**
+     * 权限申请回调
+     */
+    public interface PermissionsCallBack {
+        /**
+         * @param codes 授权结果
+         * @return 返回false则用后即焚
+         */
+        boolean callback(int[] codes);
+    }
 
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
@@ -73,7 +100,7 @@ public abstract class CDKActivity extends AppCompatActivity {
 
     //Activity创建,启动的初始化
     @Override
-    protected void onCreate(Bundle save) {
+    protected final void onCreate(Bundle save) {
         L.e(TAG, "启动创建-Create");
         contextInit(save);
         super.onCreate(save);
@@ -126,7 +153,7 @@ public abstract class CDKActivity extends AppCompatActivity {
 
     //保存Activity状态
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         L.e(TAG, "保存状态-Save");
         Bundle save = saveData(outState);
         if (save == null) save = outState;
@@ -134,11 +161,20 @@ public abstract class CDKActivity extends AppCompatActivity {
         super.onSaveInstanceState(save);
     }
 
-    //回调函数
+    //Activity回调函数
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        L.e(TAG, "Activity回调:" + requestCode + "-" + resultCode + data);
+    protected final void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        ActivityCallBack acb = acbMap.get(requestCode);
+        if (acb != null && !acb.callback(resultCode, data)) removeActiveCallback(requestCode);
+    }
+
+    //权限回调
+    @Override
+    public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionsCallBack pcb = pcbMap.get(requestCode);
+        if (pcb != null && !pcb.callback(grantResults)) removePermissionCallback(requestCode);
     }
 
     /**
@@ -147,7 +183,7 @@ public abstract class CDKActivity extends AppCompatActivity {
      */
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
-        this.setContentView(LayoutInflater.from(viewContext).inflate(layoutResID, null));
+        this.setContentView(LayoutInflater.from(this).inflate(layoutResID, null));
     }
 
     @Override
@@ -215,6 +251,46 @@ public abstract class CDKActivity extends AppCompatActivity {
     public <T extends View> T getLayout() {
         return (T) child;
     }
+
+    /**
+     * 添加Activity回调
+     *
+     * @param requestCode 回调代码,唯一
+     * @param callBack    回调体
+     * @return 返回false说明代码重复, 添加失败
+     */
+    public boolean addActiveCallback(int requestCode, ActivityCallBack callBack) {
+        if (acbMap.containsKey(requestCode)) return false;
+        acbMap.put(requestCode, callBack);
+        return true;
+    }
+
+    /**
+     * 添加权限申请回调
+     *
+     * @param requestCode 回调代码,唯一
+     * @param callBack    回调体
+     * @return 返回false说明代码重复, 添加失败
+     */
+    public boolean addPermissionCallback(int requestCode, PermissionsCallBack callBack) {
+        if (pcbMap.containsKey(requestCode)) return false;
+        pcbMap.put(requestCode, callBack);
+        return true;
+    }
+
+    /**
+     * 移除Activity回调
+     */
+    public void removeActiveCallback(int requestCode) {
+        acbMap.remove(requestCode);
+    }
+
+    /**
+     * 移除权限回调
+     */
+    public void removePermissionCallback(int requestCode) {
+        pcbMap.remove(requestCode);
+    }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/
@@ -235,7 +311,6 @@ public abstract class CDKActivity extends AppCompatActivity {
     private void contextInit(Bundle save) {
         this.TAG = this.getClass().getSimpleName();
         this.saveData = save;
-        this.viewContext = new ContextThemeWrapper(this, R.style.Theme_CDK);
         setTitle(null);
         if (save != null) {
             sign[0] = save.getInt("sign0", 0);
@@ -244,22 +319,22 @@ public abstract class CDKActivity extends AppCompatActivity {
 
     /*** 创建根布局 ***/
     private void createRootLayout() {
-        container = new FrameLayout(viewContext);
+        container = new FrameLayout(this);
         container.setId(31636368);
         V.eleDP(container, -100);
         container.setBackgroundResource(R.color.back_all);
 
-        ImageView iv = new ImageView(viewContext);
+        ImageView iv = new ImageView(this);
         V.FL(iv).size(-1, -1).eleDP(-90).parent(container).refresh();
         iv.setScaleType(ImageView.ScaleType.FIT_START);
         iv.setImageResource(R.drawable.bg_cdk_head);
 
-        titleBar = new LinearLayout(viewContext);
+        titleBar = new LinearLayout(this);
         V.FL(titleBar).size(-1, -2).marginDP(40, 60, 0, 40).eleDP(100).parent(container).refresh();
         titleBar.setOrientation(LinearLayout.VERTICAL);
         if (getTitle() == null) titleBar.setVisibility(View.GONE);
 
-        TextView tv = new MaterialTextView(viewContext);
+        TextView tv = new MaterialTextView(this);
         V.LL(tv).size(-2, -2).parent(titleBar).refresh();
         if (getTitle() != null) tv.setText(getTitle());
         tv.setTextColor(getColor(R.color.text_title));
@@ -269,7 +344,7 @@ public abstract class CDKActivity extends AppCompatActivity {
 
     /*** 创建底栏布局 ***/
     private void createBottomLayout() {
-        bottomBar = new BottomBar(viewContext);
+        bottomBar = new BottomBar(this);
         V.FL(bottomBar)
                 .size(-1, -2)
                 .eleDP(100)
@@ -297,7 +372,6 @@ public abstract class CDKActivity extends AppCompatActivity {
             f = (CDKFragment) getSupportFragmentManager().findFragmentByTag(classz.getSimpleName());
         }
         f.activity = this;
-        f.viewContext = this.viewContext;
         return f;
     }
 

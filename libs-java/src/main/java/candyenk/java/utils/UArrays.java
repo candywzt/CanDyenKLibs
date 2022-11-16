@@ -7,21 +7,7 @@ import java.util.function.*;
 
 /**
  * Java数组工具
- * 数组判空
- * 自定义数组ToString
- * 基本数据类型数组ToString
- * 自定义数组转化
- * 自定义数组转化为基本数据类型数组
- * 数组转自定义List
- * 数组转自定义Set
- * 数组ForEach
- * int数组转byte数组
- * byte数组转int数组
- * int数组转long数组
- * Collection添加自定义数组
- * Arrays合并
- * 判断Object/int/long/Double数组内是否含有某元素
- * int/long/double数组求和/绝对和
+ * 功能很多不写了
  */
 public class UArrays {
     /**********************************************************************************************/
@@ -252,6 +238,7 @@ public class UArrays {
         return arrays;
 
     }
+
 
     /**
      * 判断Object数组内是否含有某单个元素

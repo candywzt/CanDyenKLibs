@@ -9,7 +9,7 @@ java {
 version('0.1')
 
 dependencies {
-    api 'com.google.code.gson:gson:2.10'
+    implementation 'com.google.code.gson:gson:2.10'
     api fileTree(dir: 'libs', includes: ['*jar'])
 }
 
@@ -24,7 +24,7 @@ task sourcesJar(type: Jar) {
 
 jar {
     duplicatesStrategy DuplicatesStrategy.EXCLUDE
-    from {configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }}
+    //from {configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }}
     manifest {
         attributes('Implementation-Title': 'CDKLibs-Java')
         attributes('Manifest-Version': '1.0')

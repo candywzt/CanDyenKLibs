@@ -3,6 +3,7 @@ package candyenk.java.utils;
 
 import candyenk.java.io.FileType;
 import candyenk.java.io.IO;
+import candyenk.java.io.NIO;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -42,7 +43,7 @@ public class UFile {
      *
      * @param file 文件对象
      */
-    public static boolean isEmptyFile(File file) {
+    public static boolean isEmptyContent(File file) {
         if (isEmpty(file)) return false;
         if (file.isDirectory()) return UArrays.isEmpty(file.list());
         else return file.length() == 0;
@@ -50,7 +51,7 @@ public class UFile {
 
     /**
      * 文件读取字符串(默认编码)
-     * 底层采用Reader读取String
+     * 超高性能文本文件读取
      *
      * @param file 输入文件
      * @return 文件无法读取返回空字符串
@@ -61,28 +62,32 @@ public class UFile {
 
     /**
      * 文件读取字符串
-     * 底层采用Reader读取String
+     * 超高性能文本文件读取
      *
      * @param file    输入文件
      * @param charset 字符编码
      * @return 文件无法读取返回空字符串
      */
     public static String readString(File file, Charset charset) {
-        return IO.readString(getReader(file, charset));
+        return new String(readBytes(file), charset);
     }
 
     /**
      * 文件读取字节数组
+     * 超高性能文件读取
      *
      * @param file 输入文件
      * @return 文件无法读取返回空数组
      */
     public static byte[] readBytes(File file) {
-        return IO.readBytes(getInStream(file));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        if (!readStream(file, baos)) return new byte[0];
+        else return baos.toByteArray();
     }
 
     /**
      * 文件读取到输出流(自动关闭输出流)
+     * 超高性能文件读取
      */
     public static boolean readStream(File file, OutputStream out) {
         return readStream(file, out, true);
@@ -90,23 +95,25 @@ public class UFile {
 
     /**
      * 文件读取到输出流
+     * 超高性能文件读取
      *
      * @param isClose 是否关闭输出流
      * @return 读取成功与否
      */
     public static boolean readStream(File file, OutputStream out, boolean isClose) {
-        return IO.streamRW(getInStream(file), out, true, isClose);
+        InputStream in;
+        if (file.length() < 1 << 23) {//小于512MB采用FileInputStream方式
+            in = getInputStream(file);
+        } else {//大于512MB采用ChannelInputStream方式
+            in = getChannelInputStream(file);
+        }
+        return IO.streamRW(in, out, true, isClose);
     }
 
 
     /**
      * 字符串写入到文件(默认编码)
-     * 底层采用Writer写入char[]
-     *
-     * @param file     写入文件
-     * @param text     写入内容
-     * @param isAppend 是否增量写入
-     * @return 写入成功与否
+     * 超高性能文本文件写入
      */
     public static boolean writeString(File file, String text, boolean isAppend) {
         return writeString(file, text, Charset.defaultCharset(), isAppend);
@@ -114,7 +121,7 @@ public class UFile {
 
     /**
      * 字符串写入到文件
-     * 底层采用Writer写入char[]
+     * 超高性能文本文件写入
      *
      * @param file     写入文件
      * @param text     写入内容
@@ -123,20 +130,25 @@ public class UFile {
      * @return 写入成功与否
      */
     public static boolean writeString(File file, String text, Charset charset, boolean isAppend) {
-        return IO.writeString(getWriter(file, charset, isAppend), text);
+        return writeBytes(file, text.getBytes(charset), isAppend);
     }
 
 
     /**
      * 字节数组写入到文件
+     * 超高性能文件写入
      *
      * @param file     写入文件
-     * @param content  写入内容
+     * @param bytes    写入内容
      * @param isAppend 是否增量写入
      * @return 写入成功与否
      */
-    public static boolean writeBytes(File file, byte[] content, boolean isAppend) {
-        return IO.writeBytes(getOutStream(file, isAppend), content);
+    public static boolean writeBytes(File file, byte[] bytes, boolean isAppend) {
+        FileOutputStream out = getOutputStream(file, isAppend);
+        if (out == null) return false;
+        if (file.length() < 1 << 23) {//小于8MB采用IO方式
+            return IO.writeBytes(out, bytes);
+        } else return NIO.write(out.getChannel(), bytes);//大于8MB采用NIO方式
     }
 
     /**
@@ -153,7 +165,7 @@ public class UFile {
      * @return 写入成功与否
      */
     public static boolean writeStream(File file, InputStream in, boolean isClose) {
-        return IO.streamRW(in, getOutStream(file, true), isClose, true);
+        return IO.streamRW(in, getOutputStream(file, false), isClose, true);
     }
 
     /**
@@ -164,7 +176,7 @@ public class UFile {
      * @return 文件无法读取返回NULL
      */
     public static Reader getReader(File file, Charset charset) {
-        try {return new InputStreamReader(Objects.requireNonNull(getInStream(file)), charset);} catch (Exception e) {
+        try {return new InputStreamReader(Objects.requireNonNull(getInputStream(file)), charset);} catch (Exception e) {
             return null;
         }
     }
@@ -175,7 +187,17 @@ public class UFile {
      * @param file 输入文件
      * @return 文件无法读取返回NULL
      */
-    public static InputStream getInStream(File file) {
+    public static FileInputStream getInputStream(File file) {
+        try {return new FileInputStream(file);} catch (Exception e) {return null;}
+    }
+
+    /**
+     * 获取文件通道输入流
+     *
+     * @param file 输入文件
+     * @return 文件无法读取返回NULL
+     */
+    public static InputStream getChannelInputStream(File file) {
         try {return Files.newInputStream(file.toPath());} catch (Exception e) {return null;}
     }
 
@@ -187,7 +209,7 @@ public class UFile {
      * @return 文件无法写入返回NULL
      */
     public static Writer getWriter(File file, Charset charset, boolean isAppend) {
-        try {return new OutputStreamWriter(Objects.requireNonNull(getOutStream(file, isAppend)), charset);} catch (
+        try {return new OutputStreamWriter(Objects.requireNonNull(getOutputStream(file, isAppend)), charset);} catch (
                 Exception e) {
             return null;
         }
@@ -200,11 +222,22 @@ public class UFile {
      * @param isAppend 是否累加
      * @return 文件无法写入返回NULL
      */
-    public static OutputStream getOutStream(File file, boolean isAppend) {
-        try {
-            return Files.newOutputStream(file.toPath(), isAppend ? StandardOpenOption.APPEND : StandardOpenOption.WRITE);
-        } catch (Exception e) {return null;}
+    public static FileOutputStream getOutputStream(File file, boolean isAppend) {
+        try {return new FileOutputStream(file, isAppend);} catch (Exception e) {return null;}
+    }
 
+    /**
+     * 获取文件通道输出流
+     *
+     * @param file     输出文件
+     * @param isAppend 是否累加
+     * @return 文件无法写入返回NULL
+     */
+    public static OutputStream getChannelOutputStream(File file, boolean isAppend) {
+        try {
+            StandardOpenOption append = isAppend ? StandardOpenOption.APPEND : StandardOpenOption.WRITE;
+            return Files.newOutputStream(file.toPath(), append);
+        } catch (IOException e) {return null;}
     }
 
 
@@ -213,30 +246,34 @@ public class UFile {
      * 自动创建所有父级文件夹
      * 返回false优肯以及创建了一些文件夹
      *
-     * @param file 文件对象
+     * @param files 文件对象
      * @return 创建成功或已存在返回true, 创建失败返回false
      */
-    public static boolean createFolder(File file) {
-        if (file == null) return false;
-        return file.exists() || file.mkdirs();
+    public static boolean createFolder(File... files) {
+        if (UArrays.isEmpty(files)) return false;
+        for (File file : files) {
+            if (file == null) continue;
+            if (!file.exists() && !file.mkdirs()) return false;
+        }
+        return true;
     }
 
     /**
      * 创建文件
      * 自动创建所有父级文件夹
      *
-     * @param file 文件对象
+     * @param files 文件对象
      * @return 创建成功或已存在返回true, 创建失败返回false
      */
-    public static boolean createFile(File file) {
-        if (file == null) return false;
-        if (file.exists()) return true;
-        if (file.getParentFile() != null && !createFolder(file.getParentFile())) return false;
-        try {
-            return file.createNewFile();
-        } catch (IOException e) {
-            return false;
+    public static boolean createFile(File... files) {
+        if (UArrays.isEmpty(files)) return false;
+        for (File file : files) {
+            if (file == null) continue;
+            if (file.exists()) return true;
+            if (file.getParentFile() != null && !createFolder(file.getParentFile())) return false;
+            try {if (!file.createNewFile()) return false;} catch (IOException e) {return false;}
         }
+        return true;
     }
 
     /**
@@ -250,7 +287,7 @@ public class UFile {
     public static boolean deleteFile(File... files) {
         if (UArrays.isEmpty(files)) return true;
         for (File file : files) {
-            if (!file.exists()) return true;
+            if (!file.exists()) continue;
             if (file.isDirectory() && !deleteFile(file.listFiles())) return false;
             if (!file.delete()) return false;
         }
@@ -271,25 +308,100 @@ public class UFile {
     }
 
     /**
-     * 列出文件夹内所有文件
-     * 只列举文件,不列举文件夹
-     * 包括子文件夹文件
+     * 文件(夹)大小
      *
-     * @param file 文件夹对象
-     * @return 失败返回空list
+     * @param files 文件(夹)
      */
-    public static List<File> listAllFile(File file) {
-        final ArrayList<File> list = new ArrayList<>();
-        if (isEmpty(file)) return list;
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (!UArrays.isEmpty(files)) {
-                for (File f : files) list.addAll(listAllFile(f));
+    public static long sizeFile(File... files) {
+        if (UArrays.isEmpty(files)) return 0;
+        long size = 0;
+        for (File file : files) {
+            if (file.isFile()) size += file.length();
+            else if (file.isDirectory()) size += sizeFile(file.listFiles());
+        }
+        return size;
+    }
+
+    /**
+     * 文件(夹)复制(NIO)
+     * 如果目标文件存在,将被覆盖!!!
+     *
+     * @param from 源文件
+     * @param to   目标文件
+     * @return 复制是否成功
+     */
+    public static boolean copy(File from, File to) {
+        if (isEmpty(from)) return false;
+        if (from.isDirectory()) {
+            if (isEmpty(to) && !to.isDirectory()) deleteFile(to);
+            createFolder(to);
+            String[] list = from.list();
+            if (list == null) return false;
+            else if (list.length == 0) return true;
+            for (String s : list) {
+                if (!copy(new File(from, s), new File(to, s))) return false;
             }
-        } else {
-            list.add(file);
+            return true;
+        } else if (from.isFile()) {
+            if (isEmpty(to) && !to.isFile()) deleteFile(to);
+            createFile(to);
+            if (from.length() > 1 << 29) {//小于512MB采用IO方式
+                return IO.streamRW(getInputStream(from), getOutputStream(to, false));
+            } else {//大于512MB采用NIO方式
+                return NIO.copy(from, to);
+            }
+        } else return false;
+    }
+
+    /**
+     * 列出所有文件
+     * 包括子文件夹文件
+     * 只列举文件,不列举文件夹
+     *
+     * @param files 文件(夹)(们)
+     */
+    public static List<File> listFiles(File... files) {
+        final ArrayList<File> list = new ArrayList<>();
+        if (UArrays.isEmpty(files)) return list;
+        for (File file : files) {
+            if (file.isFile()) list.add(file);
+            else if (file.isDirectory()) {
+                list.addAll(listFiles(file.listFiles()));
+            }
         }
         return list;
+    }
+
+    /**
+     * 计算文件数量
+     *
+     * @param files 文件(夹)(们)
+     */
+    public static int numberFiles(File... files) {
+        if (UArrays.isEmpty(files)) return 0;
+        int num = 0;
+        for (File file : files) {
+            if (file.isFile()) num++;
+            else if (file.isDirectory()) num += numberFiles(file.listFiles());
+        }
+        return num;
+    }
+
+    /**
+     * 计算文件夹数量
+     *
+     * @param files 文件(夹)(们)
+     */
+    public static int numberFolders(File... files) {
+        if (UArrays.isEmpty(files)) return 0;
+        int num = 0;
+        for (File file : files) {
+            if (file.isDirectory()) {
+                num += numberFiles(file.listFiles());
+                num++;
+            }
+        }
+        return num;
     }
 
     /**

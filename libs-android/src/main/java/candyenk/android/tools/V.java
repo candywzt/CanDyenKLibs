@@ -77,6 +77,7 @@ public class V<T extends View> {
 
     /**
      * 获取子控件
+     * i:子控件索引
      */
     public static <T extends View> T getChild(View v, int i) {
         if (i < 0 || !(v instanceof ViewGroup)) return null;
@@ -107,7 +108,12 @@ public class V<T extends View> {
      * 这个判定条件是Class
      */
     public static <T extends View> T getChild(View v, Class<T> c, int i) {
-        for (View view : getChilds(v)) if (view.getClass() == c) {if (i == 0) return (T) view; i--;}
+        for (View view : getChilds(v)) {
+            if (view.getClass() == c) {
+                if (i == 0) return (T) view;
+                i--;
+            }
+        }
         return null;
     }
 
@@ -176,7 +182,7 @@ public class V<T extends View> {
     public static <T extends ViewGroup> T getParent(View v, int i) {
         if (i < -1 || v == null) return null;
         ViewParent vp = v.getParent();
-        while (i-- != -1 && vp != null && vp.getParent() != null) vp = vp.getParent();
+        while (i-- > 0 && vp != null && vp.getParent() != null) vp = vp.getParent();
         return (T) vp;
     }
 

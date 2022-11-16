@@ -1,6 +1,7 @@
 package candyenk.android.utils;
 
 import android.content.Context;
+import android.net.Uri;
 import androidx.annotation.RawRes;
 
 import java.io.*;
@@ -108,6 +109,27 @@ public class UFile extends candyenk.java.utils.UFile {
     public static boolean deleteData(Context context, String fileName) {
         return context.deleteFile(fileName);
     }
+
+    /**
+     * Uri文件读取
+     *
+     * @param context 应用上下文
+     * @param uri     目标uri
+     */
+    public static InputStream readUri(Context context, Uri uri) {
+        try {return context.getContentResolver().openInputStream(uri);} catch (Exception e) {return null;}
+    }
+
+    /**
+     * Uri文件写入
+     *
+     * @param context 应用上下文
+     * @param uri     目标uri
+     */
+    public static OutputStream writeUri(Context context, Uri uri) {
+        try {return context.getContentResolver().openOutputStream(uri);} catch (Exception e) {return null;}
+    }
+
 
     /**
      * Data文件(夹)重命名(data/data/包名/files/目录)

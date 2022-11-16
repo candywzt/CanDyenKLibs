@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -14,8 +13,11 @@ import android.view.inputmethod.InputMethodManager;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.PermissionChecker;
-import androidx.core.util.Consumer;
 import androidx.fragment.app.Fragment;
+import candyenk.android.activity.CDKActivity;
+import candyenk.android.activity.CDKFragment;
+
+import java.util.Random;
 
 /**
  * Android系统工具类
@@ -32,7 +34,6 @@ public class USys {
     public static final String GET_SENSOR = Manifest.permission.BODY_SENSORS;//获取身体传感器权限
     public static final String SET_FILE = Manifest.permission.WRITE_EXTERNAL_STORAGE;//文件读写权限
     public static final String SET_SMS = Manifest.permission.SEND_SMS;//短信权限
-    private static final int requestCode = 100;
 
     /**
      * 获取系统服务
@@ -73,46 +74,33 @@ public class USys {
     /**
      * 检查权限
      */
-    public static boolean checkPermission(Activity context, String permission) {
+    public static boolean checkPermission(Context context, String permission) {
         return PermissionChecker.checkSelfPermission(context, permission) == PermissionChecker.PERMISSION_GRANTED;
     }
 
     /**
      * 申请权限
      */
-    public static void requestPermission(Activity activity, String permission) {
-        ActivityCompat.requestPermissions(activity, new String[]{permission}, requestCode);
-    }
-
-    public static void requestPermission(Fragment fragment, String permission) {
-        fragment.requestPermissions(new String[]{permission}, requestCode);
-    }
-
-    /**
-     * 申请权限组
-     */
-    public static void applySelfPermission(Activity activity, String... permissions) {
+    public static void requestPermission(Activity activity, int requestCode, String... permissions) {
         ActivityCompat.requestPermissions(activity, permissions, requestCode);
     }
 
-    public static void applySelfPermission(Fragment fragment, String... permissions) {
+    public static void requestPermission(Fragment fragment, int requestCode, String... permissions) {
         fragment.requestPermissions(permissions, requestCode);
     }
 
-    /**
-     * 申请结果回调
-     * 在Activity和Fragment的onRequestPermissionsResult中调用
-     */
-    public static void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults, Consumer<String> successListener, Consumer<String> failListener) {
-        if (requestCode == USys.requestCode) {
-            for (int i = 0; i < permissions.length; i++) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED && successListener != null) {
-                    successListener.accept(permissions[i]);
-                } else if (grantResults[i] != PackageManager.PERMISSION_GRANTED && failListener != null) {
-                    failListener.accept(permissions[i]);
-                }
-            }
-        }
+    public static void reauestPermission(CDKActivity activity, CDKActivity.PermissionsCallBack callback, String... permissions) {
+        int requestCode = new Random().nextInt(65535);
+        if (activity.addPermissionCallback(requestCode, callback)) {
+            ActivityCompat.requestPermissions(activity, permissions, requestCode);
+        } else reauestPermission(activity, callback, permissions);
+    }
+
+    public static void reauestPermission(CDKFragment fragment, CDKActivity.PermissionsCallBack callback, String... permissions) {
+        int requestCode = new Random().nextInt(65535);
+        if (fragment.addPermissionCallback(requestCode, callback)) {
+            fragment.requestPermissions(permissions, requestCode);
+        } else reauestPermission(fragment, callback, permissions);
     }
 
     /**

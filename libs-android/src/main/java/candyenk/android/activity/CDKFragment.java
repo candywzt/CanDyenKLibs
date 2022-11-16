@@ -1,6 +1,8 @@
 package candyenk.android.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import candyenk.android.R;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * CDKFragment
@@ -23,10 +29,11 @@ public abstract class CDKFragment extends Fragment {
     /*************************************成员变量**************************************************/
     protected String TAG = this.getClass().getSimpleName();
     protected CDKActivity activity;//创建和使用本Fragment的Activity
-    protected Context viewContext;//创建控件使用的Context
     protected Bundle saveData;//保存的数据
     protected View container;//根控件
     protected LayoutInflater inflater;
+    private final Map<Integer, CDKActivity.ActivityCallBack> acbMap = new HashMap<>();//Activity回调表
+    private final Map<Integer, CDKActivity.PermissionsCallBack> pcbMap = new HashMap<>();//权限申请回调表
     /**********************************************************************************************/
     /***********************************公共静态方法*************************************************/
     /**********************************************************************************************/
@@ -58,6 +65,7 @@ public abstract class CDKFragment extends Fragment {
      * 获取当前Fragment的图标
      * 子类重写该方法
      */
+    @SuppressLint("UseCompatLoadingForDrawables")
     public Drawable getIcon() {
         return activity.getDrawable(R.drawable.ic_file_picture);
     }
@@ -72,7 +80,7 @@ public abstract class CDKFragment extends Fragment {
 
     //关联activity
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
     }
 
@@ -83,7 +91,7 @@ public abstract class CDKFragment extends Fragment {
     }
 
     //Fragment首次绘制界面
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saveData) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle saveData) {
         this.inflater = inflater;
         this.saveData = saveData;
         viewInit();
@@ -144,6 +152,22 @@ public abstract class CDKFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(saveData(outState));
     }
+
+    //Activity回调函数
+    @Override
+    public final void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        CDKActivity.ActivityCallBack acb = acbMap.get(requestCode);
+        if (acb != null && acb.callback(resultCode, data)) removeActiveCallback(requestCode);
+    }
+
+    //权限回调
+    @Override
+    public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        CDKActivity.PermissionsCallBack pcb = pcbMap.get(requestCode);
+        if (pcb != null && pcb.callback(grantResults)) removePermissionCallback(requestCode);
+    }
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
@@ -171,6 +195,45 @@ public abstract class CDKFragment extends Fragment {
         return container.findViewById(id);
     }
 
+    /**
+     * 添加Activity回调
+     *
+     * @param requestCode 回调代码,唯一
+     * @param callBack    回调体
+     * @return 返回false说明代码重复, 添加失败
+     */
+    public boolean addActiveCallback(int requestCode, CDKActivity.ActivityCallBack callBack) {
+        if (acbMap.containsKey(requestCode)) return false;
+        acbMap.put(requestCode, callBack);
+        return true;
+    }
+
+    /**
+     * 添加权限申请回调
+     *
+     * @param requestCode 回调代码,唯一
+     * @param callBack    回调体
+     * @return 返回false说明代码重复, 添加失败
+     */
+    public boolean addPermissionCallback(int requestCode, CDKActivity.PermissionsCallBack callBack) {
+        if (pcbMap.containsKey(requestCode)) return false;
+        pcbMap.put(requestCode, callBack);
+        return true;
+    }
+
+    /**
+     * 移除Activity回调
+     */
+    public void removeActiveCallback(int requestCode) {
+        acbMap.remove(requestCode);
+    }
+
+    /**
+     * 移除权限回调
+     */
+    public void removePermissionCallback(int requestCode) {
+        pcbMap.remove(requestCode);
+    }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/

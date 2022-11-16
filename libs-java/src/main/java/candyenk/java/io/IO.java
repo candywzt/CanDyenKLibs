@@ -5,7 +5,7 @@ import java.nio.charset.Charset;
 import java.util.function.Consumer;
 
 /**
- * JavaIO实体类
+ * JavaIO 帮助类
  * 尽量避免Stream到Reader的转换,效率会降低
  */
 public class IO {
@@ -57,13 +57,21 @@ public class IO {
     /**
      * Reader读取字符串
      * 不建议读取StreamReader,直接读取Stream较好
+     * Reader作为一个包装,不是用来全盘读取字符串的
      *
      * @param reader 输入Reader
      * @return Reader无法读取返回空字符串
      */
     public static String readString(Reader reader, boolean isClose) {
         StringBuilder sb = new StringBuilder();
-        return readString(reader, isClose, s -> sb.append(s).append("\n")) ? sb.toString() : "";
+        char[] chars = new char[1024];
+        int size;
+        try {
+            while ((size = reader.read(chars)) != -1) {
+                sb.append(chars, 0, size);
+            }
+        } catch (Exception ignored) {return "";} finally {if (isClose) close(reader);}
+        return sb.toString();
     }
 
     /**
@@ -113,6 +121,7 @@ public class IO {
     /**
      * 流间读写(自动关闭输入流)
      * 输出流不会关闭(关了还怎么输出)
+     * 默认true,false
      */
     public static boolean streamRW(InputStream in, OutputStream out) {
         return streamRW(in, out, true, false);
@@ -134,12 +143,14 @@ public class IO {
             BufferedOutputStream bos = out instanceof BufferedOutputStream ? (BufferedOutputStream) out : new BufferedOutputStream(out);
             byte[] b = new byte[1024];
             int size;
-            while ((size = bis.read(b)) != -1) bos.write(b, 0, size);
+            while ((size = bis.read(b)) > -1) bos.write(b, 0, size);
             bos.flush();
             return true;
-        } catch (IOException e) {return false;} finally {
-            if (isCloseIn) close(in);
-            if (isCloseOut) close(out);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            close(isCloseIn ? in : null, isCloseOut ? out : null);
         }
     }
 
@@ -238,42 +249,10 @@ public class IO {
     }
 
     /**
-     * 资源回收
-     * 关闭输入流
-     *
-     * @param in 输入流
+     * 关闭器
      */
-    public static void close(InputStream in) {
-        try {in.close();} catch (Exception ignored) {}
-    }
-
-    /**
-     * 资源回收
-     * 关闭输出流
-     *
-     * @param out 输入流
-     */
-    public static void close(OutputStream out) {
-        try {out.close();} catch (Exception ignored) {}
-    }
-
-    /**
-     * 资源回收
-     * 关闭Reader
-     *
-     * @param reader 输入流
-     */
-    public static void close(Reader reader) {
-        try {reader.close();} catch (Exception ignored) {}
-    }
-
-    /**
-     * 资源回收
-     * 关闭Writer
-     *
-     * @param writer 输入流
-     */
-    public static void close(Writer writer) {
-        try {writer.close();} catch (Exception ignored) {}
+    public static void close(Closeable... c) {
+        if (c == null) return;
+        for (Closeable able : c) try {able.close();} catch (Exception ignored) {}
     }
 }

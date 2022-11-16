@@ -46,13 +46,14 @@ android {
 }
 
 dependencies {
-    api project(path: ':libs-java')
+    api project(':libs-java')
     implementation fileTree(dir: 'libs', includes: ['*.aar'])
-    implementation 'com.google.android.material:material:1.6.1'
-    implementation 'com.squareup.okio:okio:3.2.0'
+    implementation 'com.google.code.gson:gson:2.10'//Gson
+    implementation 'com.google.android.material:material:1.6.1'//AndroidX
+    implementation 'com.squareup.okio:okio:3.2.0'//OkHttp3
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.8'//OkHttp3
-    implementation 'com.sun.mail:android-mail:1.6.7'//邮件
-    implementation 'com.sun.mail:android-activation:1.6.7'
+    implementation 'com.sun.mail:android-mail:1.6.7'//Mail
+    implementation 'com.sun.mail:android-activation:1.6.7'//Mail
     implementation 'dev.rikka.shizuku:api:12.2.0'//Sui
     implementation 'dev.rikka.shizuku:provider:12.2.0'//Shizuku
     compileOnly 'de.robv.android.xposed:api:82'
