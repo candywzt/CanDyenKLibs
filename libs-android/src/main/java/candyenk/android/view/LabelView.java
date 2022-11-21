@@ -1,45 +1,47 @@
 package candyenk.android.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.ColorStateListDrawable;
 import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.util.AttributeSet;
-import android.view.View;
-
-import androidx.annotation.ColorInt;
-
 import candyenk.android.R;
+import candyenk.android.tools.L;
+import com.google.android.material.textview.MaterialTextView;
+
+import java.util.Random;
 
 /**
  * 小标签控件
- * 必须要有文字
- * 可以没有图
- * BUG:暂时不能改文字内容,不然会被截断
+ * 背景色无法设置图片,只能设置Color
+ * 不能设置Padding属性,无效
+ * 启用随机色彩将覆盖原有色彩,不可逆
  */
-public class LabelView extends View {
+public class LabelView extends MaterialTextView {
     private static final String TAG = LabelView.class.getSimpleName();
-    private Context context;
-    private Paint backgroundPaint;
-    private Paint titlePaint;
-    private Paint imagePaint;
-
-    private int backgroundColor;
-    private int titleColor;
-    private Drawable titleImage;
-    private CharSequence titleText;
-
-    private int width, height;//控件尺寸
-    private int titleWidth, titleHeight;//内容尺寸
-    private float startX, endX, startY, endY;//背景四相坐标
-    private float centerY;//中心点y坐标
-    private float textX;//文字起始点x坐标
-    private float imageStartX, imageStartY, imageEndX, imageEndY;//图标四相坐标
-
+    private static final int strokeWidth = 4;
+    private final Context context;
+    private GradientDrawable drawable;//背景
+    private final int[] sign = {0, 0, 0, 0, 0};//边距和高
+    private Drawable icon;//头图
+    private static final int[][] colorList = {
+            {0xFFFFCDD2, 0xFFF44336}, {0xFFF8BBD0, 0xFFE91E63},
+            {0xFFE1BEE7, 0xFF9C27B0}, {0xFFD1C4E9, 0xFF673AB7},
+            {0xFFC5CAE9, 0xFF3F51B5}, {0xFFBBDEFB, 0xFF2196F3},
+            {0xFFB3E5FC, 0xFF03A9F4}, {0xFFB2EBF2, 0xFF00BCD4},
+            {0xFFB2DFDB, 0xFF009688}, {0xFFC8E6C9, 0xFF4CAF50},
+            {0xFFDCEDC8, 0xFF8BC34A}, {0xFFF0F4C3, 0xFFCDDC39},
+            {0xFFFFF9C4, 0xFFFFEB3B}, {0xFFFFECB3, 0xFFFFC107},
+            {0xFFFFE0B2, 0xFFFF9800}, {0xFFFFCCBC, 0xFFFF5722},
+            {0xFFD7CCC8, 0xFF795548}, {0xFFF5F5F5, 0xFF9E9E9E},
+            {0xFFCFD8DC, 0xFF607D8B}
+    };//预制颜色表
 
     /**********************************************************************************************/
     /*****************************************接口**************************************************/
@@ -64,136 +66,92 @@ public class LabelView extends View {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
         initAttrs(attrs);
-        initPaints();
     }
     /**********************************************************************************************/
     /*****************************************重写方法***********************************************/
     /**********************************************************************************************/
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        drawBackground(canvas);//背景
-        drawImage(canvas);//图标
-        drawTitle(canvas);//文字
+        if (icon != null) {
+            icon.setBounds(getPaddingLeft() - getMeasuredHeight() + getPaddingTop() + getPaddingBottom(), getPaddingTop(), getPaddingLeft(), getMeasuredHeight() - getPaddingBottom());
+            icon.draw(canvas);
+        }
+    }
+
+    @Override
+    public void setPadding(int l, int t, int r, int b) {
+        L.e(TAG, "不许动");
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        initLayout();
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int height = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
+        int width = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
+        if (sign[0] == 0 || height != sign[4]) {
+            sign[1] = sign[3] = (int) ((sign[0] = sign[2] = (int) (getMeasuredHeight() * 0.4)) * 0.5);
+        }
+        sign[0] = icon == null ? sign[2] : (height + sign[2]);
+        sign[4] = height;
+        super.setPadding(sign[0], sign[1], sign[2], sign[3]);
+        setMeasuredDimension(sign[0] + width + sign[2], sign[1] + height + sign[3]);
+        if (this.drawable == null) this.drawable = new GradientDrawable();
+        this.drawable.setCornerRadius((float) (Math.min(getMeasuredHeight(), getMeasuredWidth()) * 0.5));
+        setBackground(this.drawable);
     }
 
+    @Override
+    public void setBackground(Drawable bg) {
+        if (this.drawable == null) this.drawable = new GradientDrawable();
+        if (bg != this.drawable) {
+            if (bg instanceof ColorDrawable) {
+                int color = ((ColorDrawable) bg).getColor();
+                this.drawable.setColor(color);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && bg instanceof ColorStateListDrawable) {
+                ColorStateList csl = ((ColorStateListDrawable) bg).getColorStateList();
+                this.drawable.setColor(csl);
+            }
+        }
+        super.setBackground(this.drawable);
+    }
+
+    @Override
+    public void setTextColor(int color) {
+        this.setTextColor(ColorStateList.valueOf(color));
+    }
+
+    @Override
+    public void setTextColor(ColorStateList colors) {
+        if (this.drawable == null) this.drawable = new GradientDrawable();
+        this.drawable.setStroke(strokeWidth, colors);
+        this.setBackgroundDrawable(this.drawable);
+        super.setTextColor(colors);
+    }
     /**********************************************************************************************/
     /*****************************************私有方法***********************************************/
     /**********************************************************************************************/
-
-    private void initLayout() {
-        Rect rect = new Rect();
-        if (titleText != null) {
-            titlePaint.getTextBounds((String) titleText, 0, titleText.length(), rect);
-        }
-        int textWidth = rect.width();//文字宽度(图标尺寸)
-        int textHeight = this.titleText == null ? 33 : rect.height();//文字高度
-
-        int imageWidth = this.titleImage == null ? 0 : textHeight + dp2px(6);
-
-        this.titleWidth = this.titleImage == null ? textWidth : textWidth + imageWidth + dp2px(2);
-        this.titleHeight = textHeight + dp2px(10);
-
-        this.height = this.titleHeight + dp2px(10);
-        this.width = this.titleWidth + this.height;
-
-        this.startX = (this.width - this.titleWidth) * 0.5f;
-        this.endX = this.startX + this.titleWidth;
-        this.startY = (this.height - this.titleHeight) * 0.5f;
-        this.endY = this.startY + this.titleHeight;
-
-        this.textX = this.endX - textWidth;
-        this.centerY = this.height * 0.5f;
-
-        if (this.titleImage != null) {
-            this.imageStartX = this.startX;
-            this.imageStartY = dp2px(7);
-            this.imageEndX = this.imageStartX + imageWidth;
-            this.imageEndY = this.imageStartY + imageWidth;
-        }
-        setMeasuredDimension(this.width, this.height);
-    }
-
     private void initAttrs(AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CDKLabelView);
-        this.titleText = typedArray.getString(R.styleable.CDKLabelView_android_text);
-        this.titleColor = typedArray.getColor(R.styleable.CDKLabelView_android_textColor, context.getResources().getColor(R.color.text_title));
-        int res = typedArray.getResourceId(R.styleable.CDKLabelView_android_src, 0);
-        if (res != 0) {
-            this.titleImage = context.getResources().getDrawable(res);
-        }
-        this.backgroundColor = typedArray.getColor(R.styleable.CDKLabelView_android_background, context.getResources().getColor(R.color.mainGC4_1));
-    }
-
-    private void initPaints() {
-        backgroundPaint = new Paint();
-        backgroundPaint.setColor(backgroundColor);
-        backgroundPaint.setStyle(Paint.Style.FILL);
-        backgroundPaint.setAntiAlias(true);
-        backgroundPaint.setStrokeWidth(1);
-
-        imagePaint = new Paint();
-        imagePaint.setColor(titleColor);
-        imagePaint.setStyle(Paint.Style.FILL);
-        imagePaint.setAntiAlias(true);
-        imagePaint.setStrokeWidth(1);
-
-        titlePaint = new Paint();
-        titlePaint.setColor(titleColor);
-        titlePaint.setStyle(Paint.Style.FILL);
-        titlePaint.setTextSize(sp2px(12));
-        titlePaint.setAntiAlias(true);
-        titlePaint.setStrokeWidth(1);
-    }
-
-    private void drawBackground(Canvas canvas) {
-        canvas.drawCircle(this.startX, this.centerY, this.titleHeight * 0.5f, backgroundPaint);
-        canvas.drawCircle(this.endX, this.centerY, this.titleHeight * 0.5f, backgroundPaint);
-        RectF rectF = new RectF(this.startX, this.startY, this.endX, this.endY);
-        canvas.drawRect(rectF, backgroundPaint);
-    }
-
-    private void drawImage(Canvas canvas) {
-        if (this.titleImage != null) {
-            Rect rect = new Rect((int) this.imageStartX, (int) this.imageStartY, (int) this.imageEndX, (int) this.imageEndY);
-            this.titleImage.setBounds(rect);
-            this.titleImage.draw(canvas);
-        }
-    }
-
-    private void drawTitle(Canvas canvas) {
-        if (this.titleText == null) return;
-        Paint.FontMetrics f = titlePaint.getFontMetrics();
-        float y = this.centerY + (f.bottom - f.top) * 0.5f - f.bottom;
-        canvas.drawText(this.titleText, 0, this.titleText.length(), this.textX, y, titlePaint);
-    }
-
-    public int sp2px(float spValue) {
-        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
-    }
-
-    private int dp2px(double dpValue) {
-        float num = dpValue < 0 ? -1 : 1;
-        final double scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + (0.5f * num));
+        try {
+            @SuppressLint({"CustomViewStyleable", "Recycle"})
+            TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKLabelView);
+            this.icon = ta.getDrawable(R.styleable.CDKLabelView_android_src);
+            boolean rc = ta.getBoolean(R.styleable.CDKLabelView_randomColor, true);
+            if (rc) randomColor();
+            ta.recycle();
+        } catch (Exception ignored) {}
     }
     /**********************************************************************************************/
     /*****************************************公开方法***********************************************/
     /**********************************************************************************************/
     /**
-     * 设置文字内容
+     * 启用随机色彩
      */
-    public void setText(CharSequence text) {
-        if (TextUtils.isEmpty(text)) return;
-        this.titleText = text;
-        initLayout();
-        invalidate();
+    public void randomColor() {
+        int index = new Random().nextInt(colorList.length);
+        this.drawable.setColor(colorList[index][0]);
+        setTextColor(colorList[index][1]);
     }
 
     /**
@@ -201,30 +159,17 @@ public class LabelView extends View {
      * 为空则删除图标
      */
     public void setImageDrawable(Drawable drawable) {
-        if (drawable == null) return;
-        this.titleImage = drawable;
-        initLayout();
-        invalidate();
+        this.icon = drawable;
+        requestLayout();
     }
 
     /**
-     * 设置文字颜色
+     * 设置图标内容
+     * 为0则删除图标
      */
-    public void setTextColor(@ColorInt int textColor) {
-        if (textColor == 0) return;
-        this.titleColor = textColor;
-        this.titlePaint.setColor(textColor);
-        initLayout();
-        invalidate();
-    }
-
-    /**
-     * 设置背景色
-     */
-    public void setBackgroundColor(@ColorInt int backgroundColor) {
-        if (backgroundColor == 0) return;
-        this.backgroundColor = backgroundColor;
-        this.backgroundPaint.setColor(backgroundColor);
-        invalidate();
+    @SuppressLint({"UseCompatLoadingForDrawables"})
+    public void setImageDrawableRes(int resId) {
+        if (resId <= 0) setImageDrawable(null);
+        else setImageDrawable(context.getDrawable(resId));
     }
 }

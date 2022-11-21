@@ -70,32 +70,35 @@ public class ItemSeekBar extends Item {
         ll2.addView(ll);
 
         progressTextView = new MaterialTextView(context);
-        V.LL(progressTextView).size(-2, -2).lGravity(Gravity.TOP).margin(0, 5, 0, 0).textColorRes(R.color.text_main).parent(ll2).refresh();
+        V.LL(progressTextView).size(-2, -2).lGravity(Gravity.TOP).paddingDP(0, 5, 0, 0).textColorRes(R.color.text_main).parent(ll2).refresh();
 
         seekBarView = new SeekBarCDK(context);
-        V.LL(seekBarView).size(-1, -2).margin(0, 10, 0, 0).parent(this).refresh();
+        V.LL(seekBarView).size(-1, -2).paddingDP(0, 10, 0, 0).parent(this).refresh();
         seekBarView.setDisplayMode(SeekBarCDK.DM_EXTREMUM | SeekBarCDK.DM_PERCENT);
 
     }
 
     @Override
     protected void initAttrs(AttributeSet attrs) {
-        @SuppressLint("CustomViewStyleable")
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKItemSeekBar);
-        String title = ta.getString(R.styleable.CDKItemSeekBar_android_title);
-        String summary = ta.getString(R.styleable.CDKItemSeekBar_android_summary);
-        int max = ta.getInt(R.styleable.CDKItemSeekBar_android_max, 100);
-        int min = ta.getInt(R.styleable.CDKItemSeekBar_android_min, 0);
-        int progress = ta.getInt(R.styleable.CDKItemSeekBar_android_progress, min);
-        Drawable icon = ta.getDrawable(R.styleable.CDKItemSeekBar_android_icon);
-        ta.recycle();
-
-        setTitleText(title);
-        setSummaryText(summary);
-        setIconDrawable(icon);
-        setMax(max);
-        setMin(min);
-        progressTextView.setText(String.valueOf(progress));
+        try {
+            @SuppressLint({"CustomViewStyleable", "Recycle"})
+            TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKItemSeekBar);
+            String title = ta.getString(R.styleable.CDKItemSeekBar_android_title);
+            String summary = ta.getString(R.styleable.CDKItemSeekBar_android_summary);
+            int max = ta.getInt(R.styleable.CDKItemSeekBar_android_max, 100);
+            int min = ta.getInt(R.styleable.CDKItemSeekBar_android_min, 0);
+            int progress = ta.getInt(R.styleable.CDKItemSeekBar_android_progress, min);
+            Drawable icon = ta.getDrawable(R.styleable.CDKItemSeekBar_android_icon);
+            boolean ss = ta.getBoolean(R.styleable.CDKItemSeekBar_smoothSliding, false);
+            setTitleText(title);
+            setSummaryText(summary);
+            setIconDrawable(icon);
+            setMax(max);
+            setMin(min);
+            setProgressText(String.valueOf(progress));
+            enableSmoothSliding(ss);
+            ta.recycle();
+        } catch (Exception ignored) {}
     }
 
     @Override
@@ -149,6 +152,13 @@ public class ItemSeekBar extends Item {
     }
 
     /**
+     * 开启seekbar流畅滑动
+     */
+    public void enableSmoothSliding(boolean enable) {
+        seekBarView.enableSmoothSliding(enable);
+    }
+
+    /**
      * 获取SeekBar最大值
      */
     public int getMax() {
@@ -175,7 +185,6 @@ public class ItemSeekBar extends Item {
     public SeekBarCDK getSeekBarView() {
         return seekBarView;
     }
-
 
     /**********************************************************************************************/
     /******************************************私有方法*********************************************/

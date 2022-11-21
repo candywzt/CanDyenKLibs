@@ -1,6 +1,5 @@
 package candyenk.android.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -9,12 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ContextThemeWrapper;
 import candyenk.android.R;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
@@ -41,7 +38,7 @@ public abstract class CDKActivity extends AppCompatActivity {
     private final Map<Integer, ActivityCallBack> acbMap = new HashMap<>();//Activity回调表
     private final Map<Integer, PermissionsCallBack> pcbMap = new HashMap<>();//权限申请回调表
     private FrameLayout container;//根布局
-    private LinearLayout titleBar;//标题栏控件
+    private TextView titleBar;//标题栏控件
     private BottomBar bottomBar;//底栏控件
     private View child;//添加的子控件
     private List<CDKFragment> fList;//添加的Fragment数组
@@ -104,6 +101,7 @@ public abstract class CDKActivity extends AppCompatActivity {
         L.e(TAG, "启动创建-Create");
         contextInit(save);
         super.onCreate(save);
+        initLayout();
         intentInit();
         viewInit();
         contentInit(save);
@@ -188,9 +186,12 @@ public abstract class CDKActivity extends AppCompatActivity {
 
     @Override
     public void setContentView(View view) {
-        if (container == null) createRootLayout();
-        packLayout(view);
-        super.setContentView(container);
+        if (this.child != null) container.removeView(this.child);
+        this.child = view;
+        if (view == null) return;
+        view.setElevation(0);
+        view.setBackgroundResource(R.color.transparent);
+        container.addView(view);
     }
 
     /**
@@ -294,6 +295,7 @@ public abstract class CDKActivity extends AppCompatActivity {
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/
+
     /*** 设置实际显示的Title内容 ***/
     private void setTitleText(CharSequence text) {
         if (titleBar != null) {
@@ -301,8 +303,7 @@ public abstract class CDKActivity extends AppCompatActivity {
                 titleBar.setVisibility(View.GONE);
             } else {
                 titleBar.setVisibility(View.VISIBLE);
-                TextView tv = (TextView) titleBar.getChildAt(0);
-                tv.setText(text);
+                titleBar.setText(text);
             }
         }
     }
@@ -317,29 +318,26 @@ public abstract class CDKActivity extends AppCompatActivity {
         }
     }
 
-    /*** 创建根布局 ***/
-    private void createRootLayout() {
+    /*** 初始化根布局 ***/
+    private void initLayout() {
         container = new FrameLayout(this);
         container.setId(31636368);
         V.eleDP(container, -100);
         container.setBackgroundResource(R.color.back_all);
+        super.setContentView(container);
 
         ImageView iv = new ImageView(this);
         V.FL(iv).size(-1, -1).eleDP(-90).parent(container).refresh();
         iv.setScaleType(ImageView.ScaleType.FIT_START);
         iv.setImageResource(R.drawable.bg_cdk_head);
 
-        titleBar = new LinearLayout(this);
-        V.FL(titleBar).size(-1, -2).marginDP(40, 60, 0, 40).eleDP(100).parent(container).refresh();
-        titleBar.setOrientation(LinearLayout.VERTICAL);
-        if (getTitle() == null) titleBar.setVisibility(View.GONE);
-
-        TextView tv = new MaterialTextView(this);
-        V.LL(tv).size(-2, -2).parent(titleBar).refresh();
-        if (getTitle() != null) tv.setText(getTitle());
-        tv.setTextColor(getColor(R.color.text_title));
-        tv.setTextSize(20);
-        tv.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        titleBar = new MaterialTextView(this);
+        V.FL(titleBar).size(-1, -2).paddingDP(40, 60, 0, 40).eleDP(100).parent(container).refresh();
+        if (getTitle() != null) setTitle(getTitle());
+        else titleBar.setVisibility(View.GONE);
+        titleBar.setTextColor(getColor(R.color.text_title));
+        titleBar.setTextSize(20);
+        titleBar.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
     }
 
     /*** 创建底栏布局 ***/
@@ -389,16 +387,6 @@ public abstract class CDKActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().show(fList.get(sign[0])).commit();
     }
 
-
-    /*** 包装子View ***/
-    private void packLayout(View view) {
-        if (this.child != null) container.removeView(this.child);
-        this.child = view;
-        if (view == null) return;
-        view.setElevation(0);
-        view.setBackgroundResource(R.color.transparent);
-        container.addView(view);
-    }
     /**********************************************************************************************/
     /**************************************内部类***************************************************/
     /**********************************************************************************************/

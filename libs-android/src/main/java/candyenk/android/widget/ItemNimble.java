@@ -1,6 +1,7 @@
 package candyenk.android.widget;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -76,23 +77,19 @@ public final class ItemNimble extends FrameLayout {
     }
 
     private void initAttrs(AttributeSet attrs) {
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CDKItemNimble);
-        int l = a.getInt(R.styleable.CDKItemNimble_iconLocation, 0);
-        String title = a.getString(R.styleable.CDKItemNimble_android_title);
-        Drawable back = a.getDrawable(R.styleable.CDKItemNimble_android_background);
-        Drawable image = a.getDrawable(R.styleable.CDKItemNimble_android_icon);
-        a.recycle();
-
-        setImageLocation(l);
-        if (title != null) {
-            titleView.setText(title);
-        }
-        if (image != null) {
-            iconView.setImageDrawable(image);
-        }
-        if (back != null) {
-            backView.setImageDrawable(back);
-        }
+        try {
+            @SuppressLint({"CustomViewStyleable", "Recycle"})
+            TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKItemNimble);
+            int l = ta.getInt(R.styleable.CDKItemNimble_iconLocation, 0);
+            String title = ta.getString(R.styleable.CDKItemNimble_android_title);
+            Drawable back = ta.getDrawable(R.styleable.CDKItemNimble_android_background);
+            Drawable image = ta.getDrawable(R.styleable.CDKItemNimble_android_icon);
+            setImageLocation(l);
+            if (title != null) titleView.setText(title);
+            if (image != null) iconView.setImageDrawable(image);
+            if (back != null) backView.setImageDrawable(back);
+            ta.recycle();
+        } catch (Exception ignored) {}
     }
 
     private void initEvents() {

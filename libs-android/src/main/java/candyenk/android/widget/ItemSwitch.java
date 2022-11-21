@@ -59,19 +59,21 @@ public class ItemSwitch extends Item implements Checkable {
 
     @Override
     protected void initAttrs(AttributeSet attrs) {
-        @SuppressLint("CustomViewStyleable")
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKItemSwitch);
-        summary = ta.getString(R.styleable.CDKItemSwitch_android_summary);
-        onSummary = ta.getString(R.styleable.CDKItemSwitch_android_summaryOn);
-        offSummary = ta.getString(R.styleable.CDKItemSwitch_android_summaryOff);
-        setTitleText(ta.getString(R.styleable.CDKItemSwitch_android_title));
-        setChecked(ta.getBoolean(R.styleable.CDKItemSwitch_android_checked, false));
-        setIconDrawable(ta.getDrawable(R.styleable.CDKItemSwitch_android_icon));
-        updateSummary(0, summary);
-        updateSummary(-1, offSummary);
-        updateSummary(1, onSummary);
-        updateSummary();
-        ta.recycle();
+        try {
+            @SuppressLint({"CustomViewStyleable", "Recycle"})
+            TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKItemSwitch);
+            summary = ta.getString(R.styleable.CDKItemSwitch_android_summary);
+            onSummary = ta.getString(R.styleable.CDKItemSwitch_android_summaryOn);
+            offSummary = ta.getString(R.styleable.CDKItemSwitch_android_summaryOff);
+            setTitleText(ta.getString(R.styleable.CDKItemSwitch_android_title));
+            setChecked(ta.getBoolean(R.styleable.CDKItemSwitch_android_checked, false));
+            setIconDrawable(ta.getDrawable(R.styleable.CDKItemSwitch_android_icon));
+            updateSummary(0, summary);
+            updateSummary(-1, offSummary);
+            updateSummary(1, onSummary);
+            updateSummary();
+            ta.recycle();
+        } catch (Exception ignored) {}
     }
 
     @Override

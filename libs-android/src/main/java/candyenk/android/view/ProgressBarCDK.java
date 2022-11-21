@@ -2,15 +2,22 @@ package candyenk.android.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.ColorStateListDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import candyenk.android.R;
+import candyenk.android.tools.L;
 import candyenk.android.utils.ULay;
+import candyenk.android.utils.USDK;
 import candyenk.java.utils.UData;
 
 import java.lang.annotation.Retention;
@@ -20,6 +27,7 @@ import java.lang.annotation.RetentionPolicy;
  * CDK ProgressBar
  * 支持负数的
  * 控件高度固定DP25
+ * 一次重构
  */
 public class ProgressBarCDK extends ProgressBar {
     @Retention(RetentionPolicy.SOURCE)
@@ -36,24 +44,18 @@ public class ProgressBarCDK extends ProgressBar {
     protected int max;//最大进度
     protected int min;//最小进度
     protected int progress;//当前进度
-    protected int backgroundColor;//背景色
-    protected int progressColor;//进度条颜色
-    private Paint progressPaint;//进度条画笔
-    private Paint backgroundPaint;//背景画笔
-    private Paint extremumPaint;//极值画笔
-    private Paint numberPaint;//进度画笔
-
-    protected int layoutHeight, layoutWidth;//控件宽高
-    protected float padding;//绘制内距
-
-    protected float startPoint;//绘制x起点坐标
-    protected float endPoint;//绘制x终点坐标
-    protected float yPoint;//绘制y坐标
     protected float progressPercent;//进度百分比
-    protected float progressPoint;//当前进度坐标
-
     protected int displayMode;//进度显示模式
     protected boolean ss;//是否启用流畅滑动
+
+    private final GradientDrawable bgGD = new GradientDrawable();//背景
+    private final GradientDrawable pgGD = new GradientDrawable();//进度
+    private final Paint extremumPaint = new Paint();//极值画笔
+    private final Paint numberPaint = new Paint();//进度画笔
+
+    private float extW;//极值宽度
+    private float startX, endX;//X轴始末
+    private float proX, proY;//进度点坐标
     private OnProgressChangedListener l;
 
     /**********************************************************************************************/
@@ -88,49 +90,50 @@ public class ProgressBarCDK extends ProgressBar {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+        L.e(TAG, "绘制");
         initLayout();
-        drawBackground(canvas);//背景
-        drawExtremum(canvas);//极值
-        drawProgress(canvas);//进度条
-        drawNumber(canvas);//进度显示
+        bgGD.draw(canvas);//背景
+        pgGD.draw(canvas);//进度条
+        drawDisplay(canvas);//极值和进度显示
+
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(widthMeasureSpec, dp2px(25));
+        setMeasuredDimension(widthMeasureSpec, dp2px(25) + getPaddingTop() + getPaddingBottom());
     }
 
+    @Override
     public int getMax() {
         return max;
     }
 
-
+    @Override
     public void setMax(int max) {
         this.max = max;
-        if (this.progress > max) this.progress = max;
+        if (this.progress > max) setProgress(max);
         invalidate();
     }
 
-
+    @Override
     public int getMin() {
         return this.min;
     }
 
-
+    @Override
     public void setMin(int min) {
         this.min = min;
-        if (this.progress < min) this.progress = min;
+        if (this.progress < min) setProgress(min);
         invalidate();
     }
 
-
+    @Override
     public int getProgress() {
         return progress;
     }
 
-
+    @Override
     public void setProgress(int progress) {
         progress = Math.max(this.min, Math.min(this.max, progress));
         if (progress < min) progress = min;
@@ -138,57 +141,60 @@ public class ProgressBarCDK extends ProgressBar {
         updateProgress(progress);
     }
 
-    public void setBackgroundColor(@ColorInt int backgroundColor) {
-        this.backgroundColor = backgroundColor;
-        backgroundPaint.setColor(backgroundColor);
+    @Override
+    public void setBackground(Drawable bg) {
+        if (bg instanceof ColorDrawable) {
+            int color = ((ColorDrawable) bg).getColor();
+            this.bgGD.setColor(color);
+        } else if (USDK.Q() && bg instanceof ColorStateListDrawable) {
+            ColorStateList color = ((ColorStateListDrawable) bg).getColorStateList();
+            this.bgGD.setColor(color);
+        } else return;
         invalidate();
     }
 
+
     /*** 设置进度条X轴坐标 ***/
     protected void setProgressPoint(float progressPoint) {
-        progressPoint = Math.max(this.startPoint, Math.min(this.endPoint, progressPoint));
-        if (this.progressPoint != progressPoint) updateProgress(progressPoint);
+        progressPoint = Math.max(this.startX, Math.min(this.endX, progressPoint));
+        if (this.proX != progressPoint) updateProgress(progressPoint);
     }
 
     /**********************************************************************************************/
     /*****************************************私有方法***********************************************/
     /**********************************************************************************************/
-
+    /*** 初始化属性 ***/
     private void initAttrs(AttributeSet attrs) {
-        @SuppressLint("CustomViewStyleable")
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CDKProgressBar);
-        max = a.getInt(R.styleable.CDKProgressBar_android_max, 100);
-        min = a.getInt(R.styleable.CDKProgressBar_android_min, 0);
-        progress = a.getInt(R.styleable.CDKProgressBar_android_progress, min);
-        ss = a.getBoolean(R.styleable.CDKProgressBar_smoothSliding, false);
-        displayMode = a.getInt(R.styleable.CDKProgressBar_displayMode, DM_NONE);
-
-        progressColor = context.getColor(R.color.main_01);
-        backgroundColor = context.getColor(R.color.back_view);
-        a.recycle();
+        try {
+            @SuppressLint("CustomViewStyleable")
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CDKProgressBar);
+            int max = a.getInt(R.styleable.CDKProgressBar_android_max, 100);
+            int min = a.getInt(R.styleable.CDKProgressBar_android_min, 0);
+            int progress = a.getInt(R.styleable.CDKProgressBar_android_progress, min);
+            boolean ss = a.getBoolean(R.styleable.CDKProgressBar_smoothSliding, false);
+            int displayMode = a.getInt(R.styleable.CDKProgressBar_displayMode, DM_NONE);
+            int progressColor = context.getColor(R.color.main_01);
+            int backgroundColor = context.getColor(R.color.back_view);
+            a.recycle();
+            setMax(max);
+            setMin(min);
+            setProgress(progress);
+            enableSmoothSliding(ss);
+            setDisplayMode(displayMode);
+            setProgressColor(progressColor);
+            setBackgroundColor(backgroundColor);
+        } catch (Exception ignored) {}
         //初始化进度值
     }
 
+    /*** 初始化画笔 ***/
     private void initPaints() {
-        //进度条画笔
-        progressPaint = new Paint();
-        progressPaint.setColor(progressColor);
-        progressPaint.setStyle(Paint.Style.FILL);
-        progressPaint.setAntiAlias(true);
-        //背景画笔
-        backgroundPaint = new Paint();
-        backgroundPaint.setColor(backgroundColor);
-        backgroundPaint.setStyle(Paint.Style.FILL);
-        backgroundPaint.setAntiAlias(true);
         //极值画笔
-        extremumPaint = new Paint();
         extremumPaint.setTextSize(24);
         extremumPaint.setTextAlign(Paint.Align.CENTER);
-        extremumPaint.setColor(progressColor);
         extremumPaint.setStyle(Paint.Style.FILL);
         extremumPaint.setAntiAlias(true);
         //进度画笔
-        numberPaint = new Paint();
         numberPaint.setTextSize(24);
         numberPaint.setTextAlign(Paint.Align.CENTER);
         numberPaint.setColor(0xFFFFFFFF);
@@ -196,66 +202,52 @@ public class ProgressBarCDK extends ProgressBar {
         numberPaint.setAntiAlias(true);
     }
 
+    /*** 初始化布局 ***/
     private void initLayout() {
-        layoutHeight = dp2px(25);
-        layoutWidth = getWidth();
-        padding = (this.displayMode & DM_EXTREMUM) != 0 ? dp2px(20) : 0.0f;
-        yPoint = this.layoutHeight * 0.5f;
-        startPoint = yPoint + padding;
-        endPoint = this.layoutWidth - this.startPoint;
-        if (progressPercent == 0) progressPercent = (this.progress - this.min) * 1.0f / (this.max - this.min);
-        if (progressPoint == 0)
-            this.progressPoint = (this.endPoint - this.startPoint) * this.progressPercent + this.startPoint;
+        if (progressPercent == 0) progressPercent = (progress - min) * 1.0f / (max - min);
+        this.extW = (displayMode & DM_EXTREMUM) != 0 ? dp2px(20) : 0.0f;
+        float radius = (getHeight() - getPaddingTop() - getPaddingBottom()) * 0.5f;
+        this.startX = getPaddingLeft() + extW + radius;
+        this.endX = getWidth() - getPaddingRight() - extW - radius;
+        if (proX == 0) proX = (getWidth() - getPaddingLeft() - getPaddingRight()) * progressPercent + startX;
+        this.proY = radius + getPaddingTop();
+        this.bgGD.setCornerRadius(radius);
+        this.bgGD.setBounds((int) (startX - radius), getPaddingTop(), (int) (endX + radius), getHeight() - getPaddingBottom());
+        this.pgGD.setCornerRadius(radius);
+        this.pgGD.setBounds((int) (startX - radius), getPaddingTop(), (int) (proX + radius), getHeight() - getPaddingBottom());
     }
 
-    private void drawBackground(Canvas canvas) {
-        canvas.drawCircle(this.startPoint, this.yPoint, this.yPoint, backgroundPaint);
-        canvas.drawCircle(this.endPoint, this.yPoint, this.yPoint, backgroundPaint);
-        canvas.drawRect(this.startPoint, 0, endPoint, layoutHeight, backgroundPaint);
-    }
-
-    private void drawExtremum(Canvas canvas) {
-        if ((this.displayMode & DM_NONE) != 0) return;//不显示极值
-        if ((this.displayMode & DM_EXTREMUM) != 0) {//显示极值
-            Paint.FontMetrics f = extremumPaint.getFontMetrics();
-            float y = this.yPoint - ((f.ascent + f.descent) * 0.5f);
-            //TODO:这里方法改了
-            canvas.drawText(UData.L2A(min, "", "%.1f"), padding * 0.5f, y, extremumPaint);
-            canvas.drawText(UData.L2A(max, "", "%.1f"), this.layoutWidth - padding * 0.5f, y, extremumPaint);
+    /*** 绘制进度显示 ***/
+    private void drawDisplay(Canvas canvas) {
+        //不显示极值
+        if ((this.displayMode & DM_NONE) != 0) return;
+        Paint.FontMetrics f = extremumPaint.getFontMetrics();
+        float y = this.proY - ((f.ascent + f.descent) * 0.5f);
+        //显示极值
+        if ((this.displayMode & DM_EXTREMUM) != 0) {
+            canvas.drawText(UData.L2A(min, "", "%.1f"), extW * 0.5f + getPaddingLeft(), y, extremumPaint);
+            canvas.drawText(UData.L2A(max, "", "%.1f"), getWidth() - extW * 0.5f - getPaddingRight(), y, extremumPaint);
         }
-    }
-
-    private void drawProgress(Canvas canvas) {
-        canvas.drawCircle(this.startPoint, this.yPoint, this.yPoint, progressPaint);
-        canvas.drawCircle(this.progressPoint, this.yPoint, this.yPoint, progressPaint);
-        canvas.drawRect(this.startPoint, 0, this.progressPoint, this.layoutHeight, progressPaint);
-    }
-
-    private void drawNumber(Canvas canvas) {
-        if ((this.displayMode & DM_NONE) != 0) return;//不显示进度
-        String text = "";
+        //进度显示
         if ((this.displayMode & DM_NUM) != 0) {//显示数值
-            text = UData.L2A(progress, "", "%.1f");
-            //TODO:这里方法改了
+            canvas.drawText(UData.L2A(progress, "", "%.1f"), this.proX, y, numberPaint);
         } else if ((this.displayMode & DM_PERCENT) != 0) {//显示百分数
-            text = (int) (progressPercent * 100) + "%";
+            canvas.drawText((int) (progressPercent * 100) + "%", this.proX, y, numberPaint);
         }
-        Paint.FontMetrics f = numberPaint.getFontMetrics();
-        float y = this.yPoint - ((f.ascent + f.descent) * 0.5f);
-        canvas.drawText(text, this.progressPoint, y, numberPaint);
     }
 
+    /*** 更新进度 ***/
     private void updateProgress(Number number) {
         int op = this.progress;//旧进度
         if (number instanceof Integer) {
             this.progress = (int) number;//进度
             if (op == this.progress) return;
-            this.progressPoint = c2b(a2c(this.progress));//进度转百分比转坐标
+            this.proX = c2b(a2c(this.progress));//进度转百分比转坐标
         } else {
             float b = (float) number;//坐标
             this.progress = c2a(b2c(b));//坐标转百分比转进度
             if (!ss && op == this.progress) return;
-            this.progressPoint = ss ? b : c2b(a2c(this.progress));//进度转百分比转坐标
+            this.proX = ss ? b : c2b(a2c(this.progress));//进度转百分比转坐标
         }
         this.progressPercent = a2c(this.progress);
         postInvalidate();
@@ -270,12 +262,12 @@ public class ProgressBarCDK extends ProgressBar {
 
     /*** 坐标转百分比 ***/
     private float b2c(float b) {
-        return (b - this.startPoint) / (this.endPoint - this.startPoint);
+        return (b - this.startX) / (this.endX - this.startX);
     }
 
     /*** 百分比转坐标 ***/
     private float c2b(float c) {
-        return (this.endPoint - this.startPoint) * c + this.startPoint;
+        return (this.endX - this.startX) * c + this.startX;
     }
 
     /*** 百分比转进度 ***/
@@ -327,33 +319,12 @@ public class ProgressBarCDK extends ProgressBar {
 
 
     /**
-     * 获取背景色
-     *
-     * @return 颜色值
-     */
-    public int getBackgroundColor() {
-        return backgroundColor;
-    }
-
-
-    /**
-     * 获取进度条颜色
-     *
-     * @return 颜色值
-     */
-    public int getProgressColor() {
-        return progressColor;
-    }
-
-
-    /**
      * 设置进度条颜色
      *
      * @param progressColor 颜色值
      */
     public void setProgressColor(@ColorInt int progressColor) {
-        this.progressColor = progressColor;
-        progressPaint.setColor(progressColor);
+        pgGD.setColor(progressColor);
         invalidate();
     }
 

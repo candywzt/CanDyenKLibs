@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--CDKProgressBar进度条-->
+    <declare-styleable name="CDKProgressBar">
+        <attr name="android:max"/>
+        <attr name="android:min"/>
+        <attr name="android:progress"/>
+        <attr name="smoothSliding" format="boolean"/>
+        <attr name="displayMode" format="integer">
+            <flag name="none" value="1"/>
+            <flag name="extremum" value="2"/>
+            <flag name="number" value="4"/>
+            <flag name="percent" value="8"/>
+        </attr>
+    </declare-styleable>
+    <!--LabelView小标签组件-->
+    <declare-styleable name="CDKLabelView">
+        <attr name="android:src"/>
+        <attr name="randomColor" format="boolean"/>
+    </declare-styleable>
     <!--CDKItem系列控件属性 -->
     <!--Item -->
     <declare-styleable name="CDKItem">
@@ -24,6 +42,7 @@
         <attr name="android:progress"/>
         <attr name="android:max"/>
         <attr name="android:min"/>
+        <attr name="smoothSliding"/>
     </declare-styleable>
     <!--ItemNimble-->
     <declare-styleable name="CDKItemNimble">
@@ -34,29 +53,5 @@
         <attr name="android:title"/>
         <attr name="android:background"/>
         <attr name="android:icon"/><!--控件图片-->
-    </declare-styleable>
-    <!--CDKAutoImageView微动背景图-->
-    <declare-styleable name="CDKAutoImageView">
-        <attr name="android:src" format="reference"/>
-    </declare-styleable>
-    <!--CDKProgressBar进度条-->
-    <declare-styleable name="CDKProgressBar">
-        <attr name="android:max"/>
-        <attr name="android:min"/>
-        <attr name="android:progress"/>
-        <attr name="smoothSliding" format="boolean"/>
-        <attr name="displayMode" format="integer">
-            <flag name="none" value="1"/>
-            <flag name="extremum" value="2"/>
-            <flag name="number" value="4"/>
-            <flag name="percent" value="8"/>
-        </attr>
-    </declare-styleable>
-    <!--LabelView小标签组件-->
-    <declare-styleable name="CDKLabelView">
-        <attr name="android:text"/>
-        <attr name="android:textColor"/>
-        <attr name="android:background"/>
-        <attr name="android:src"/>
     </declare-styleable>
 </resources>

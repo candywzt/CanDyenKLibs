@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.R;
+import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import candyenk.java.io.FileInfo;
 import candyenk.java.utils.UArrays;
@@ -42,6 +43,7 @@ public class DialogFileChooser extends DialogBottom {
     /*************************************成员变量**************************************************/
     private final List<FileInfo> infoList = new ArrayList<>();//当前展示Info列表
     private final FileAdapter adapter = new FileAdapter();//文件适配器
+    private Context lastSign;//重复标记
     private FileInfo rootInfo;//当前展示File对象
     private Comparator<FileInfo> sortOrder;//排序方式
     private Predicate<FileInfo> filter;//过滤方式
@@ -74,9 +76,12 @@ public class DialogFileChooser extends DialogBottom {
      */
     public DialogFileChooser(Context context, FileInfo rootInfo) {
         super(context);
-        updateDialog(rootInfo);
-        setContent(adapter);
-        setTitle("选择文件");
+        super.ok = checkSign();
+        if (ok) {
+            updateDialog(rootInfo);
+            super.setContent(adapter);
+            setTitle("选择文件");
+        }
     }
 
     /**
@@ -84,13 +89,38 @@ public class DialogFileChooser extends DialogBottom {
      */
     public DialogFileChooser(Context context, FileInfo... infos) {
         super(context);
-        updateDialog(infos);
-        setContent(adapter);
-        setTitle("选择文件");
+        super.ok = checkSign();
+        if (ok) {
+            updateDialog(infos);
+            super.setContent(adapter);
+            setTitle("选择文件");
+        }
     }
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
     /**********************************************************************************************/
+    /**
+     * 仅首次有效
+     */
+    @Override
+    public void setTitle(CharSequence title) {
+        super.setTitle(title);
+    }
+
+    @Override
+    public void setTitleCenter(boolean isCenter) {
+        L.e(TAG, "不支持的操作DialogFileChooser.setTitleCenter(boolean)");
+    }
+
+    @Override
+    public void setShowClose(boolean isShow) {
+        L.e(TAG, "不支持的操作DialogFileChooser.setShowClose(boolean)");
+    }
+
+    @Override
+    public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
+        L.e(TAG, "不支持的操作DialogFileChooser.setContent(RecyclerView.Adapter)");
+    }
 
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
@@ -101,7 +131,7 @@ public class DialogFileChooser extends DialogBottom {
      * 自定义列表无效
      */
     public void setSortOrder(Comparator<FileInfo> sortOrder) {
-        if (this.rootInfo == null) return;
+        if (this.rootInfo == null || !ok) return;
         this.sortOrder = sortOrder;
         updateDialog(this.rootInfo);
     }
@@ -113,7 +143,7 @@ public class DialogFileChooser extends DialogBottom {
      * 自定义列表无效
      */
     public void setFilter(Predicate<FileInfo> filter) {
-        if (this.rootInfo == null) return;
+        if (this.rootInfo == null || !ok) return;
         this.filter = filter;
         updateDialog(this.rootInfo);
     }
@@ -123,7 +153,7 @@ public class DialogFileChooser extends DialogBottom {
      * 自定义列表无效
      */
     public void setShowHideFile(boolean isShowHide) {
-        if (this.rootInfo == null) return;
+        if (this.rootInfo == null || !ok) return;
         this.isShowHide = isShowHide;
         updateDialog(this.rootInfo);
     }
@@ -132,18 +162,20 @@ public class DialogFileChooser extends DialogBottom {
      * 更新Dialog数据
      */
     public void updateDialog(FileInfo rootInfo) {
+        if (!ok) return;
         if (rootInfo.isCustom() || rootInfo == null || rootInfo.getFile() == null)
             throw new NullPointerException("File地址不能为不存在");
         this.rootInfo = rootInfo;
         updateInfoList(rootInfo);
         if (titleView.getVisibility() == View.VISIBLE) setTitle(rootInfo.getPath());
-        if (ok) updateAdapter();
+        updateAdapter();
     }
 
     /**
      * 更新自定义Dialog数据
      */
     public void updateDialog(FileInfo... infos) {
+        if (!ok) return;
         if (infos == null || infos.length == 0)
             throw new NullPointerException("Files地址不能不存在");
         this.rootInfo = null;
@@ -170,6 +202,7 @@ public class DialogFileChooser extends DialogBottom {
      * 设置上级文件夹默认事件
      */
     public void setSuperDefault(View.OnClickListener l) {
+        if (!ok) return;
         this.adapter.superOnClick = l;
     }
 
@@ -177,6 +210,7 @@ public class DialogFileChooser extends DialogBottom {
      * 设置空文件夹默认事件
      */
     public void setEmptyDefault(View.OnClickListener l) {
+        if (!ok) return;
         this.adapter.emptyOnClick = l;
     }
     /**********************************************************************************************/
@@ -212,6 +246,14 @@ public class DialogFileChooser extends DialogBottom {
     private void updateInfoList(FileInfo[] infos) {
         infoList.clear();
         UArrays.addArrays(infoList, infos, null);
+    }
+
+    /*** 检查是否合法 ***/
+    private boolean checkSign() {
+        if (lastSign == null || this.context != lastSign) {
+            lastSign = this.context;
+            return true;
+        } else return false;
     }
     /**********************************************************************************************/
     /**************************************内部类***************************************************/
@@ -335,7 +377,7 @@ public class DialogFileChooser extends DialogBottom {
             V.LL(iv).sizeDP(120).scaleType(ImageView.ScaleType.CENTER_CROP).drawable(R.drawable.ic_file_unknown).parent(l1).refresh();
 
             TextView tv = new MaterialTextView(viewContext);
-            V.LL(tv).size(-2).marginDP(0, 0, 0, 40).textSize(20).textColorRes(R.color.text_main).text(R.string.file_chooser_no_file).parent(l1).refresh();
+            V.LL(tv).size(-2).paddingDP(0, 0, 0, 40).textSize(20).textColorRes(R.color.text_main).text(R.string.file_chooser_no_file).parent(l1).refresh();
             return l1;
         }
 

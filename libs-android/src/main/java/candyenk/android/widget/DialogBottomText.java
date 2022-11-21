@@ -57,17 +57,17 @@ public class DialogBottomText extends DialogBottomView {
     /**********************************************************************************************/
     @Override
     public void setContent(@LayoutRes int viewid) {
-        L.e("TAG", "不允许使用setContent(int)");
+        L.e("TAG", "不允许使用DialogBottomText.setContent(int)");
     }
 
     @Override
     public void setContent(View view) {
-        L.e("TAG", "不允许使用setContent(View)");
+        L.e("TAG", "不允许使用DialogBottomText.setContent(View)");
     }
 
     @Override
     public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
-        L.e("TAG", "不允许使用setContent(Adapter)");
+        L.e("TAG", "不允许使用DialogBottomText.setContent(RecyclerView.Adapter)");
     }
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/

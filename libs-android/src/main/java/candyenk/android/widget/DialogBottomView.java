@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +51,10 @@ public class DialogBottomView extends DialogBottom {
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
     /**********************************************************************************************/
-
+    @Override
+    public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
+        L.e("TAG", "不允许使用DialogBottomView.setContent(Adapter)");
+    }
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
@@ -95,7 +99,7 @@ public class DialogBottomView extends DialogBottom {
 
         private ViewAdapter(View view) {
             this.view = view;
-            V.RL(view).marginDP(V.UN, V.UN, V.UN, 40).refresh();//增加底距
+            V.RL(view).paddingDP(V.UN, V.UN, V.UN, 40).refresh();//增加底距
         }
 
         @NonNull

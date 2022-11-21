@@ -602,6 +602,7 @@ public class V<T extends View> {
      */
     @SuppressLint("UseCompatLoadingForDrawables")
     public V backgroundRes(int resID) {
+        if (resID==0)return background(null);
         if (isColor(resID)) return background(context.getColor(resID));
         else return background(context.getDrawable(resID));
     }

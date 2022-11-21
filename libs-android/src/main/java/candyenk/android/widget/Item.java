@@ -68,7 +68,7 @@ public class Item extends LinearLayout {
         V.LL(iconView).sizeDP(60).parent(this).refresh();
 
         LinearLayout ll = new LinearLayout(context);
-        V.LL(ll).size(-1, -2).orientation(1).marginDP(8, 0, 8, 0).weight(1).parent(this).refresh();
+        V.LL(ll).size(-1, -2).orientation(1).paddingDP(8, 0, 8, 0).weight(1).parent(this).refresh();
 
         titleView = new MaterialTextView(context);
         V.LL(titleView).size(-1, -2).textSize(18).textColorRes(R.color.text_main).parent(ll).refresh();
@@ -81,12 +81,15 @@ public class Item extends LinearLayout {
     }
 
     protected void initAttrs(AttributeSet attrs) {
-        @SuppressLint("CustomViewStyleable")
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKItem);
-        setTitleText(ta.getString(R.styleable.CDKItem_android_title));
-        setSummaryText(ta.getString(R.styleable.CDKItem_android_summary));
-        setIconDrawable(ta.getDrawable(R.styleable.CDKItem_android_icon));
-        ta.recycle();
+        try {
+            @SuppressLint("CustomViewStyleable")
+            TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKItem);
+            setTitleText(ta.getString(R.styleable.CDKItem_android_title));
+            setSummaryText(ta.getString(R.styleable.CDKItem_android_summary));
+            setIconDrawable(ta.getDrawable(R.styleable.CDKItem_android_icon));
+            ta.recycle();
+        } catch (Exception ignored) {}
+
     }
 
     protected void initEvents() {
