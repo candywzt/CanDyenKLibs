@@ -1,28 +1,21 @@
 package candyenk.android.widget;
 
 import android.content.Context;
-import android.view.Gravity;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
-import candyenk.android.R;
 import candyenk.android.tools.L;
-import candyenk.android.tools.V;
-import com.google.android.material.textview.MaterialTextView;
+import candyenk.java.utils.UData;
 
 
 /**
- * 提示弹窗
+ * 确认弹窗
  */
-public class DialogBottomTips extends DialogBottomView {
+public class DialogBottomConfirm extends DialogBottomTips {
     /*************************************静态变量**************************************************/
     /*************************************成员变量**************************************************/
-    protected LinearLayout layout;
-    protected ImageView iconView;
-    protected TextView contentView;
-    protected long timeout = 3000;
+    protected long confirmTime;
     /**********************************************************************************************/
     /***********************************公共静态方法*************************************************/
     /**********************************************************************************************/
@@ -34,7 +27,18 @@ public class DialogBottomTips extends DialogBottomView {
     /**********************************************************************************************/
     /***************************************接口****************************************************/
     /**********************************************************************************************/
+    /**
+     * 操作回应回调
+     */
+    public interface OnEventCallBack {
+        void onYse();
 
+        void onNo();
+    }
+
+    public interface OnYseCallBack extends OnEventCallBack {
+        default void onNo() {}
+    }
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
@@ -42,17 +46,17 @@ public class DialogBottomTips extends DialogBottomView {
      * 构造方法
      * 无法使用同一View拉起多个Dialog,但可使用null拉起一个多余的dialog
      */
-    public DialogBottomTips(Context context) {
+    public DialogBottomConfirm(Context context) {
         this(context, null);
     }
 
-    public DialogBottomTips(View view) {
+    public DialogBottomConfirm(View view) {
         this(view.getContext(), view);
     }
 
-    protected DialogBottomTips(Context context, View view) {
+    protected DialogBottomConfirm(Context context, View view) {
         super(context, view);
-        if (ok) initLayout();
+        setTimeOut(0);
     }
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
@@ -60,17 +64,35 @@ public class DialogBottomTips extends DialogBottomView {
     @Override
     public void show() {
         if (!ok || isShowing()) return;
+        if (leftButton.getVisibility() == View.GONE) {
+            L.e(TAG, "尚未设置回调事件");
+            return;
+        }
         super.show();
-        if (isShowing() && timeout != 0) {
+        if (isShowing() && confirmTime != 0) {
+            leftButton.setEnabled(false);
+            Handler h = new Handler(Looper.getMainLooper());
             new Thread(() -> {
-                try {
-                    Thread.sleep(timeout);
-                } catch (Exception ignored) {}
-                if (isShowing()) dismiss();
+                CharSequence text = leftButton.getText();
+                while (isShowing() && confirmTime > 0) {
+                    try {
+                        h.post(() -> {
+                            if (isShowing()) leftButton.setText(UData.L2A(confirmTime / 1000, "s", "%d"));
+                        });
+                        Thread.sleep(1000);
+                        confirmTime -= 1000;
+                    } catch (Exception ignored) {}
+                }
+                if (isShowing()) {
+                    h.post(() -> {
+                        leftButton.setText(text);
+                        leftButton.setEnabled(true);
+                    });
+
+                }
             }).start();
         }
     }
-
 
     @Override
     public void setContent(int viewid) {
@@ -85,6 +107,11 @@ public class DialogBottomTips extends DialogBottomView {
     @Override
     public <T extends View> T getContentView() {
         return L.e(TAG, "不支持的操作DialogBottomTips.getContentView()", null);
+    }
+
+    @Override
+    public void setOnButtonClickListener(View.OnClickListener left, View.OnClickListener right) {
+        L.e(TAG, "不支持的操作DialogBottomTips.setOnButtonClickListener(View.OnClickListener,View.OnClickListener)");
     }
 
     @Override
@@ -107,58 +134,41 @@ public class DialogBottomTips extends DialogBottomView {
         L.e(TAG, "不支持的操作DialogBottomTips.setContent(RecyclerView.Adapter)");
     }
 
+
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
     /**
-     * 设置内容文本
+     * 设置确认时间
+     * 时间结束前无法点击确认
+     * show之后无效
      */
-    public void setContent(CharSequence text) {
-        if (!ok) return;
-        if (text == null) contentView.setVisibility(View.GONE);
-        else {
-            contentView.setVisibility(View.VISIBLE);
-            contentView.setText(text);
+    public void setConfirmTime(long time) {
+        if (!isShowing()) confirmTime = time;
+    }
+
+    /**
+     * 设置确认回应回调
+     */
+    public void setOnEventCallBack(OnEventCallBack callback) {
+        if (callback == null) {
+            super.setOnButtonClickListener(null, null);
+            setOnCancelListener(null);
+        } else {
+            super.setOnButtonClickListener(v -> {
+                callback.onYse();
+                dismiss();
+            }, v -> {
+                callback.onNo();
+                dismiss();
+            });
+            setOnCancelListener(d -> callback.onNo());
         }
-    }
-
-    /**
-     * 设置图标样式
-     */
-    public void setIconStyle(int style) {
-
-    }
-
-    /**
-     * 设置超时时间
-     * 在show之前设置,否则无效
-     * 1000-30000之间,或者0其余无效
-     */
-    public void setTimeOut(long time) {
-        if (!ok || isShowing()) return;
-        if (time == 0 || (time >= 1000 && time <= 30000)) timeout = time;
     }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/
-    /*** 初始化布局 ***/
-    private void initLayout() {
-        this.layout = new LinearLayout(viewContext);
-        V.RL(layout).size(-1, -2).orientation(1).paddingDP(20).refresh();
 
-        LinearLayout l1 = new LinearLayout(viewContext);
-        V.LL(l1).size(-1, -2).orientation(0).gravity(Gravity.CENTER).parent(layout).refresh();
-
-        iconView = new ImageView(viewContext);
-        V.LL(iconView).sizeDP(80).drawable(R.drawable.ic_ok).parent(l1).refresh();
-
-        titleView = new MaterialTextView(viewContext);
-        V.LL(titleView).size(-1, -1).gravity(Gravity.CENTER).textSize(24).parent(l1).hide().refresh();
-
-        contentView = new MaterialTextView(viewContext);
-        V.LL(contentView).size(-1, -2).paddingDP(0, 20, 0, 0).parent(layout).hide().refresh();
-        super.setContent(layout);
-    }
     /**********************************************************************************************/
     /**************************************内部类***************************************************/
     /**********************************************************************************************/

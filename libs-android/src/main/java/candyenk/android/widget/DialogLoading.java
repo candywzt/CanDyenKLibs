@@ -73,18 +73,22 @@ public class DialogLoading extends AlertDialog {
         loadView.start();
     }
 
-    /**
-     * 拉起弹窗
-     */
+
+    @Override
     public void show() {
         if (ok) super.show();
         else Log.e(TAG, "拦截重复调用");
     }
 
-
+    @Override
     public void dismiss() {
         mList.remove(this.parentView);
         loadView.dismiss();
+    }
+
+    @Override
+    public void setOnDismissListener(OnDismissListener listener) {
+        super.setOnDismissListener(listener);
     }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/

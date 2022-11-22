@@ -486,7 +486,9 @@ public class V<T extends View> {
         t = t == UN ? view.getPaddingTop() : t;
         r = r == UN ? view.getPaddingRight() : r;
         b = b == UN ? view.getPaddingBottom() : b;
-        view.setPadding(l, t, r, b);
+        if (view instanceof CardView) {
+            ((CardView) view).setContentPadding(l, t, r, b);
+        } else view.setPadding(l, t, r, b);
         return this;
     }
 
@@ -602,7 +604,7 @@ public class V<T extends View> {
      */
     @SuppressLint("UseCompatLoadingForDrawables")
     public V backgroundRes(int resID) {
-        if (resID==0)return background(null);
+        if (resID == 0) return background(null);
         if (isColor(resID)) return background(context.getColor(resID));
         else return background(context.getDrawable(resID));
     }

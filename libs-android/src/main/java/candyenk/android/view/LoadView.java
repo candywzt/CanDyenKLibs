@@ -234,6 +234,5 @@ public class LoadView extends View {
         this.startAnim.cancel();
         this.loadAnim.cancel();
         closeAnimation();
-
     }
 }

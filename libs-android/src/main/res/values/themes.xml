@@ -30,23 +30,19 @@
         <item name="android:textViewStyle">@style/CDK.TextView</item>
         <!--Button控件-->
         <item name="android:buttonStyle">@style/CDK.Button.TextButton</item>
+        <item name="materialButtonStyle">@style/CDK.Button.TextButton</item>
+        <item name="materialButtonOutlinedStyle">@style/CDK.Button.TextButton.Outlined</item>
         <!--Switch控件-->
         <item name="android:switchStyle">@style/CDK.Switch</item>
-        <!--EditText控件(XML创建)-->
+        <!--EditText控件-->
         <item name="editTextStyle">@style/CDK.EditText</item>
-        <!--EditText控件(Java创建)-->
         <item name="android:editTextStyle">@style/CDK.EditText</item>
-        <!--CheckBox控件(XML创建)-->
+        <!--CheckBox控件-->
         <item name="checkboxStyle">@style/CDK.CheckBox</item>
-        <!--CheckBox控件(Java创建)-->
         <item name="android:checkboxStyle">@style/CDK.CheckBox</item>
-        <!--RadioButton控件(XML创建)-->
+        <!--RadioButton控件-->
         <item name="radioButtonStyle">@style/CDK.RadioButton</item>
-        <!--RadioButton控件(Java创建)-->
         <item name="android:radioButtonStyle">@style/CDK.RadioButton</item>
-        <!--MaterialButton控件-->
-        <item name="materialButtonStyle">@style/CDK.MaterialButton.TextButton</item>
-        <item name="materialButtonOutlinedStyle">@style/CDK.MaterialButton.TextButton.Outlined</item>
         <!--Chip控件-->
         <item name="chipStyle">@style/CDK.Chip</item>
         <!--RecyclerView控件-->

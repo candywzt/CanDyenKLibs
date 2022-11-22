@@ -38,17 +38,7 @@ public class AIV {
     /***********************************私有静态方法*************************************************/
     /**********************************************************************************************/
 
-    /**********************************************************************************************/
-    /***************************************接口****************************************************/
-    /**********************************************************************************************/
-    /*** 只保留结束监听 ***/
-    private interface EAL extends Animation.AnimationListener {
-        @Override
-        default void onAnimationStart(Animation animation) {}
 
-        @Override
-        default void onAnimationRepeat(Animation animation) {}
-    }
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
@@ -137,12 +127,12 @@ public class AIV {
 
         showAnim = new AlphaAnimation(0, 1);//显现
         showAnim.setDuration(500);
-        showAnim.setAnimationListener((EAL) a -> {
+        showAnim.setAnimationListener((A.EAL) a -> {
             if (ori != 0) imageView.startAnimation(autoAnim);
         });
         hideAnim = new AlphaAnimation(1, 0);//隐退
         hideAnim.setDuration(500);
-        hideAnim.setAnimationListener((EAL) a -> {
+        hideAnim.setAnimationListener((A.EAL) a -> {
             V.ML(imageView).size(w, h).margin(0, 0, ori < 0 ? margin : 0, ori > 0 ? margin : 0).refresh();
             imageView.setImageDrawable(image);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);

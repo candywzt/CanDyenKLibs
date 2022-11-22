@@ -8,16 +8,18 @@
     </style>
     <!--Button风格-->
     <!--实心按钮-->
-    <style name="CDK.Button.TextButton" parent="Widget.AppCompat.Button">
-        <item name="android:stateListAnimator">@null</item>
-        <item name="android:textColor">@color/text_title</item><!--按钮文本颜色-->
-        <item name="android:background">@drawable/bg_cdk_main1</item><!--背景色-->
-        <item name="android:minWidth">25dp</item>
-        <item name="android:minHeight">25dp</item>
+    <style name="CDK.Button.TextButton" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/color_textbutton_text</item>
+        <item name="android:background">@drawable/bg_textbutton</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:minHeight">35dp</item>
+        <item name="android:minWidth">35dp</item>
+        <item name="backgroundTint">@null</item>
     </style>
     <!--空心按钮-->
-    <style name="CDK.Button.OutlinedTextButton" parent="CDK.Button.TextButton">
-
+    <style name="CDK.Button.TextButton.Outlined" parent="CDK.Button.TextButton">
+        <item name="android:textColor">@color/color_outlinedtextbutton_text</item>
+        <item name="android:background">@drawable/bg_outlinedtextbutton</item>
     </style>
     <!--*****************************************************************************************-->
     <!--CheckBox风格-->
@@ -32,22 +34,6 @@
     <!--Chip风格-->
     <style name="CDK.Chip" parent="Widget.MaterialComponents.Chip.Choice">
 
-    </style>
-    <!--*****************************************************************************************-->
-    <!--MaterialButton风格-->
-    <!--实心按钮-->
-    <style name="CDK.MaterialButton.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:textColor">@color/text_title</item><!--按钮文本颜色-->
-        <item name="backgroundTint">@color/main_01</item><!--背景色-->
-        <item name="rippleColor">@color/main_03</item><!--波纹颜色-->
-        <item name="cornerRadius">120dp</item><!--圆角-->
-    </style>
-    <!--空心按钮-->
-    <style name="CDK.MaterialButton.TextButton.Outlined" parent="CDK.MaterialButton.TextButton">
-        <item name="android:textColor">@color/main_01</item><!--按钮文本颜色-->
-        <item name="backgroundTint">@android:color/transparent</item><!--背景色-->
-        <item name="strokeColor">@color/main_01</item><!--轮廓笔画-->
-        <item name="strokeWidth">1dp</item><!--笔画宽度-->
     </style>
     <!--*****************************************************************************************-->
     <!--EditText风格-->

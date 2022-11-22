@@ -17,6 +17,7 @@
     <declare-styleable name="CDKLabelView">
         <attr name="android:src"/>
         <attr name="randomColor" format="boolean"/>
+        <attr name="colorIndex" format="integer"/>
     </declare-styleable>
     <!--CDKItem系列控件属性 -->
     <!--Item -->

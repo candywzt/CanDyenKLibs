@@ -3,7 +3,6 @@ package candyenk.android.widget;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
-import android.os.Build;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,7 +20,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.R;
 import candyenk.android.tools.GD;
+import candyenk.android.tools.L;
 import candyenk.android.tools.V;
+import candyenk.android.utils.USDK;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -86,8 +87,9 @@ public class DialogBottom extends BottomSheetDialog {
         this.viewContext = new ContextThemeWrapper(context, R.style.Theme_CDK);
         this.parentView = view;
         this.ok = checkSign();
+        if (!ok) L.e(TAG, "弹窗创建重复");
         if (ok) initLayout();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && context instanceof Service) {//悬浮窗模式(API26)
+        if (USDK.O() && context instanceof Service) {//悬浮窗模式(API26)
             getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
         }
     }
@@ -102,7 +104,7 @@ public class DialogBottom extends BottomSheetDialog {
 
     @Override
     public void show() {
-        if (!ok) return;
+        if (!ok || isShowing()) return;
         if (listView.getAdapter() == null) return;
         super.show();
     }
@@ -264,11 +266,10 @@ public class DialogBottom extends BottomSheetDialog {
         V.LL(ll1).size(-1, -2).orientation(0).paddingDP(20, 0, 20, 20).hide().parent(ll).refresh();
 
         leftButton = new MaterialButton(viewContext);
-        V.LL(leftButton).sizeDP(-1, 60).marginDP(0, 0, 20, 0).weight(1).text(R.string.yes).hide().parent(ll1).refresh();
+        V.LL(leftButton).sizeDP(-1, 50).marginDP(0, 0, 20, 0).weight(1).text(R.string.yes).hide().parent(ll1).refresh();
 
         rightButton = new MaterialButton(viewContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
-        V.LL(rightButton).sizeDP(-1, 60).marginDP(20, 0, 0, 0).weight(1).text(R.string.no).hide().parent(ll1).refresh();
-
+        V.LL(rightButton).sizeDP(-1, 50).marginDP(20, 0, 0, 0).weight(1).text(R.string.no).hide().parent(ll1).refresh();
         super.setContentView(dialogView);
     }
 

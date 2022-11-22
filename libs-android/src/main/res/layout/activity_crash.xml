@@ -52,7 +52,6 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/crash_button1"
-            style="@style/CDK.MaterialButton.TextButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="20dp"
@@ -62,7 +61,6 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/crash_button2"
-            style="@style/CDK.MaterialButton.TextButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="20dp"
@@ -79,7 +77,6 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/crash_button3"
-            style="@style/CDK.MaterialButton.TextButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="20dp"
@@ -89,7 +86,6 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/crash_button4"
-            style="@style/CDK.MaterialButton.TextButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="20dp"

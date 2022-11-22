@@ -66,6 +66,7 @@ public class LabelView extends MaterialTextView {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
         initAttrs(attrs);
+
     }
     /**********************************************************************************************/
     /*****************************************重写方法***********************************************/
@@ -138,8 +139,10 @@ public class LabelView extends MaterialTextView {
             TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKLabelView);
             this.icon = ta.getDrawable(R.styleable.CDKLabelView_android_src);
             boolean rc = ta.getBoolean(R.styleable.CDKLabelView_randomColor, true);
-            if (rc) randomColor();
+            int index = ta.getInt(R.styleable.CDKLabelView_colorIndex, -1);
             ta.recycle();
+            if (rc) randomColor();
+            setColorIndex(index);
         } catch (Exception ignored) {}
     }
     /**********************************************************************************************/
@@ -150,8 +153,7 @@ public class LabelView extends MaterialTextView {
      */
     public void randomColor() {
         int index = new Random().nextInt(colorList.length);
-        this.drawable.setColor(colorList[index][0]);
-        setTextColor(colorList[index][1]);
+        setColorIndex(index);
     }
 
     /**
@@ -171,5 +173,15 @@ public class LabelView extends MaterialTextView {
     public void setImageDrawableRes(int resId) {
         if (resId <= 0) setImageDrawable(null);
         else setImageDrawable(context.getDrawable(resId));
+    }
+
+    /**
+     * 设置色彩
+     * 色彩索引(0-18)
+     */
+    public void setColorIndex(int index) {
+        if (index < 0 || index > 18) return;
+        this.drawable.setColor(colorList[index][0]);
+        setTextColor(colorList[index][1]);
     }
 }
