@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -37,6 +38,7 @@ public class V<T extends View> {
     private final T view;
     private final Context context;
     private ViewGroup.LayoutParams lp;
+
     /**********************************************************************************************/
     /***********************************公共静态方法*************************************************/
     /**********************************************************************************************/
@@ -186,6 +188,57 @@ public class V<T extends View> {
         return (T) vp;
     }
 
+
+    /**
+     * 获取ViewHolder
+     */
+    public static <T extends RecyclerView.ViewHolder> T getHolder(RecyclerView v, MotionEvent e) {
+        return getHolder(v, e.getX(), e.getY());
+    }
+
+    public static <T extends RecyclerView.ViewHolder> T getHolder(RecyclerView v, float x, float y) {
+        View c = v.findChildViewUnder(x, y);
+        return c == null ? null : (T) v.getChildViewHolder(c);
+    }
+
+    /**
+     * 添加控件
+     */
+    public static void addView(View v, View... c) {
+        if (v instanceof ViewGroup) for (View view : c) ((ViewGroup) v).addView(view);
+    }
+
+    /**
+     * 设置控件显隐
+     */
+    public static void hide(View... v) {
+        for (View view : v) if (view != null) view.setVisibility(View.GONE);
+    }
+
+
+    public static void visible(View... v) {
+        for (View view : v) if (view != null) view.setVisibility(View.VISIBLE);
+    }
+
+    public static void invisible(View... v) {
+        for (View view : v) if (view != null) view.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * 设置控件开关
+     */
+    public static void checkTrue(View... v) {
+        check(true, v);
+    }
+
+    public static void checkFalse(View... v) {
+        check(false, v);
+    }
+
+    public static void check(boolean c, View... v) {
+        for (View view : v) if (view instanceof Checkable) ((Checkable) view).setChecked(c);
+    }
+
     /**
      * 创建LinearLayout.LayoutParams
      */
@@ -298,16 +351,16 @@ public class V<T extends View> {
      * 设置控件Padding属性
      * 无需刷新
      */
-    public static V padding(View v, int l, int t, int r, int b) {
-        return new V(v).padding(l, t, r, b);
+    public static V padding(View v, int s, int t, int e, int b) {
+        return new V(v).padding(s, t, e, b);
     }
 
     public static V padding(View v, int vv) {
         return new V(v).padding(vv);
     }
 
-    public static V paddingDP(View v, int l, int t, int r, int b) {
-        return new V(v).paddingDP(l, t, r, b);
+    public static V paddingDP(View v, int s, int t, int e, int b) {
+        return new V(v).paddingDP(s, t, e, b);
     }
 
     public static V paddingDP(View v, int vv) {
@@ -330,36 +383,7 @@ public class V<T extends View> {
         return new V(v).radiusDP(r);
     }
 
-    /**
-     * 设置控件显隐
-     * 无需刷新
-     */
-    public static V hide(View v) {
-        return new V(v).hide();
-    }
 
-    public static V visible(View v) {
-        return new V(v).visible();
-    }
-
-    public static V invisible(View v) {
-        return new V(v).invisible();
-    }
-
-    /**
-     * 设置控件开关
-     */
-    public static V checkTrue(View v) {
-        return check(v, true);
-    }
-
-    public static V checkFalse(View v) {
-        return check(v, false);
-    }
-
-    public static V check(View v, boolean checked) {
-        return new V(v).check(checked);
-    }
     /**********************************************************************************************/
     /***********************************私有静态方法*************************************************/
     /**********************************************************************************************/
@@ -413,15 +437,15 @@ public class V<T extends View> {
     /**
      * 设置控件外边距
      */
-    public V margin(int l, int t, int r, int b) {
+    public V margin(int s, int t, int e, int b) {
         if (lp == null) throw new NullPointerException("控件没有LayoutParams,请先创建");
         if (lp instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams lp1 = (ViewGroup.MarginLayoutParams) lp;
-            l = l == UN ? lp1.leftMargin : l;
+            s = s == UN ? lp1.getMarginStart() : s;
             t = t == UN ? lp1.topMargin : t;
-            r = r == UN ? lp1.rightMargin : r;
+            e = e == UN ? lp1.rightMargin : e;
             b = b == UN ? lp1.bottomMargin : b;
-            lp1.setMargins(l, t, r, b);
+            lp1.setMarginsRelative(s, t, e, b);
         }
         return this;
     }
@@ -430,10 +454,10 @@ public class V<T extends View> {
         return margin(v, v, v, v);
     }
 
-    public V marginDP(int l, int t, int r, int b) {
-        return margin((int) DP(l),
+    public V marginDP(int s, int t, int e, int b) {
+        return margin((int) DP(s),
                 (int) DP(t),
-                (int) DP(r),
+                (int) DP(e),
                 (int) DP(b));
     }
 
@@ -481,14 +505,14 @@ public class V<T extends View> {
      * 设置控件Padding属性
      * 无需刷新
      */
-    public V padding(int l, int t, int r, int b) {
-        l = l == UN ? view.getPaddingLeft() : l;
+    public V padding(int s, int t, int e, int b) {
+        s = s == UN ? view.getPaddingLeft() : s;
         t = t == UN ? view.getPaddingTop() : t;
-        r = r == UN ? view.getPaddingRight() : r;
+        e = e == UN ? view.getPaddingRight() : e;
         b = b == UN ? view.getPaddingBottom() : b;
         if (view instanceof CardView) {
-            ((CardView) view).setContentPadding(l, t, r, b);
-        } else view.setPadding(l, t, r, b);
+            ((CardView) view).setContentPadding(s, t, e, b);
+        } else view.setPaddingRelative(s, t, e, b);
         return this;
     }
 
@@ -496,10 +520,10 @@ public class V<T extends View> {
         return padding(v, v, v, v);
     }
 
-    public V paddingDP(int l, int t, int r, int b) {
-        return padding((int) DP(l),
+    public V paddingDP(int s, int t, int e, int b) {
+        return padding((int) DP(s),
                 (int) DP(t),
-                (int) DP(r),
+                (int) DP(e),
                 (int) DP(b));
     }
 
@@ -707,6 +731,7 @@ public class V<T extends View> {
 
     /**
      * 设置图片显示方式
+     * 无需刷新
      */
     public V scaleType(ImageView.ScaleType type) {
         if (view instanceof ImageView) ((ImageView) view).setScaleType(type);
@@ -715,8 +740,7 @@ public class V<T extends View> {
     }
 
     /**
-     * 设置布局方向(0横1纵)
-     * LinearLayout
+     * 设置布局方向(0横1纵)LinearLayout
      * 无需刷新
      */
     public V orientation(int o) {

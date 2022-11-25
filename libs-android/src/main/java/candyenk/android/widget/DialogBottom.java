@@ -1,36 +1,32 @@
 package candyenk.android.widget;
 
+
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
-import androidx.core.view.GestureDetectorCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.R;
-import candyenk.android.tools.GD;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
+import candyenk.android.utils.ULay;
 import candyenk.android.utils.USDK;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textview.MaterialTextView;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Consumer;
 
 
 /**
@@ -40,6 +36,7 @@ import java.util.function.Consumer;
  */
 public class DialogBottom extends BottomSheetDialog {
     /*************************************静态变量**************************************************/
+    @SuppressLint("StaticFieldLeak")
     private static View lastSign;//重复标记
     /*************************************成员变量**************************************************/
     protected String TAG;
@@ -53,18 +50,6 @@ public class DialogBottom extends BottomSheetDialog {
     protected RecyclerView listView; //列表控件
     protected Button leftButton, rightButton;  //左右按钮控件
     protected RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter;
-    /**********************************************************************************************/
-    /***********************************公共静态方法*************************************************/
-    /**********************************************************************************************/
-
-    /**********************************************************************************************/
-    /***********************************私有静态方法*************************************************/
-    /**********************************************************************************************/
-
-    /**********************************************************************************************/
-    /***************************************接口****************************************************/
-    /**********************************************************************************************/
-
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
@@ -115,41 +100,8 @@ public class DialogBottom extends BottomSheetDialog {
         super.dismiss();
     }
 
-    /*** 创建RecycleView单击长按双击监听 ***/
-    protected RecyclerView.OnItemTouchListener createListener(Consumer<RecyclerView.ViewHolder> onClick, Consumer<RecyclerView.ViewHolder> onLongClick, Consumer<RecyclerView.ViewHolder> onDoubleClick) {
-        return new RecyclerView.OnItemTouchListener() {
-            private final GestureDetectorCompat gd = GD.create(viewContext)
-                    .click(this::cilck)
-                    .longClick(this::longClick)
-                    .doubleClick(this::doubleClick).buildCompat();
-
-            private void cilck(MotionEvent e) {c(onClick, e);}
-
-            private void longClick(MotionEvent e) {c(onLongClick, e);}
-
-            private void doubleClick(MotionEvent e) {c(onDoubleClick, e);}
-
-            private void c(Consumer<RecyclerView.ViewHolder> c, MotionEvent e) {
-                View child = listView.findChildViewUnder(e.getX(), e.getY());
-                if (c != null && child != null) {
-                    c.accept(listView.getChildViewHolder(child));
-                }
-            }
-
-            @Override
-            public boolean onInterceptTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
-                gd.onTouchEvent(e);
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
-                gd.onTouchEvent(e);
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
-        };
+    protected double dp2px(double dp) {
+        return ULay.dp2px(context, dp);
     }
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
@@ -198,6 +150,10 @@ public class DialogBottom extends BottomSheetDialog {
      * 设置标题文本
      * 调用该方法以显示标题栏
      */
+    public void setTitle(@StringRes int resId) {
+        this.setTitle(context.getText(resId));
+    }
+
     public void setTitle(CharSequence title) {
         if (!ok) return;
         if (title == null) {
@@ -234,6 +190,16 @@ public class DialogBottom extends BottomSheetDialog {
         if (adapter == null) return;
         this.adapter = adapter;
         listView.setAdapter(adapter);
+    }
+
+    /**
+     * 设置内容布局管理器
+     * 默认 LinearLayoutManager
+     */
+    public void setLayoutManager(RecyclerView.LayoutManager lm) {
+        if (!ok) return;
+        if (lm == null) lm = new LinearLayoutManager(context);
+        listView.setLayoutManager(lm);
     }
 
     /**********************************************************************************************/
@@ -280,9 +246,5 @@ public class DialogBottom extends BottomSheetDialog {
             return true;
         } else return false;
     }
-    /**********************************************************************************************/
-    /**************************************内部类***************************************************/
-    /**********************************************************************************************/
-
 }
 

@@ -22,6 +22,7 @@ import com.google.android.material.textview.MaterialTextView;
  * icon(Reference):图标,默认无
  */
 public class Item extends LinearLayout {
+    protected String TAG;
     protected Context context;
     protected TextView titleView, summaryView;
     protected ImageView iconView, arrowView;
@@ -48,6 +49,7 @@ public class Item extends LinearLayout {
     public Item(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
+        this.TAG = this.getClass().getSimpleName();
         initLayout();
         initAttrs(attrs);
         initEvents();
@@ -119,10 +121,10 @@ public class Item extends LinearLayout {
     public void setSummaryText(CharSequence summary) {
         if (summaryView == null) return;
         if (summary == null) {
-            summaryView.setVisibility(View.GONE);
+            V.hide(summaryView);
         } else {
+            V.visible(summaryView);
             summaryView.setText(summary);
-            summaryView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -131,13 +133,12 @@ public class Item extends LinearLayout {
      * 为0则不显示Icon控件(Invisible)
      * 为-1则隐藏控件(Gone)
      */
-    public void setIconResource(int rec) {
+    public void setIconResource(int res) {
         if (iconView == null) return;
-        if (rec > 0) {
-            iconView.setImageResource(rec);
+        if (res > 0) {
+            V.LL(iconView).sizeDP(60).drawable(res).visible().refresh();
         } else {
-            V.LL(iconView).sizeDP(60, -2).refresh();
-            iconView.setVisibility(rec == 0 ? View.INVISIBLE : View.GONE);
+            V.LL(iconView).sizeDP(60, -2).visibility(res == 0 ? View.INVISIBLE : View.GONE).refresh();
         }
     }
 
@@ -148,10 +149,9 @@ public class Item extends LinearLayout {
     public void setIconDrawable(Drawable drawable) {
         if (iconView == null) return;
         if (drawable != null) {
-            iconView.setImageDrawable(drawable);
+            V.LL(iconView).sizeDP(60).drawable(drawable).visible().refresh();
         } else {
-            V.LL(iconView).sizeDP(60, -2).refresh();
-            iconView.setVisibility(View.INVISIBLE);
+            V.LL(iconView).sizeDP(60, -2).invisible().refresh();
         }
     }
 
@@ -190,6 +190,13 @@ public class Item extends LinearLayout {
      */
     public ImageView getIconView() {
         return iconView;
+    }
+
+    /**
+     * 获取箭头控件
+     */
+    public ImageView getArrowView() {
+        return arrowView;
     }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/

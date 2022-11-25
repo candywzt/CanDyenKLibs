@@ -12,7 +12,7 @@
     <string name="crash_error">检测到未知来源的异常，无法正常捕捉到日志，\n可向开发者口述崩溃复现过程\n</string>
     <!--文件选择器-->
     <string name="file_chooser_title">文件选择器</string>
-    <string name="file_chooser_filesize">文件大小</string>
-    <string name="file_chooser_lmd">最后修改日期</string>
+    <string name="file_chooser_filesize">文件大小:%s</string>
+    <string name="file_chooser_lmd">更新时间:%s</string>
     <string name="file_chooser_no_file">该文件夹为空</string>
 </resources>

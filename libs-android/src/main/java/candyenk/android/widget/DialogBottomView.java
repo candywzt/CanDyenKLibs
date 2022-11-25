@@ -3,33 +3,19 @@ package candyenk.android.widget;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import candyenk.android.asbc.HolderCDK;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 
 /**
  * 自定义View上拉弹窗
  */
-public class DialogBottomView extends DialogBottom {
-    /*************************************静态变量**************************************************/
-    /*************************************成员变量**************************************************/
-    protected View contentView;
-    /**********************************************************************************************/
-    /***********************************公共静态方法*************************************************/
-    /**********************************************************************************************/
-
-    /**********************************************************************************************/
-    /***********************************私有静态方法*************************************************/
-    /**********************************************************************************************/
-
-    /**********************************************************************************************/
-    /***************************************接口****************************************************/
-    /**********************************************************************************************/
-
+public class DialogBottomView extends DialogBottomItem {
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
@@ -51,9 +37,68 @@ public class DialogBottomView extends DialogBottom {
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
     /**********************************************************************************************/
+    /**
+     * @deprecated 请使用 {@link #setContent(View)}{@link #setContent(int)}
+     */
     @Override
     public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
         L.e("TAG", "不允许使用DialogBottomView.setContent(Adapter)");
+    }
+
+    /**
+     * @deprecated 请使用 {@link #setContent(View)}{@link #setContent(int)}
+     */
+    @Override
+    public void setContent(View... views) {
+        L.e("TAG", "不允许使用DialogBottomView.setContent(View...)");
+    }
+
+    /**
+     * @deprecated 请使用 {@link #setContent(View)}{@link #setContent(int)}
+     */
+    @Override
+    public void setContent(int... resIds) {
+        L.e("TAG", "不允许使用DialogBottomView.setContent(int...)");
+    }
+
+    /**
+     * @deprecated 请使用 {@link #setContent(View)}{@link #setContent(int)}
+     */
+    @Override
+    public void setContent(int resId, int count) {
+        L.e("TAG", "不允许使用DialogBottomView.setContent(int,int)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setLayoutManager(RecyclerView.LayoutManager lm) {
+        L.e("TAG", "不允许使用DialogBottomView.setLayoutManager(RecyclerView.LayoutManager)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setOnBindViewHolder(Consumer<HolderCDK> c) {
+        L.e("TAG", "不允许使用DialogBottomView.setOnBindViewHolder(Consumer)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setOnItemClickListener(BiConsumer<View, Integer> l) {
+        L.e("TAG", "不允许使用DialogBottomView.setOnItemClickListener(BiConsumer)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setOnItemLongClickListener(BiConsumer<View, Integer> l) {
+        L.e("TAG", "不允许使用DialogBottomView.setOnItemLongClickListener(BiConsumer)");
     }
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
@@ -64,8 +109,7 @@ public class DialogBottomView extends DialogBottom {
      */
     public void setContent(int viewid) {
         if (!ok) return;
-        View view = LayoutInflater.from(viewContext).inflate(viewid, null, false);
-        this.setContent(view);
+        this.setContent(LayoutInflater.from(context).inflate(viewid, null));
     }
 
     /**
@@ -74,9 +118,9 @@ public class DialogBottomView extends DialogBottom {
      */
     public void setContent(View view) {
         if (!ok) return;
-        this.contentView = view;
-        adapter = new ViewAdapter(view);
-        super.setContent(adapter);
+        V.RL(view).padding(V.UN, V.UN, V.UN, (int) (view.getPaddingBottom() + dp2px(20)));
+        super.setContent(view);
+        adapter.clearListener();
     }
 
     /**
@@ -84,38 +128,9 @@ public class DialogBottomView extends DialogBottom {
      * 方便使用xml的控件设置事件监听
      */
     public <T extends View> T getContentView() {
-        return (T) contentView;
+        return (T) adapter.items[0];
     }
-/**********************************************************************************************/
-    /*************************************私有方法**************************************************/
-    /**********************************************************************************************/
 
-    /**********************************************************************************************/
-    /**************************************内部类***************************************************/
-    /**********************************************************************************************/
-    /*** 上拉弹窗适配器 ***/
-    private static class ViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        private final View view;//自定义View
 
-        private ViewAdapter(View view) {
-            this.view = view;
-            V.RL(view).paddingDP(V.UN, V.UN, V.UN, 40).refresh();//增加底距
-        }
-
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new RecyclerView.ViewHolder(view) {};
-        }
-
-        @Override
-        public void onBindViewHolder(@NotNull RecyclerView.ViewHolder holder, int position) {
-        }
-
-        @Override
-        public int getItemCount() {
-            return 1;
-        }
-    }
 }
 

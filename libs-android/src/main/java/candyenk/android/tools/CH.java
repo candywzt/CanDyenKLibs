@@ -4,8 +4,8 @@ import android.app.Application;
 import android.content.Intent;
 import android.os.Looper;
 
-import candyenk.android.CDKApplication;
-import candyenk.android.activity.CrashActivity;
+import candyenk.android.asbc.ApplicationCDK;
+import candyenk.android.asbc.ActivityCrash;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 
@@ -25,7 +25,7 @@ public class CH implements UncaughtExceptionHandler {
     // 程序的Context对象
     private Application mApplication;
     //崩溃日志跳转activity
-    private Class<?> crashActivity = CrashActivity.class;
+    private Class<?> crashActivity = ActivityCrash.class;
 
 
     //获取CrashHandler实例 ,单例模式
@@ -81,8 +81,8 @@ public class CH implements UncaughtExceptionHandler {
                 Looper.prepare();
                 Intent intent = new Intent(mApplication, crashActivity);
                 intent.putExtra("crashReport", ex);
-                intent.putExtra("CurrentActivity", CDKApplication.getCurrentActivity().getClass());
-                CDKApplication.getCurrentActivity().startActivity(intent);
+                intent.putExtra("CurrentActivity", ApplicationCDK.getCurrentActivity().getClass());
+                ApplicationCDK.getCurrentActivity().startActivity(intent);
                 Looper.loop();
             }
         }.start();

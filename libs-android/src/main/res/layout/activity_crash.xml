@@ -7,7 +7,7 @@
     android:background="@android:color/transparent"
     android:orientation="vertical"
     app:layout_constraintTop_toTopOf="parent"
-    tools:context="candyenk.android.activity.CrashActivity">
+    tools:context="candyenk.android.asbc.ActivityCrash">
 
     <View
         android:layout_width="wrap_content"

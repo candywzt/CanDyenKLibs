@@ -26,6 +26,11 @@
         <attr name="android:summary"/>
         <attr name="android:icon"/>
     </declare-styleable>
+    <!--ItemIcon -->
+    <declare-styleable name="CDKItemIcon">
+        <attr name="android:title"/>
+        <attr name="android:icon"/>
+    </declare-styleable>
     <!--ItemSwitch-->
     <declare-styleable name="CDKItemSwitch">
         <attr name="android:title"/>

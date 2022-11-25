@@ -1,4 +1,4 @@
-package candyenk.android.activity;
+package candyenk.android.asbc;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -10,12 +10,11 @@ import android.text.SpannableStringBuilder;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import candyenk.android.CDKApplication;
 import candyenk.android.R;
 import candyenk.android.tools.TH;
 
 
-public class CrashActivity extends CDKActivity {
+public class ActivityCrash extends ActivityCDK {
     //控件声明
     private TextView reportView;
     private Button button1, button2, button3, button4;
@@ -68,13 +67,13 @@ public class CrashActivity extends CDKActivity {
             intent.putExtra("REBOOT", "reboot");
             startActivity(intent);
              */
-            CDKApplication.restartApplication(this);
+            ApplicationCDK.restartApplication(this);
         });
         button2.setOnClickListener(v -> {
             /*
             CDKApplication.finishAllActivity();
              */
-            CDKApplication.closeApplication(this);
+            ApplicationCDK.closeApplication(this);
         });
         button3.setOnClickListener(v -> {
             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);

@@ -3,7 +3,10 @@ package candyenk.android.tools;
 import android.content.Context;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
+import androidx.recyclerview.widget.RecyclerView;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -43,6 +46,7 @@ public class GD {
         return this;
     }
 
+
     /**
      * 设置双击事件
      */
@@ -59,6 +63,7 @@ public class GD {
         return this;
     }
 
+
     /**
      * 生成GestureDetectorCompat
      */
@@ -71,6 +76,27 @@ public class GD {
      */
     public GestureDetector build() {
         return new GestureDetector(context, createListener());
+    }
+
+    /**
+     * 生成RecycleView Item监听
+     */
+    public RecyclerView.OnItemTouchListener buildItemListener() {
+        GestureDetectorCompat gdc = buildCompat();
+        /*** 创建RecycleView Item监听 ***/
+        return new RecyclerView.SimpleOnItemTouchListener() {
+
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
+                gdc.onTouchEvent(e);
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull @NotNull RecyclerView rv, @NonNull @NotNull MotionEvent e) {
+                gdc.onTouchEvent(e);
+            }
+        };
     }
 
     /*** 执行返回器 ***/

@@ -5,25 +5,20 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import androidx.recyclerview.widget.RecyclerView;
+import candyenk.android.asbc.HolderCDK;
 import candyenk.android.tools.L;
 import candyenk.java.utils.UData;
+
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 
 /**
  * 确认弹窗
  */
 public class DialogBottomConfirm extends DialogBottomTips {
-    /*************************************静态变量**************************************************/
     /*************************************成员变量**************************************************/
     protected long confirmTime;
-    /**********************************************************************************************/
-    /***********************************公共静态方法*************************************************/
-    /**********************************************************************************************/
-
-    /**********************************************************************************************/
-    /***********************************私有静态方法*************************************************/
-    /**********************************************************************************************/
-
     /**********************************************************************************************/
     /***************************************接口****************************************************/
     /**********************************************************************************************/
@@ -36,7 +31,7 @@ public class DialogBottomConfirm extends DialogBottomTips {
         void onNo();
     }
 
-    public interface OnYseCallBack extends OnEventCallBack {
+    public interface OnYes extends OnEventCallBack {
         default void onNo() {}
     }
     /**********************************************************************************************/
@@ -94,46 +89,125 @@ public class DialogBottomConfirm extends DialogBottomTips {
         }
     }
 
+    /**
+     * @deprecated 请使用 {@link #setContent(CharSequence)}
+     */
     @Override
     public void setContent(int viewid) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setContent(int)");
+        L.e(TAG, "不支持的操作DialogBottomConfirm.setContent(int)");
     }
 
+    /**
+     * @deprecated 请使用 {@link #setContent(CharSequence)}
+     */
     @Override
     public void setContent(View view) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setContent(View)");
+        L.e(TAG, "不支持的操作DialogBottomConfirm.setContent(View)");
     }
 
-    @Override
-    public <T extends View> T getContentView() {
-        return L.e(TAG, "不支持的操作DialogBottomTips.getContentView()", null);
-    }
-
-    @Override
-    public void setOnButtonClickListener(View.OnClickListener left, View.OnClickListener right) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setOnButtonClickListener(View.OnClickListener,View.OnClickListener)");
-    }
-
-    @Override
-    public void setCancelable(boolean touchOff, boolean backOff) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setCancelable(boolean,boolean)");
-    }
-
-    @Override
-    public void setTitleCenter(boolean isCenter) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setTitleCenter(boolean)");
-    }
-
-    @Override
-    public void setShowClose(boolean isShow) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setShowClose(boolean)");
-    }
-
+    /**
+     * @deprecated 请使用 {@link #setContent(CharSequence)}
+     */
     @Override
     public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setContent(RecyclerView.Adapter)");
+        L.e(TAG, "不支持的操作DialogBottomConfirm.setContent(RecyclerView.Adapter)");
     }
 
+    /**
+     * @deprecated 请使用 {@link #setContent(CharSequence)}
+     */
+    @Override
+    public void setContent(View... views) {
+        L.e("TAG", "不支持的操作DialogBottomConfirm.setContent(View...)");
+    }
+
+    /**
+     * @deprecated 请使用 {@link #setContent(CharSequence)}
+     */
+    @Override
+    public void setContent(int... resIds) {
+        L.e("TAG", "不支持的操作DialogBottomConfirm.setContent(int...)");
+    }
+
+    /**
+     * @deprecated 请使用 {@link #setContent(CharSequence)}
+     */
+    @Override
+    public void setContent(int resId, int count) {
+        L.e("TAG", "不支持的操作DialogBottomConfirm.setContent(int,int)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setLayoutManager(RecyclerView.LayoutManager lm) {
+        L.e("TAG", "不支持的操作DialogBottomConfirm.setLayoutManager(RecyclerView.LayoutManager)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setOnBindViewHolder(Consumer<HolderCDK> c) {
+        L.e("TAG", "不支持的操作DialogBottomConfirm.setOnBindViewHolder(Consumer)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setOnItemClickListener(BiConsumer<View, Integer> l) {
+        L.e("TAG", "不支持的操作DialogBottomConfirm.setOnItemClickListener(BiConsumer)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setOnItemLongClickListener(BiConsumer<View, Integer> l) {
+        L.e("TAG", "不支持的操作DialogBottomConfirm.setOnItemLongClickListener(BiConsumer)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public <T extends View> T getContentView() {
+        return L.e(TAG, "不支持的操作DialogBottomConfirm.getContentView()", null);
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setOnButtonClickListener(View.OnClickListener left, View.OnClickListener right) {
+        L.e(TAG, "不支持的操作DialogBottomConfirm.setOnButtonClickListener(View.OnClickListener,View.OnClickListener)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setCancelable(boolean touchOff, boolean backOff) {
+        L.e(TAG, "不支持的操作DialogBottomConfirm.setCancelable(boolean,boolean)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setTitleCenter(boolean isCenter) {
+        L.e(TAG, "不支持的操作DialogBottomConfirm.setTitleCenter(boolean)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setShowClose(boolean isShow) {
+        L.e(TAG, "不支持的操作DialogBottomConfirm.setShowClose(boolean)");
+    }
 
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
@@ -165,13 +239,6 @@ public class DialogBottomConfirm extends DialogBottomTips {
             setOnCancelListener(d -> callback.onNo());
         }
     }
-    /**********************************************************************************************/
-    /*************************************私有方法**************************************************/
-    /**********************************************************************************************/
-
-    /**********************************************************************************************/
-    /**************************************内部类***************************************************/
-    /**********************************************************************************************/
 
 }
 

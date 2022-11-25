@@ -1,4 +1,4 @@
-package candyenk.android;
+package candyenk.android.asbc;
 
 import android.app.Activity;
 import android.app.Application;
@@ -12,7 +12,7 @@ import candyenk.android.utils.UApp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CDKApplication extends Application {
+public class ApplicationCDK extends Application {
     private static final String TAG = "CDKApplication";
     private static ArrayList<Activity> activityList;
 

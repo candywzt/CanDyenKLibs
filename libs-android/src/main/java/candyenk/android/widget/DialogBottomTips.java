@@ -8,33 +8,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.R;
+import candyenk.android.asbc.HolderCDK;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import com.google.android.material.textview.MaterialTextView;
+
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 
 /**
  * 提示弹窗
  */
 public class DialogBottomTips extends DialogBottomView {
-    /*************************************静态变量**************************************************/
     /*************************************成员变量**************************************************/
     protected LinearLayout layout;
     protected ImageView iconView;
     protected TextView contentView;
     protected long timeout = 3000;
-    /**********************************************************************************************/
-    /***********************************公共静态方法*************************************************/
-    /**********************************************************************************************/
-
-    /**********************************************************************************************/
-    /***********************************私有静态方法*************************************************/
-    /**********************************************************************************************/
-
-    /**********************************************************************************************/
-    /***************************************接口****************************************************/
-    /**********************************************************************************************/
-
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
@@ -71,40 +62,105 @@ public class DialogBottomTips extends DialogBottomView {
         }
     }
 
-
+    /**
+     * @deprecated 请使用 {@link #setContent(CharSequence)}
+     */
     @Override
     public void setContent(int viewid) {
         L.e(TAG, "不支持的操作DialogBottomTips.setContent(int)");
     }
-
+    /**
+     * @deprecated 请使用 {@link #setContent(CharSequence)}
+     */
     @Override
     public void setContent(View view) {
         L.e(TAG, "不支持的操作DialogBottomTips.setContent(View)");
     }
+    /**
+     * @deprecated 请使用 {@link #setContent(CharSequence)}
+     */
+    @Override
+    public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
+        L.e(TAG, "不支持的操作DialogBottomTips.setContent(RecyclerView.Adapter)");
+    }
+    /**
+     * @deprecated 请使用 {@link #setContent(CharSequence)}
+     */
+    @Override
+    public void setContent(View... views) {
+        L.e("TAG", "不支持的操作DialogBottomTips.setContent(View...)");
+    }
+    /**
+     * @deprecated 请使用 {@link #setContent(CharSequence)}
+     */
+    @Override
+    public void setContent(int... resIds) {
+        L.e("TAG", "不支持的操作DialogBottomTips.setContent(int...)");
+    }
+    /**
+     * @deprecated 请使用 {@link #setContent(CharSequence)}
+     */
+    @Override
+    public void setContent(int resId, int count) {
+        L.e("TAG", "不支持的操作DialogBottomTips.setContent(int,int)");
+    }
 
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setLayoutManager(RecyclerView.LayoutManager lm) {
+        L.e("TAG", "不支持的操作DialogBottomTips.setLayoutManager(RecyclerView.LayoutManager)");
+    }
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setOnBindViewHolder(Consumer<HolderCDK> c) {
+        L.e("TAG", "不支持的操作DialogBottomTips.setOnBindViewHolder(Consumer)");
+    }
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setOnItemClickListener(BiConsumer<View, Integer> l) {
+        L.e("TAG", "不支持的操作DialogBottomTips.setOnItemClickListener(BiConsumer)");
+    }
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setOnItemLongClickListener(BiConsumer<View, Integer> l) {
+        L.e("TAG", "不支持的操作DialogBottomTips.setOnItemLongClickListener(BiConsumer)");
+    }
+    /**
+     * @deprecated 不允许使用
+     */
     @Override
     public <T extends View> T getContentView() {
         return L.e(TAG, "不支持的操作DialogBottomTips.getContentView()", null);
     }
-
+    /**
+     * @deprecated 不允许使用
+     */
     @Override
     public void setCancelable(boolean touchOff, boolean backOff) {
         L.e(TAG, "不支持的操作DialogBottomTips.setCancelable(boolean,boolean)");
     }
-
+    /**
+     * @deprecated 不允许使用
+     */
     @Override
     public void setTitleCenter(boolean isCenter) {
         L.e(TAG, "不支持的操作DialogBottomTips.setTitleCenter(boolean)");
     }
-
+    /**
+     * @deprecated 不允许使用
+     */
     @Override
     public void setShowClose(boolean isShow) {
         L.e(TAG, "不支持的操作DialogBottomTips.setShowClose(boolean)");
-    }
-
-    @Override
-    public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setContent(RecyclerView.Adapter)");
     }
 
     /**********************************************************************************************/
@@ -126,7 +182,7 @@ public class DialogBottomTips extends DialogBottomView {
      * 设置图标样式
      */
     public void setIconStyle(int style) {
-
+        //TODO:还没做
     }
 
     /**
@@ -159,9 +215,6 @@ public class DialogBottomTips extends DialogBottomView {
         V.LL(contentView).size(-1, -2).paddingDP(0, 20, 0, 0).parent(layout).hide().refresh();
         super.setContent(layout);
     }
-    /**********************************************************************************************/
-    /**************************************内部类***************************************************/
-    /**********************************************************************************************/
 
 }
 

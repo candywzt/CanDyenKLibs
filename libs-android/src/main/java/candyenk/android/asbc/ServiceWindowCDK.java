@@ -1,4 +1,4 @@
-package candyenk.android.service;
+package candyenk.android.asbc;
 
 import android.app.Service;
 import android.content.Intent;
@@ -6,7 +6,7 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-public class CDKServiceWindow extends Service {
+public class ServiceWindowCDK extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

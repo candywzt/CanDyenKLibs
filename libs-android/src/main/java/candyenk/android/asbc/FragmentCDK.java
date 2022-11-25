@@ -1,4 +1,4 @@
-package candyenk.android.activity;
+package candyenk.android.asbc;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -23,17 +23,17 @@ import java.util.Map;
  * 就配合CDKActivity用
  * 一次重构
  */
-public abstract class CDKFragment extends Fragment {
+public abstract class FragmentCDK extends Fragment {
     /*************************************静态变量**************************************************/
     //public static boolean useAnimation = true;
     /*************************************成员变量**************************************************/
     protected String TAG = this.getClass().getSimpleName();
-    protected CDKActivity activity;//创建和使用本Fragment的Activity
+    protected ActivityCDK activity;//创建和使用本Fragment的Activity
     protected Bundle saveData;//保存的数据
     protected View container;//根控件
     protected LayoutInflater inflater;
-    private final Map<Integer, CDKActivity.ActivityCallBack> acbMap = new HashMap<>();//Activity回调表
-    private final Map<Integer, CDKActivity.PermissionsCallBack> pcbMap = new HashMap<>();//权限申请回调表
+    private final Map<Integer, ActivityCDK.ActivityCallBack> acbMap = new HashMap<>();//Activity回调表
+    private final Map<Integer, ActivityCDK.PermissionsCallBack> pcbMap = new HashMap<>();//权限申请回调表
     /**********************************************************************************************/
     /***********************************公共静态方法*************************************************/
     /**********************************************************************************************/
@@ -157,7 +157,7 @@ public abstract class CDKFragment extends Fragment {
     @Override
     public final void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        CDKActivity.ActivityCallBack acb = acbMap.get(requestCode);
+        ActivityCDK.ActivityCallBack acb = acbMap.get(requestCode);
         if (acb != null && acb.callback(resultCode, data)) removeActiveCallback(requestCode);
     }
 
@@ -165,7 +165,7 @@ public abstract class CDKFragment extends Fragment {
     @Override
     public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        CDKActivity.PermissionsCallBack pcb = pcbMap.get(requestCode);
+        ActivityCDK.PermissionsCallBack pcb = pcbMap.get(requestCode);
         if (pcb != null && pcb.callback(grantResults)) removePermissionCallback(requestCode);
     }
     /**********************************************************************************************/
@@ -202,7 +202,7 @@ public abstract class CDKFragment extends Fragment {
      * @param callBack    回调体
      * @return 返回false说明代码重复, 添加失败
      */
-    public boolean addActiveCallback(int requestCode, CDKActivity.ActivityCallBack callBack) {
+    public boolean addActiveCallback(int requestCode, ActivityCDK.ActivityCallBack callBack) {
         if (acbMap.containsKey(requestCode)) return false;
         acbMap.put(requestCode, callBack);
         return true;
@@ -215,7 +215,7 @@ public abstract class CDKFragment extends Fragment {
      * @param callBack    回调体
      * @return 返回false说明代码重复, 添加失败
      */
-    public boolean addPermissionCallback(int requestCode, CDKActivity.PermissionsCallBack callBack) {
+    public boolean addPermissionCallback(int requestCode, ActivityCDK.PermissionsCallBack callBack) {
         if (pcbMap.containsKey(requestCode)) return false;
         pcbMap.put(requestCode, callBack);
         return true;

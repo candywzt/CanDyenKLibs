@@ -3,18 +3,24 @@ package candyenk.android.widget;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
+import android.widget.FrameLayout;
 import android.widget.PopupWindow;
+import android.widget.TextView;
+import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
+import androidx.annotation.LayoutRes;
 import candyenk.android.R;
 import candyenk.android.tools.A;
 import candyenk.android.tools.V;
 import candyenk.android.utils.ULay;
-import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,22 +33,22 @@ public class Popup extends PopupWindow {
     @IntDef({STARTOUT, START, CENTER, END, ENDOUT})
     public @interface ViewLocation {}
 
-    public static final int STARTOUT = 1;//控件置于起始点外
-    public static final int START = 2;//控件对齐起始点
-    public static final int CENTER = 3;//控件居中
-    public static final int END = 4;//控件对齐结束点
-    public static final int ENDOUT = 5;//控件置于结束点外
+    public static final int STARTOUT = 1;//置于起始点外
+    public static final int START = 2;//对齐起始点
+    public static final int CENTER = 3;//居中
+    public static final int END = 4;//对齐结束点
+    public static final int ENDOUT = 5;//置于结束点外
 
 
     private static View lastSign;//上一个标记
     private static final String TAG = Popup.class.getSimpleName();
     private final Context context;
     private final View parentView;//弹窗目标View
-    private final MaterialCardView rootView;//弹窗根布局
+    private final FrameLayout rootView;//弹窗根布局
     private final int[] location = {CENTER, STARTOUT};//位置
     private final int[] deviation = {0, 0};//偏移
     private final float[] animD = {0.5f, 1};//动画参数
-    private int margin;//与目标控件的距离
+    private int margin = 16;//与目标控件的距离
     private View contentView;//内容布局
     private boolean ok;//是否已经初始化成功
     private boolean overSign;//结束标记
@@ -87,14 +93,6 @@ public class Popup extends PopupWindow {
     }
 
     /**
-     * 获取添加的自定义View
-     */
-    public View getContent() {
-        if (!ok) return null;
-        return this.contentView;
-    }
-
-    /**
      * 设置弹窗位置(水平,垂直)
      * show后无效
      */
@@ -106,6 +104,7 @@ public class Popup extends PopupWindow {
 
     /**
      * 设置与目标控件的距离
+     * 位置为out才有效
      * show后无效
      */
     public void setMargin(int margin) {
@@ -126,7 +125,16 @@ public class Popup extends PopupWindow {
         setFocusable(outTouchOff);
     }
 
+    /**
+     * 设置内容布局
+     */
+    public void setContent(@LayoutRes int resId) {
+        this.setContent(LayoutInflater.from(context).inflate(resId, null));
+    }
 
+    /**
+     * 设置内容布局
+     */
     public void setContent(View contentView) {
         if (!ok) return;
         this.contentView = contentView;
@@ -135,10 +143,40 @@ public class Popup extends PopupWindow {
         super.setContentView(this.rootView);
     }
 
+    /**
+     * 设置纯文本内容布局
+     */
+    public void setContent(CharSequence text) {
+        TextView tv = new MaterialTextView(context);
+        tv.setText(text);
+        setContent(tv);
+    }
+
+    /**
+     * 获取设置内容
+     */
+    public <T extends View> T getContent() {
+        return (T) this.contentView;
+    }
+
+    /**
+     * 设置背景色
+     */
+    public void setBackground(@ColorInt int color) {
+        rootView.setBackgroundColor(color);
+    }
+
+    /**
+     * 设置背景图
+     */
+    public void setBackground(Drawable drawable) {
+        rootView.setBackground(drawable);
+    }
+
     /*** 创建弹窗根布局 ***/
-    private MaterialCardView createLayout() {
-        MaterialCardView cv = new MaterialCardView(context);
-        V.FL(cv).size(-2, -2).radiusDP(16).ele(0).paddingDP(8).backgroundRes(R.color.back_group).refresh();
+    private FrameLayout createLayout() {
+        FrameLayout cv = new FrameLayout(context);
+        V.FL(cv).size(-2, -2).paddingDP(8).backgroundRes(R.drawable.bg_popup).refresh();
         return cv;
     }
 
@@ -160,7 +198,7 @@ public class Popup extends PopupWindow {
         int th = parentView.getHeight();
         switch (location[0]) {
             case STARTOUT:
-                deviation[0] = w * -1;
+                deviation[0] = w * -1 - margin;
                 animD[0] = w;
                 break;
             case START:
@@ -176,13 +214,13 @@ public class Popup extends PopupWindow {
                 animD[0] = w;
                 break;
             case ENDOUT:
-                deviation[0] = tw;
+                deviation[0] = tw + margin;
                 animD[0] = 0f;
                 break;
         }
         switch (location[1]) {
             case STARTOUT:
-                deviation[1] = (th + h) * -1;
+                deviation[1] = (th + h) * -1 - margin;
                 animD[1] = h;
                 break;
             case START:
@@ -198,7 +236,7 @@ public class Popup extends PopupWindow {
                 animD[1] = h;
                 break;
             case ENDOUT:
-                deviation[1] = 0;
+                deviation[1] = margin;
                 animD[1] = 0f;
                 break;
         }

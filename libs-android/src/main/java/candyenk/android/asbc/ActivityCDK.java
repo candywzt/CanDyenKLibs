@@ -1,4 +1,4 @@
-package candyenk.android.activity;
+package candyenk.android.asbc;
 
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -29,19 +29,19 @@ import java.util.Map;
  * CDKActivity
  * 一次重构
  */
-public abstract class CDKActivity extends AppCompatActivity {
+public abstract class ActivityCDK extends AppCompatActivity {
     /*************************************静态变量**************************************************/
     //public static boolean useAnimation = true;
     /*************************************成员变量**************************************************/
     protected String TAG;//TAG
     protected Bundle saveData;//保存的数据
+    protected FrameLayout container;//根布局
     private final Map<Integer, ActivityCallBack> acbMap = new HashMap<>();//Activity回调表
     private final Map<Integer, PermissionsCallBack> pcbMap = new HashMap<>();//权限申请回调表
-    private FrameLayout container;//根布局
     private TextView titleBar;//标题栏控件
     private BottomBar bottomBar;//底栏控件
     private View child;//添加的子控件
-    private List<CDKFragment> fList;//添加的Fragment数组
+    private List<FragmentCDK> fList;//添加的Fragment数组
     private int[] sign = {0};//标记<fragment当前页面>
 
     /**********************************************************************************************/
@@ -219,11 +219,11 @@ public abstract class CDKActivity extends AppCompatActivity {
      * 与setContentView二选一
      * 最多添加5个多了无效
      */
-    public void setFragment(Class<? extends CDKFragment>... fragment) {
+    public void setFragment(Class<? extends FragmentCDK>... fragment) {
         setContentView(null);
         if (bottomBar == null) createBottomLayout();
         bottomBar.removeAllItem();
-        bindingFragmentManager(UArrays.toArray(fragment, CDKFragment.class, this::createFragment));
+        bindingFragmentManager(UArrays.toArray(fragment, FragmentCDK.class, this::createFragment));
     }
 
 
@@ -354,8 +354,8 @@ public abstract class CDKActivity extends AppCompatActivity {
     }
 
     /*** 创建Fragment ***/
-    private CDKFragment createFragment(Class<? extends CDKFragment> classz) {
-        CDKFragment f = null;
+    private FragmentCDK createFragment(Class<? extends FragmentCDK> classz) {
+        FragmentCDK f = null;
         if (saveData == null) {
             try {
                 f = classz.getConstructor().newInstance();
@@ -367,7 +367,7 @@ public abstract class CDKActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         } else {
-            f = (CDKFragment) getSupportFragmentManager().findFragmentByTag(classz.getSimpleName());
+            f = (FragmentCDK) getSupportFragmentManager().findFragmentByTag(classz.getSimpleName());
         }
         f.activity = this;
         return f;
@@ -375,7 +375,7 @@ public abstract class CDKActivity extends AppCompatActivity {
 
 
     /*** 绑定Fragment页面管理器 ***/
-    private void bindingFragmentManager(CDKFragment... fragments) {
+    private void bindingFragmentManager(FragmentCDK... fragments) {
         if (fList == null) fList = new ArrayList<>(fragments.length);
         fList.clear();
         UArrays.addArrays(fList, fragments);

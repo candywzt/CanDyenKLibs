@@ -7,8 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import candyenk.android.activity.CDKActivity;
-import candyenk.android.activity.CDKFragment;
+import candyenk.android.asbc.ActivityCDK;
+import candyenk.android.asbc.FragmentCDK;
 
 import java.util.Random;
 
@@ -26,22 +26,22 @@ public class UShare {
         context.startActivity(intent);
     }
 
-    public static void startActivity(CDKActivity activity, Intent intent, CDKActivity.ActivityCallBack callBack) {
+    public static void startActivity(ActivityCDK activity, Intent intent, ActivityCDK.ActivityCallBack callBack) {
         startActivity(activity, intent, null, callBack);
     }
 
-    public static void startActivity(CDKActivity activity, Intent intent, Bundle data, CDKActivity.ActivityCallBack callBack) {
+    public static void startActivity(ActivityCDK activity, Intent intent, Bundle data, ActivityCDK.ActivityCallBack callBack) {
         int requestCode = new Random().nextInt(65535);
         if (activity.addActiveCallback(requestCode, callBack)) {
             activity.startActivityForResult(intent, requestCode, data);
         } else startActivity(activity, intent, data, callBack);
     }
 
-    public static void startActivity(CDKFragment fragment, Intent intent, CDKActivity.ActivityCallBack callBack) {
+    public static void startActivity(FragmentCDK fragment, Intent intent, ActivityCDK.ActivityCallBack callBack) {
         startActivity(fragment, intent, null, callBack);
     }
 
-    public static void startActivity(CDKFragment fragment, Intent intent, Bundle data, CDKActivity.ActivityCallBack callBack) {
+    public static void startActivity(FragmentCDK fragment, Intent intent, Bundle data, ActivityCDK.ActivityCallBack callBack) {
         int requestCode = new Random().nextInt(65535);
         if (fragment.addActiveCallback(requestCode, callBack)) {
             fragment.startActivityForResult(intent, requestCode, data);

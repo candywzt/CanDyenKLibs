@@ -4,7 +4,7 @@
 
     <application>
         <activity
-                android:name="candyenk.android.activity.CrashActivity"
+                android:name="candyenk.android.asbc.ActivityCrash"
                 android:process=":error_activity"/>
     </application>
 </manifest>

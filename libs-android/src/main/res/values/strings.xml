@@ -15,7 +15,7 @@
     </string>
     <!--文件选择器-->
     <string name="file_chooser_title">File Chooser</string>
-    <string name="file_chooser_filesize">File Size</string>
-    <string name="file_chooser_lmd">Last Modified Date</string>
+    <string name="file_chooser_filesize">File Size:%s</string>
+    <string name="file_chooser_lmd">Update Date:%s</string>
     <string name="file_chooser_no_file">No File</string>
 </resources>

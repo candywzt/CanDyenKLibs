@@ -14,8 +14,8 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.PermissionChecker;
 import androidx.fragment.app.Fragment;
-import candyenk.android.activity.CDKActivity;
-import candyenk.android.activity.CDKFragment;
+import candyenk.android.asbc.ActivityCDK;
+import candyenk.android.asbc.FragmentCDK;
 
 import java.util.Random;
 
@@ -89,14 +89,14 @@ public class USys {
         fragment.requestPermissions(permissions, requestCode);
     }
 
-    public static void reauestPermission(CDKActivity activity, CDKActivity.PermissionsCallBack callback, String... permissions) {
+    public static void reauestPermission(ActivityCDK activity, ActivityCDK.PermissionsCallBack callback, String... permissions) {
         int requestCode = new Random().nextInt(65535);
         if (activity.addPermissionCallback(requestCode, callback)) {
             ActivityCompat.requestPermissions(activity, permissions, requestCode);
         } else reauestPermission(activity, callback, permissions);
     }
 
-    public static void reauestPermission(CDKFragment fragment, CDKActivity.PermissionsCallBack callback, String... permissions) {
+    public static void reauestPermission(FragmentCDK fragment, ActivityCDK.PermissionsCallBack callback, String... permissions) {
         int requestCode = new Random().nextInt(65535);
         if (fragment.addPermissionCallback(requestCode, callback)) {
             fragment.requestPermissions(permissions, requestCode);
