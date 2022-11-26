@@ -276,8 +276,8 @@ public class ProgressBarCDK extends ProgressBar {
     }
 
 
-    private int dp2px(double dpValue) {
-        return ULay.dp2px(context, dpValue);
+    protected int dp2px(float dp) {
+        return (int) ULay.dp2px(context, dp);
     }
     /**********************************************************************************************/
     /*****************************************公共方法***********************************************/

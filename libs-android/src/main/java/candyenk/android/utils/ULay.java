@@ -67,19 +67,19 @@ public class ULay {
      * 从dp转成为px
      * 支持负数
      */
-    public static int dp2px(Context context, double dpValue) {
-        float num = dpValue < 0 ? -1 : 1;
-        final double scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + (0.5f * num));
+    public static float dp2px(Context context, float dp) {
+        float num = dp < 0 ? -1 : 1;
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return dp * scale + (0.5f * num);
     }
 
     /**
      * 根据手机的分辨率
      * 从px转成为dp
      */
-    public static int px2dp(Context context, double pxValue) {
-        final double scale = context.getResources().getDisplayMetrics().density;
-        return (int) (pxValue / scale + 0.5f);
+    public static float px2dp(Context context, float px) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return px / scale + 0.5f;
     }
 
 

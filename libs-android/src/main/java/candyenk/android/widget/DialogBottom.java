@@ -100,7 +100,7 @@ public class DialogBottom extends BottomSheetDialog {
         super.dismiss();
     }
 
-    protected double dp2px(double dp) {
+    protected float dp2px(float dp) {
         return ULay.dp2px(context, dp);
     }
     /**********************************************************************************************/

@@ -51,8 +51,9 @@ public class L {
     public static boolean e(String tag, Exception e, Object msg) {
         String mm = msg == null ? "NULL" : msg.toString();
         String ee = e == null ? "" : (":" + e.getClass().getSimpleName() + "-" + e.getMessage());
+        boolean r = e(tag, mm + ee);
         if (e != null) e.printStackTrace();
-        return e(tag, mm + ee);
+        return r;
     }
 
     /**

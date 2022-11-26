@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import candyenk.android.R;
 import candyenk.android.tools.V;
+import candyenk.android.utils.ULay;
 import com.google.android.material.textview.MaterialTextView;
 
 /**
@@ -57,29 +58,27 @@ public class Item extends LinearLayout {
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
     /**********************************************************************************************/
-    protected int dp2px(double dpValue) {
-        float num = dpValue < 0 ? -1 : 1;
-        final double scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + (0.5f * num));
+    protected int dp2px(float dp) {
+        return (int) ULay.dp2px(context, dp);
     }
 
     protected void initLayout() {
-        V.paddingDP(this, 10).orientation(0).gravity(Gravity.CENTER).backgroundRes(R.drawable.bg_cdk).refresh();
+        V.paddingDP(this, 8).orientation(0).gravity(Gravity.CENTER).backgroundRes(R.drawable.bg_cdk).refresh();
 
         iconView = new ImageView(context);
-        V.LL(iconView).sizeDP(60).parent(this).refresh();
+        V.LL(iconView).sizeDP(56).parent(this).refresh();
 
         LinearLayout ll = new LinearLayout(context);
         V.LL(ll).size(-1, -2).orientation(1).paddingDP(8, 0, 8, 0).weight(1).parent(this).refresh();
 
         titleView = new MaterialTextView(context);
-        V.LL(titleView).size(-1, -2).textSize(18).textColorRes(R.color.text_main).parent(ll).refresh();
+        V.LL(titleView).size(-1, -2).textSize(16).textColorRes(R.color.text_main).parent(ll).refresh();
 
         summaryView = new MaterialTextView(context);
         V.LL(summaryView).size(-1, -2).textSize(12).textColorRes(R.color.text_deputy).hide().parent(ll).refresh();
 
         arrowView = new ImageView(context);
-        V.LL(arrowView).sizeDP(20).parent(this).drawable(R.drawable.ic_arrow_right).refresh();
+        V.LL(arrowView).sizeDP(18).parent(this).drawable(R.drawable.ic_arrow_right).refresh();
     }
 
     protected void initAttrs(AttributeSet attrs) {
@@ -136,9 +135,9 @@ public class Item extends LinearLayout {
     public void setIconResource(int res) {
         if (iconView == null) return;
         if (res > 0) {
-            V.LL(iconView).sizeDP(60).drawable(res).visible().refresh();
+            V.LL(iconView).size(V.UN, V.getLLP(iconView).width).drawable(res).visible().refresh();
         } else {
-            V.LL(iconView).sizeDP(60, -2).visibility(res == 0 ? View.INVISIBLE : View.GONE).refresh();
+            V.LL(iconView).size(V.UN, -2).visibility(res == 0 ? View.INVISIBLE : View.GONE).refresh();
         }
     }
 
@@ -149,9 +148,9 @@ public class Item extends LinearLayout {
     public void setIconDrawable(Drawable drawable) {
         if (iconView == null) return;
         if (drawable != null) {
-            V.LL(iconView).sizeDP(60).drawable(drawable).visible().refresh();
+            V.LL(iconView).size(V.UN, iconView.getLayoutParams().width).drawable(drawable).visible().refresh();
         } else {
-            V.LL(iconView).sizeDP(60, -2).invisible().refresh();
+            V.LL(iconView).size(V.UN, -2).invisible().refresh();
         }
     }
 
