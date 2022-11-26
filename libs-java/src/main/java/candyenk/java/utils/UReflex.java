@@ -1,106 +1,249 @@
 package candyenk.java.utils;
 
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import candyenk.java.tools.T;
 
 /**
  * Java反射工具
  */
 public class UReflex {
     /**
-     * 获取类实例
+     * 查找构造方法
      *
-     * @param classz 类Class对象
-     * @param args   构造方法参数集
-     * @return 类实例
+     * @param o 构造方法所在的对象
+     * @param c 构造方法参数
      */
-    public static <T> T newInstance(Class<T> classz, Object... args) {
-        T object = null;
-        Class[] cs = new Class[args.length];
-        for (int i = 0; i < args.length; i++) cs[i] = args[i].getClass();
-        try {
-            Constructor<T> d = classz.getDeclaredConstructor(cs);
-            d.setAccessible(true);
-            object = d.newInstance(args);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return object;
+    public static <T> UC<T> findC(Object o, Class<?>... c) {
+        return findC((T) o.getClass(), c);
     }
 
     /**
-     * 执行方法
+     * 查找构造方法
      *
-     * @param classz      方法所在的类对象
-     * @param obj         执行方法的类对象
-     * @param methodName  方法名
-     * @param args        参数列表
-     * @param resultClass 返回值类型
-     * @return 方法返回值
+     * @param oc 构造方法所在的类
+     * @param c  构造方法参数
      */
-    public static <T> T invoke(Class<?> classz, Object obj, String methodName, Class<T> resultClass, Object... args) {
-        T result = null;
-        Class[] cs = new Class[args.length];
-        for (int i = 0; i < args.length; i++) cs[i] = args[i].getClass();
+    public static <T> UC<T> findC(Class<T> oc, Class<?>... c) {
         try {
-            if (classz == null && obj != null) classz = obj.getClass();
-            Method m = classz.getDeclaredMethod(methodName, cs);
-            m.setAccessible(true);
-            result = (T) m.invoke(obj, args);
+            Constructor<T> con = oc.getConstructor(c);
+            return new UC<>(con);
         } catch (Exception e) {
-            e.printStackTrace();
+            return new UC<>(e);
         }
-        return result;
-    }
 
-    public static Object invoke(Class<?> classz, Object obj, String methodName, Object... args) {
-        return invoke(classz, obj, methodName, null, args);
-    }
-
-    public static Object invoke(Object obj, String methodName, Object... args) {
-        return invoke(null, obj, methodName, null, args);
     }
 
     /**
-     * 获取对象的成员变量
+     * 查找方法
      *
-     * @param classz   对象的类型
-     * @param obj      指定对象
-     * @param varName  变量名
-     * @param varClass 变量类型
-     * @return 变量
+     * @param o    方法所在的对象
+     * @param name 方法名
+     * @param c    方法参数类型集合
      */
-    public static <T> T getVar(Class<?> classz, Object obj, String varName, Class<T> varClass) {
-        T object = null;
-        try {
-            Field f = classz.getDeclaredField(varName);
-            object = (T) f.get(obj);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return object;
+    public static UM findM(Object o, String name, Class<?>... c) {
+        return findM(o.getClass(), name, c);
     }
 
     /**
-     * 设置对象的成员变量
+     * 查找方法
      *
-     * @param classz  对象的类型
-     * @param obj     指定对象
-     * @param varName 变量名
-     * @param value   设置的值
-     * @return 变量
+     * @param oc   方法所在的类
+     * @param name 方法名
+     * @param c    方法参数类型集合
      */
-    public static void setVar(Class<?> classz, Object obj, String varName, Object value) {
-        T object = null;
+    public static UM findM(Class<?> oc, String name, Class<?>... c) {
+        if (UString.isEmpty(name)) return new UM(new NullPointerException("findM(方法名为空)"));
+        Method m = null;
+        Exception e = null;
         try {
-            Field f = classz.getDeclaredField(varName);
-            f.setAccessible(true);
-            f.set(obj, value);
-        } catch (Exception e) {
-            e.printStackTrace();
+            m = oc.getDeclaredMethod(name, c);
+        } catch (NoSuchMethodException e1) {
+            try {
+                m = oc.getMethod(name, c);
+            } catch (Exception e2) {
+                e = e2;
+            }
+        } catch (Exception e1) {
+            e = e1;
         }
+        return m == null ? new UM(e) : new UM(m);
+    }
+
+    /**
+     * 查找字段
+     *
+     * @param o    字段所在的对象
+     * @param name 字段名
+     */
+    public static UF findF(Object o, String name) {
+        return findF(o.getClass(), name);
+    }
+
+    /**
+     * 查找字段
+     *
+     * @param oc   字段所在的类
+     * @param name 字段名
+     */
+    public static UF findF(Class<?> oc, String name) {
+        if (UString.isEmpty(name)) return new UF(new NullPointerException("findM(方法名为空)"));
+        Field f = null;
+        Exception e = null;
+        try {
+            f = oc.getDeclaredField(name);
+        } catch (NoSuchFieldException e1) {
+            try {
+                f = oc.getField(name);
+            } catch (Exception e2) {
+                e = e2;
+            }
+        } catch (Exception e1) {
+            e = e1;
+        }
+        return f == null ? new UF(e) : new UF(f);
+
+    }
+
+    /**
+     * 一个小小的带实例Method包装类
+     * 用来连调使用
+     */
+    public static class UC<T> {
+        public final Constructor<T> c;//Find到的方法
+        public Exception e;//c为空时=Find期间的异常,c不为空时=newInstance期间的异常(没有发生异常那就是空)
+
+        public UC(Constructor<T> c) {
+            this.c = c;
+        }
+
+        public UC(Exception e) {
+            this.c = null;
+            this.e = e;
+        }
+
+        /**
+         * 构建新的实例
+         */
+        public T newInstance(Object... a) {
+            if (c == null) return null;
+            try {
+                return c.newInstance(a);
+            } catch (Exception e) {
+                this.e = e;
+                return null;
+            }
+        }
+
+        /**
+         * 是不是空方法
+         */
+        public boolean isNull() {
+            return c == null;
+        }
+    }
+
+    /**
+     * 一个小小的带实例Method包装类
+     * 用来连调使用
+     */
+    public static class UM {
+        public final Method m;//Find到的方法
+        public Exception e;//m为空时=Find期间的异常,m不为空时=invoke期间的异常(没有发生异常那就是空)
+
+        public UM(Method m) {
+            this.m = m;
+        }
+
+        public UM(Exception e) {
+            this.m = null;
+            this.e = e;
+        }
+
+        /**
+         * 执行无返回值方法
+         */
+        public <T> T invoke(Object o, Object... a) {
+            if (m == null || o == null) return null;
+            try {
+                return (T) m.invoke(o, a);
+            } catch (Exception e) {
+                this.e = e;
+                return null;
+            }
+        }
+
+        /**
+         * 执行有返回值方法
+         */
+        public <T> T invoke(Object o, Class<T> r, Object... a) {
+            if (m == null || o == null) return null;
+            try {
+                return (T) m.invoke(o, a);
+            } catch (Exception e) {
+                this.e = e;
+                return null;
+            }
+        }
+
+        /**
+         * 是不是空方法
+         */
+        public boolean isNull() {
+            return m == null;
+        }
+    }
+
+    /**
+     * 一个小小的带实例Field包装类
+     * 用来连调使用
+     */
+    public static class UF {
+        public final Field f;//Find到的字段
+        public Exception e;//f为空时=Find期间的异常,f不为空时=getset期间的异常(没有发生异常那就是空)
+
+        public UF(Field f) {
+            this.f = f;
+        }
+
+        public UF(Exception e) {
+            this.f = null;
+            this.e = e;
+        }
+
+        /**
+         * 修改字段值
+         */
+        public void set(Object o, Object a) {
+            if (f == null || o == null) return;
+            try {
+                f.setAccessible(true);
+                f.set(o, a);
+            } catch (Exception e) {
+                this.e = e;
+            }
+        }
+
+        /**
+         * 获取字段值
+         */
+        public <T> T get(Object o) {
+            if (f == null || o == null) return null;
+            try {
+                return (T) f.get(o);
+            } catch (Exception e) {
+                this.e = e;
+                return null;
+            }
+        }
+
+        /**
+         * 获取字段值(具体类型)
+         */
+        public <T> T get(Object o, Class<T> c) {
+            return (T) get(o);
+        }
+
     }
 }

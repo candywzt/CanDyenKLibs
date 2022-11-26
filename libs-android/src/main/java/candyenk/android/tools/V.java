@@ -15,6 +15,9 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+import candyenk.android.utils.ULay;
+import candyenk.java.utils.UArrays;
+import candyenk.java.utils.UReflex;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.ShapeAppearanceModel;
@@ -209,35 +212,68 @@ public class V<T extends View> {
     }
 
     /**
-     * 设置控件显隐
+     * 设置控件隐藏
      */
     public static void hide(View... v) {
         for (View view : v) if (view != null) view.setVisibility(View.GONE);
     }
 
-
+    /**
+     * 设置控件可见
+     */
     public static void visible(View... v) {
         for (View view : v) if (view != null) view.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * 设置控件不可见
+     */
     public static void invisible(View... v) {
         for (View view : v) if (view != null) view.setVisibility(View.INVISIBLE);
     }
 
     /**
-     * 设置控件开关
+     * 判断控件隐藏
+     */
+    public static boolean isHide(View v) {
+        return v != null && v.getVisibility() == View.GONE;
+    }
+
+    /**
+     * 判断控件可见
+     */
+    public static boolean isVisible(View v) {
+        return v != null && v.getVisibility() == View.VISIBLE;
+    }
+
+    /**
+     * 判断控件不可见
+     */
+    public static boolean isInvisible(View v) {
+        return v != null && v.getVisibility() == View.INVISIBLE;
+    }
+
+    /**
+     * 设置控件打开
      */
     public static void checkTrue(View... v) {
         check(true, v);
     }
 
+    /**
+     * 设置控件关闭
+     */
     public static void checkFalse(View... v) {
         check(false, v);
     }
 
+    /**
+     * 设置控件开关状态
+     */
     public static void check(boolean c, View... v) {
         for (View view : v) if (view instanceof Checkable) ((Checkable) view).setChecked(c);
     }
+
 
     /**
      * 创建LinearLayout.LayoutParams
@@ -383,15 +419,10 @@ public class V<T extends View> {
         return new V(v).radiusDP(r);
     }
 
-
     /**********************************************************************************************/
     /***********************************私有静态方法*************************************************/
     /**********************************************************************************************/
-    private static V create(View v) {
-        V vv = map.get(v);
-        if (vv == null) vv = new V(v);
-        return vv;
-    }
+
     /**********************************************************************************************/
     /***************************************接口****************************************************/
     /**********************************************************************************************/
@@ -647,49 +678,46 @@ public class V<T extends View> {
         else view.setBackground(drawable);
         return this;
     }
+/*** 从这里开始就是使用反射实现的属性了 ***/
+    /*** 反射Find属性 ***/
+    public UReflex.UM find(String m, Class<?>... c) {
+        return UReflex.findM(view.getClass(), m, c);
+    }
 
     /**
      * 设置控件Hint
      * TextView
      * 无需刷新
      */
-    public V hint(CharSequence s) {
-        if (view instanceof TextView) ((TextView) view).setHint(s);
-        else L.e(TAG, "控件:" + view + "setHint");
-        return this;
-    }
-
 
     public V hint(@StringRes int resID) {
         return hint(context.getText(resID));
     }
+
+    public V hint(CharSequence s) {
+        String name = "setHint";
+        UReflex.UM um = find(name, CharSequence.class);
+        um.invoke(view, s);
+        return log(um, name, CharSequence.class);
+    }
+
 
     /**
      * 设置控件文本
      * TextView
      * 无需刷新
      */
-    public V text(CharSequence s) {
-        if (view instanceof TextView) ((TextView) view).setText(s);
-        else L.e(TAG, "控件:" + view + "无法setText");
-        return this;
-    }
-
     public V text(@StringRes int resID) {
         return text(context.getText(resID));
     }
 
-    /**
-     * 设置文本颜色
-     * 不是资源值
-     * TextView
-     * 无需刷新
-     */
-    public V textColor(@ColorInt int color) {
-        if (view instanceof TextView) ((TextView) view).setTextColor(color);
-        else L.e(TAG, "控件:" + view + "无法setTextColor");
-        return this;
+    public V text(CharSequence s) {
+        String name = "setText";
+        UReflex.UM um = find(name, CharSequence.class);
+        um.invoke(view, s);
+        return log(um, name, CharSequence.class);
     }
+
 
     /**
      * 设置文本颜色资源值
@@ -701,13 +729,28 @@ public class V<T extends View> {
     }
 
     /**
+     * 设置文本颜色
+     * 不是资源值
+     * TextView
+     * 无需刷新
+     */
+    public V textColor(@ColorInt int color) {
+        String name = "setTextColor";
+        UReflex.UM um = find(name, int.class);
+        um.invoke(view, color);
+        return log(um, name, int.class);
+    }
+
+
+    /**
      * 设置文本大小
      * 无需刷新
      */
     public V textSize(float sp) {
-        if (view instanceof TextView) ((TextView) view).setTextSize(sp);
-        else L.e(TAG, "控件:" + view + "无法setTextSize");
-        return this;
+        String name = "setTextSize";
+        UReflex.UM um = find(name, float.class);
+        um.invoke(view, sp);
+        return log(um, name, float.class);
     }
 
     /**
@@ -716,74 +759,71 @@ public class V<T extends View> {
      * ImageView
      * 无需刷新
      */
-    public V drawable(Drawable drawable) {
-        if (view instanceof ImageView) ((ImageView) view).setImageDrawable(drawable);
-        else L.e(TAG, "控件:" + view + "无法setImageDrawable");
-        return this;
-    }
-
-
     @SuppressLint("UseCompatLoadingForDrawables")
     public V drawable(@DrawableRes int resID) {
-        if (resID == 0) return drawable(null);
+        if (resID == 0) return drawable((Drawable) null);
         return drawable(context.getDrawable(resID));
     }
+
+    public V drawable(Drawable drawable) {
+        String name = "setImageDrawable";
+        UReflex.UM um = find(name, Drawable.class);
+        um.invoke(view, drawable);
+        return log(um, name, Drawable.class);
+    }
+
 
     /**
      * 设置图片显示方式
      * 无需刷新
      */
     public V scaleType(ImageView.ScaleType type) {
-        if (view instanceof ImageView) ((ImageView) view).setScaleType(type);
-        else L.e(TAG, "控件:" + view + "无法setScaleType");
-        return this;
+        String name = "setScaleType";
+        UReflex.UM um = find(name, ImageView.ScaleType.class);
+        um.invoke(view, type);
+        return log(um, name, ImageView.ScaleType.class);
     }
 
     /**
-     * 设置布局方向(0横1纵)LinearLayout
+     * 设置布局方向(0横1纵)
      * 无需刷新
      */
     public V orientation(int o) {
-        if (view instanceof LinearLayout) ((LinearLayout) view).setOrientation(o);
-        return this;
+        String name = "setOrientation";
+        UReflex.UM um = find(name, int.class);
+        um.invoke(view, o);
+        return log(um, name, int.class);
     }
-/*** 从这里开始就是使用反射实现的属性了 ***/
 
     /**
      * 设置控件Gravity属性
      * hhh我是不是应该把所有属性都用反射弄啊
      */
     public V gravity(int g) {
-        try {
-            view.getClass().getMethod("setGravity", int.class).invoke(view, g);
-        } catch (Exception e) {
-            L.e(TAG, "控件:" + view + "setGravity失败:" + e.getMessage());
-        }
-        return this;
+        String name = "setGravity";
+        UReflex.UM um = find(name, int.class);
+        um.invoke(view, g);
+        return log(um, name, int.class);
     }
 
     /**
      * 设置控件Max属性
      */
     public V max(int m) {
-        try {
-            view.getClass().getMethod("setMax", int.class).invoke(view, m);
-        } catch (Exception e) {
-            L.e(TAG, "控件:" + view + "setMax失败:" + e.getMessage());
-        }
-        return this;
+        String name = "setMax";
+        UReflex.UM um = find(name, int.class);
+        um.invoke(view, m);
+        return log(um, name, int.class);
     }
 
     /**
      * 设置控件Min属性
      */
     public V min(int m) {
-        try {
-            view.getClass().getMethod("setMin", int.class).invoke(view, m);
-        } catch (Exception e) {
-            L.e(TAG, "控件:" + view + "setMin失败:" + e.getMessage());
-        }
-        return this;
+        String name = "setMin";
+        UReflex.UM um = find(name, int.class);
+        um.invoke(view, m);
+        return log(um, name, int.class);
     }
 
     /**
@@ -796,11 +836,8 @@ public class V<T extends View> {
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/
-    private double DP(double dp) {
-        if (dp == UN) return UN;
-        float num = dp < 0 ? -1 : 1;
-        final double scale = context.getResources().getDisplayMetrics().density;
-        return (dp * scale + (0.5f * num));
+    private float DP(float dp) {
+        return ULay.dp2px(context, dp);
     }
 
     private boolean isColor(@ColorRes int resId) {
@@ -809,6 +846,14 @@ public class V<T extends View> {
             return true;
         } catch (Resources.NotFoundException ignored) {}
         return false;
+    }
+
+    private V log(UReflex.UM um, String m, Class<?>... c) {
+        if (um.isNull() || um.e != null) {
+            String log = String.format("控件[%s].%s(%s)失败", view.getClass().getName(), m, UArrays.toString(c, Class::getSimpleName));
+            L.e(TAG, um.e, log);
+        }
+        return this;
     }
     /**********************************************************************************************/
     /**************************************内部类***************************************************/
