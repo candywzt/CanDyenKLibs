@@ -68,6 +68,20 @@ public abstract class ActivityCDK extends AppCompatActivity {
     }
 
     /**
+     * Activity成功回调
+     * 一次性回调
+     */
+    public interface OK extends ActivityCallBack {
+        void ok(Intent data);
+
+        @Override
+        default boolean callback(int code, Intent data) {
+            if (code == RESULT_OK) ok(data);
+            return false;
+        }
+    }
+
+    /**
      * 权限申请回调
      */
     public interface PermissionsCallBack {
@@ -75,7 +89,7 @@ public abstract class ActivityCDK extends AppCompatActivity {
          * @param codes 授权结果
          * @return 返回false则用后即焚
          */
-        boolean callback(int[] codes);
+        void callback(int[] codes);
     }
 
     /**********************************************************************************************/
@@ -98,6 +112,7 @@ public abstract class ActivityCDK extends AppCompatActivity {
     //Activity创建,启动的初始化
     @Override
     protected final void onCreate(Bundle save) {
+        this.TAG = this.getClass().getSimpleName();
         L.e(TAG, "启动创建-Create");
         contextInit(save);
         super.onCreate(save);
@@ -172,7 +187,10 @@ public abstract class ActivityCDK extends AppCompatActivity {
     public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         PermissionsCallBack pcb = pcbMap.get(requestCode);
-        if (pcb != null && !pcb.callback(grantResults)) removePermissionCallback(requestCode);
+        if (pcb != null) {
+            pcb.callback(grantResults);
+            removePermissionCallback(requestCode);
+        }
     }
 
     /**
@@ -310,7 +328,6 @@ public abstract class ActivityCDK extends AppCompatActivity {
 
     /*** 初始化Context ***/
     private void contextInit(Bundle save) {
-        this.TAG = this.getClass().getSimpleName();
         this.saveData = save;
         setTitle(null);
         if (save != null) {

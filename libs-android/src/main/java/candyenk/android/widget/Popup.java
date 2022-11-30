@@ -1,5 +1,6 @@
 package candyenk.android.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -29,19 +30,21 @@ import java.lang.annotation.RetentionPolicy;
  * 气泡弹窗控件
  */
 public class Popup extends PopupWindow {
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({STARTOUT, START, CENTER, END, ENDOUT})
-    public @interface ViewLocation {}
-
+    /*************************************静态变量**************************************************/
     public static final int STARTOUT = 1;//置于起始点外
     public static final int START = 2;//对齐起始点
     public static final int CENTER = 3;//居中
     public static final int END = 4;//对齐结束点
     public static final int ENDOUT = 5;//置于结束点外
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({STARTOUT, START, CENTER, END, ENDOUT})
+    public @interface ViewLocation {}
 
+    @SuppressLint("StaticFieldLeak")
     private static View lastSign;//上一个标记
     private static final String TAG = Popup.class.getSimpleName();
+    /*************************************成员变量**************************************************/
     private final Context context;
     private final View parentView;//弹窗目标View
     private final FrameLayout rootView;//弹窗根布局
@@ -53,6 +56,9 @@ public class Popup extends PopupWindow {
     private boolean ok;//是否已经初始化成功
     private boolean overSign;//结束标记
 
+    /**********************************************************************************************/
+    /*************************************构造方法**************************************************/
+    /**********************************************************************************************/
     public Popup(Context context) {
         this(context, null);
     }
@@ -71,12 +77,18 @@ public class Popup extends PopupWindow {
         setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         setCancelable(true, true);
     }
+    /**********************************************************************************************/
+    /*************************************继承方法**************************************************/
+    /**********************************************************************************************/
 
     @Override
     public void dismiss() {
         if (!ok) return;
         endAnim();
     }
+    /**********************************************************************************************/
+    /*************************************公共方法**************************************************/
+    /**********************************************************************************************/
 
     /**
      * 显示气泡弹窗，并将箭头指向目标
@@ -145,11 +157,13 @@ public class Popup extends PopupWindow {
 
     /**
      * 设置纯文本内容布局
+     * 方便连调
      */
-    public void setContent(CharSequence text) {
+    public Popup setContent(CharSequence text) {
         TextView tv = new MaterialTextView(context);
         tv.setText(text);
         setContent(tv);
+        return this;
     }
 
     /**
@@ -172,6 +186,10 @@ public class Popup extends PopupWindow {
     public void setBackground(Drawable drawable) {
         rootView.setBackground(drawable);
     }
+
+    /**********************************************************************************************/
+    /*************************************私有方法**************************************************/
+    /**********************************************************************************************/
 
     /*** 创建弹窗根布局 ***/
     private FrameLayout createLayout() {
@@ -246,7 +264,7 @@ public class Popup extends PopupWindow {
         ScaleAnimation sa = new ScaleAnimation(0, 1, 0, 1, animD[0], animD[1]);
         sa.setDuration(100);
         sa.setInterpolator(new AccelerateDecelerateInterpolator());
-        sa.setAnimationListener((A.EAL) animation -> rootView.clearAnimation());
+        sa.setAnimationListener((A.End) animation -> rootView.clearAnimation());
         rootView.startAnimation(sa);
     }
 
@@ -256,7 +274,7 @@ public class Popup extends PopupWindow {
         ScaleAnimation ea = new ScaleAnimation(1, 0, 1, 0, animD[0], animD[1]);
         ea.setDuration(100);
         ea.setInterpolator(new AccelerateDecelerateInterpolator());
-        ea.setAnimationListener((A.EAL) animation -> {
+        ea.setAnimationListener((A.End) animation -> {
             super.dismiss();
             lastSign = null;
             rootView.clearAnimation();

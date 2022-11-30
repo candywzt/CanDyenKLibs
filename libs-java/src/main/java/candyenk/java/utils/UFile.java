@@ -72,6 +72,7 @@ public class UFile {
         return new String(readBytes(file), charset);
     }
 
+
     /**
      * 文件读取字节数组
      * 超高性能文件读取

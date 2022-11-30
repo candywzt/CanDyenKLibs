@@ -127,12 +127,12 @@ public class AIV {
 
         showAnim = new AlphaAnimation(0, 1);//显现
         showAnim.setDuration(500);
-        showAnim.setAnimationListener((A.EAL) a -> {
+        showAnim.setAnimationListener((A.End) a -> {
             if (ori != 0) imageView.startAnimation(autoAnim);
         });
         hideAnim = new AlphaAnimation(1, 0);//隐退
         hideAnim.setDuration(500);
-        hideAnim.setAnimationListener((A.EAL) a -> {
+        hideAnim.setAnimationListener((A.End) a -> {
             V.ML(imageView).size(w, h).margin(0, 0, ori < 0 ? margin : 0, ori > 0 ? margin : 0).refresh();
             imageView.setImageDrawable(image);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);

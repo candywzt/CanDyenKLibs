@@ -162,7 +162,7 @@ public class LoadView extends View {
     }
 
     private void closeAnimation() {
-        if (this.percent == 0) return;
+        //if (this.percent == 0) return;//开关太快会卡住,这行不能要
         this.closeAnim = getAnimator(this.percent, 0, anim -> {
             float value = (float) anim.getAnimatedValue();
             if (value == 0 && onLoadCloseListener != null) {

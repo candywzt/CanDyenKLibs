@@ -44,10 +44,12 @@ public class ItemIcon extends Item {
     /**********************************************************************************************/
     @Override
     protected void initLayout() {
-        V.paddingDP(this, 16, 0, 16, 0).orientation(1).gravity(Gravity.CENTER).backgroundRes(R.drawable.bg_cdk).refresh();
+        this.setGravity(Gravity.CENTER);
+        this.setOrientation(VERTICAL);
+        this.setBackgroundResource(R.drawable.bg_cdk);
 
         iconView = new ImageView(context);
-        V.LL(iconView).sizeDP(40).parent(this).refresh();
+        V.LL(iconView).padding(8).sizeDP(48).parent(this).refresh();
 
         titleView = new MaterialTextView(context);
         V.LL(titleView).size(-2, -2).textSize(16).gravity(Gravity.CENTER).textColorRes(R.color.text_main).parent(this).refresh();
@@ -57,7 +59,7 @@ public class ItemIcon extends Item {
     public void setIconResource(int res) {
         if (iconView == null) return;
         if (res > 0) {
-            V.LL(iconView).size(V.UN,V.getLLP(iconView).width).drawable(res).visible().refresh();
+            V.LL(iconView).size(V.UN, V.getLLP(iconView).width).drawable(res).visible().refresh();
         } else {
             V.LL(iconView).size(V.UN, -2).visibility(res == 0 ? View.INVISIBLE : View.GONE).refresh();
         }
@@ -67,7 +69,7 @@ public class ItemIcon extends Item {
     public void setIconDrawable(Drawable drawable) {
         if (iconView == null) return;
         if (drawable != null) {
-            V.LL(iconView).size(V.UN,V.getLLP(iconView).width).drawable(drawable).visible().refresh();
+            V.LL(iconView).size(V.UN, V.getLLP(iconView).width).drawable(drawable).visible().refresh();
         } else {
             V.LL(iconView).size(V.UN, -2).invisible().refresh();
         }

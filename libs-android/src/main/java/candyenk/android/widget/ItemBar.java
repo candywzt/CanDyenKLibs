@@ -7,15 +7,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.animation.*;
 import android.widget.LinearLayout;
-import candyenk.android.R;
 import candyenk.android.tools.A;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import candyenk.android.utils.ULay;
-import candyenk.java.utils.UArrays;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 非常棒的ItemBar
@@ -25,12 +20,10 @@ public class ItemBar extends LinearLayout {
     /*************************************静态变量**************************************************/
 
     /*************************************成员变量**************************************************/
-    private static final String TAG = ItemBar.class.getSimpleName();
+    protected static final String TAG = ItemBar.class.getSimpleName();
     protected Context context;
     protected ItemIcon[] items;//默认ItemIcon控件集
-    protected Animation[] showAnims;//默认展开动画集
-    protected Animation[] hideAnims;//默认收起动画集
-    protected final List<ItemPackage> list = new ArrayList<>();//ItemPackage List
+    protected ItemPackage[] packs;//当前显示的Item集
 
     /**********************************************************************************************/
     /***********************************公共静态方法*************************************************/
@@ -51,9 +44,9 @@ public class ItemBar extends LinearLayout {
 
         Drawable getIcon();
 
-        void onClick();
+        void onClick(View v);
 
-        void onLongClick();
+        boolean onLongClick(View v);
     }
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
@@ -87,10 +80,8 @@ public class ItemBar extends LinearLayout {
         setOrientation(HORIZONTAL);
         setGravity(Gravity.CENTER);
         this.items = new ItemIcon[5];
-        for (int i = 0; i < items.length; i++) {
-            items[i] = createItem();
-            super.addView(items[i]);
-        }
+        this.packs = new ItemPackage[5];
+        for (int i = 0; i < items.length; i++) items[i] = createItem();
     }
 
     protected void initAnim() {
@@ -110,11 +101,6 @@ public class ItemBar extends LinearLayout {
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
 
-    public void setItem(ItemPackage... items) {
-        list.clear();
-        UArrays.addArrays(list, items);
-    }
-
     /**
      * 展示Item到指定位置
      *
@@ -128,13 +114,15 @@ public class ItemBar extends LinearLayout {
     /**
      * 展示Item到指定位置
      *
-     * @param item     已加载的Item
+     * @param item     指定Item
      * @param index    指定位置
      * @param callback 展示完毕后的回调
      */
     public void showItem(ItemPackage item, int index, Runnable callback) {
-        if (!list.contains(item) || index > 4 || index < 0) return;
-        if (V.isInvisible(items[index])) show(item, index, callback);
+        if (index > 4 || index < 0) return;//索引越界
+        if (packs[index] == null) show(item, index, callback);//当前位置为空,直接显示
+        else if (packs[index] != item) hide(index, () -> show(item, index, callback));//当前位置有其他Item
+        else if (callback != null) callback.run();//当前位置就是当前Item,直接执行回调
     }
 
     /**
@@ -153,8 +141,9 @@ public class ItemBar extends LinearLayout {
      * @param callback 隐藏完毕的回调
      */
     public void hideItem(int index, Runnable callback) {
-        if (index > 4 || index < 0) return;
-        if (V.isVisible(items[index])) hide(index, callback);
+        if (index > 4 || index < 0) return;//索引越界
+        if (packs[index] != null) hide(index, callback);//当前位置不为空,直接隐藏
+        else if (callback != null) callback.run();//当前位置为空,直接执行回调
     }
 
     /**
@@ -163,32 +152,36 @@ public class ItemBar extends LinearLayout {
      */
     public void hideAll(Runnable callback) {
         boolean b = true;
-        for (int i = 0; i < items.length; i++) {
-            if (V.isVisible(items[i])) {
-                hide(i, b ? callback : null);
-                b = false;
-            }
+        for (int i = 0; i < packs.length; i++) {
+            if (packs[i] == null) continue;
+            hide(i, b ? callback : null);
+            b = false;
         }
         if (b) callback.run();
     }
 
     /**
-     * 启用剧中放大(默认true)
+     * 启用剧中放大(默认false)
      */
     public void enableBigCenter(boolean enable) {
-        V.LL(items[2].getIconView()).sizeDP(enable ? 64 : 40).refresh();
+        V.LL(items[2].getIconView()).sizeDP(enable ? 64 : 48).refresh();
         items[2].getTitleView().setVisibility(enable ? View.GONE : View.VISIBLE);
     }
 
+    /**
+     * 获取指定位置的Item
+     */
+    public ItemIcon getItem(int index) {
+        if (index < 0 || index > 4) return null;
+        return items[index];
+    }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/
     /*** 创建Item ***/
     private ItemIcon createItem() {
         ItemIcon icon = new ItemIcon(context);
-        V.LL(icon).size(-2, -2).invisible().refresh();
-        icon.setTitleText("标题");
-        icon.setIconResource(R.drawable.ic_ok);
+        V.LL(icon).size(-2, -2).marginDP(12, 0, 12, 0).invisible().parent(this).refresh();
         return icon;
     }
 
@@ -208,19 +201,15 @@ public class ItemBar extends LinearLayout {
         ItemIcon view = items[index];
         view.setTitleText(item.getTitle());
         view.setIconDrawable(item.getIcon());
-        view.setOnClickListener(v -> item.onClick());
-        view.setOnLongClickListener(v -> {
-            item.onLongClick();
-            return true;
-        });
-        float x = V.getParent(view).getWidth() * 0.5f;
-        float y = V.getParent(view).getHeight() * 0.5f;
+        view.setOnClickListener(item::onClick);
+        view.setOnLongClickListener(item::onLongClick);
         Animation anim = createAnim(true, index);
-        anim.setAnimationListener((A.EAL) a -> {
+        anim.setAnimationListener((A.End) a -> {
             view.clearAnimation();
             if (callback != null) callback.run();
         });
         V.visible(view);
+        packs[index] = item;
         view.startAnimation(anim);
     }
 
@@ -228,25 +217,27 @@ public class ItemBar extends LinearLayout {
     private void hide(int index, Runnable callback) {
         ItemIcon view = items[index];
         Animation anim = createAnim(false, index);
-        anim.setAnimationListener((A.EAL) a -> {
+        anim.setAnimationListener((A.End) a -> {
             V.invisible(view);
             view.clearAnimation();
             if (callback != null) callback.run();
         });
+        packs[index] = null;
         view.startAnimation(anim);
     }
-    /**********************************************************************************************/
-    /**************************************内部类***************************************************/
-    /**********************************************************************************************/
+/**********************************************************************************************/
+/**************************************内部类***************************************************/
+/**********************************************************************************************/
+
     /**
      * Item包装器
      */
     public static class ItemWrapper implements ItemPackage {
         public CharSequence title;
         public Drawable icon;
-        public Runnable onClick, onLongClick;
+        public View.OnClickListener onClick, onLongClick;
 
-        public ItemWrapper(CharSequence title, Drawable icon, Runnable onClick, Runnable onLongClick) {
+        public ItemWrapper(CharSequence title, Drawable icon, View.OnClickListener onClick, View.OnClickListener onLongClick) {
             this.title = title;
             this.icon = icon;
             this.onClick = onClick;
@@ -264,13 +255,14 @@ public class ItemBar extends LinearLayout {
         }
 
         @Override
-        public void onClick() {
-            if (onClick != null) onClick.run();
+        public void onClick(View v) {
+            if (onClick != null) onClick.onClick(v);
         }
 
         @Override
-        public void onLongClick() {
-            if (onLongClick != null) onLongClick.run();
+        public boolean onLongClick(View v) {
+            if (onLongClick != null) onLongClick.onClick(v);
+            return true;
         }
     }
 }

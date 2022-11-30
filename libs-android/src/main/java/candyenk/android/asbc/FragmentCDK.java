@@ -166,7 +166,10 @@ public abstract class FragmentCDK extends Fragment {
     public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         ActivityCDK.PermissionsCallBack pcb = pcbMap.get(requestCode);
-        if (pcb != null && pcb.callback(grantResults)) removePermissionCallback(requestCode);
+        if (pcb != null) {
+            pcb.callback(grantResults);
+            removePermissionCallback(requestCode);
+        }
     }
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/

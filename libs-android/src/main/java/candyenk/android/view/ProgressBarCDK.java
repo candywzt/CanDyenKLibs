@@ -15,7 +15,6 @@ import android.widget.ProgressBar;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import candyenk.android.R;
-import candyenk.android.tools.L;
 import candyenk.android.utils.ULay;
 import candyenk.android.utils.USDK;
 import candyenk.java.utils.UData;
@@ -90,7 +89,6 @@ public class ProgressBarCDK extends ProgressBar {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        L.e(TAG, "绘制");
         initLayout();
         bgGD.draw(canvas);//背景
         pgGD.draw(canvas);//进度条
@@ -209,7 +207,7 @@ public class ProgressBarCDK extends ProgressBar {
         float radius = (getHeight() - getPaddingTop() - getPaddingBottom()) * 0.5f;
         this.startX = getPaddingLeft() + extW + radius;
         this.endX = getWidth() - getPaddingRight() - extW - radius;
-        if (proX == 0) proX = (getWidth() - getPaddingLeft() - getPaddingRight()) * progressPercent + startX;
+        if (proX == 0) proX = (endX - startX) * progressPercent + startX;
         this.proY = radius + getPaddingTop();
         this.bgGD.setCornerRadius(radius);
         this.bgGD.setBounds((int) (startX - radius), getPaddingTop(), (int) (endX + radius), getHeight() - getPaddingBottom());

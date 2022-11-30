@@ -31,7 +31,7 @@ public class DialogBottomConfirm extends DialogBottomTips {
         void onNo();
     }
 
-    public interface OnYes extends OnEventCallBack {
+    public interface Yes extends OnEventCallBack {
         default void onNo() {}
     }
     /**********************************************************************************************/
@@ -230,11 +230,11 @@ public class DialogBottomConfirm extends DialogBottomTips {
             setOnCancelListener(null);
         } else {
             super.setOnButtonClickListener(v -> {
+                dismiss();
                 callback.onYse();
-                dismiss();
             }, v -> {
-                callback.onNo();
                 dismiss();
+                callback.onNo();
             });
             setOnCancelListener(d -> callback.onNo());
         }

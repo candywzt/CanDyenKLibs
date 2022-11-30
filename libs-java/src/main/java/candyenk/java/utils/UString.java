@@ -8,21 +8,60 @@ import java.util.regex.Pattern;
 
 /**
  * Java字符串工具
- * 拼接
- * 判空
- * 静态功能
- * 手机号判断(11)
- * 邮箱判断
- * 纯数字判断
- * 数字加字母判断
- * 身份证判断(15/18)
- * 网址判断
- * IPV4地址判断
  */
 public class UString {
     /**********************************************************************************************/
     /***********************************公共静态方法*************************************************/
     /**********************************************************************************************/
+    /**
+     * 转换为Int
+     * 如果转换失败则为0
+     */
+    public static int toInt(String str) {
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /**
+     * 转换为long
+     * 转换失败则为0
+     */
+    public static long toLong(String str) {
+        try {
+            return Long.parseLong(str);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /**
+     * 转换为Float
+     * 转哈UN失败则为0
+     */
+    public static float toFloat(String str) {
+        try {
+            return Float.parseFloat(str);
+        } catch (NumberFormatException e) {
+            return 0f;
+        }
+    }
+
+    /**
+     * 转换为Double
+     * 转换失败则为0
+     */
+    public static double toDouble(String str) {
+        try {
+            return Double.parseDouble(str);
+        } catch (NumberFormatException e) {
+            return 0d;
+        }
+    }
+
+
     /**
      * 字符串拼接
      *

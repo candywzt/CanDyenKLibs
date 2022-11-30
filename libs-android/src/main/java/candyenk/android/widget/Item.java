@@ -63,7 +63,7 @@ public class Item extends LinearLayout {
     }
 
     protected void initLayout() {
-        V.paddingDP(this, 8).orientation(0).gravity(Gravity.CENTER).backgroundRes(R.drawable.bg_cdk).refresh();
+        V.paddingDP(this, 8).orientation(0).gravity(Gravity.CENTER).backgroundRes(R.drawable.bg_cdk);
 
         iconView = new ImageView(context);
         V.LL(iconView).sizeDP(56).parent(this).refresh();
@@ -111,6 +111,7 @@ public class Item extends LinearLayout {
      */
     public void setTitleText(CharSequence title) {
         if (titleView == null) return;
+        titleView.setVisibility(title == null ? View.GONE : View.VISIBLE);
         titleView.setText(title);
     }
 
@@ -119,12 +120,8 @@ public class Item extends LinearLayout {
      */
     public void setSummaryText(CharSequence summary) {
         if (summaryView == null) return;
-        if (summary == null) {
-            V.hide(summaryView);
-        } else {
-            V.visible(summaryView);
-            summaryView.setText(summary);
-        }
+        summaryView.setVisibility(summary == null ? View.GONE : View.VISIBLE);
+        summaryView.setText(summary);
     }
 
     /**
