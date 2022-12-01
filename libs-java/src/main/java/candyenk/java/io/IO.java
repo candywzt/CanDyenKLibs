@@ -250,9 +250,23 @@ public class IO {
 
     /**
      * 关闭器
+     * 会自动刷新
+     * ( 返回NULL方便赋值
      */
-    public static void close(Closeable... c) {
+    public static <T> T close(Closeable... c) {
+        if (c == null) return null;
+        for (Closeable able : c) {
+            if (able instanceof Flushable) flush((Flushable) able);
+            try {able.close();} catch (Exception ignored) {}
+        }
+        return null;
+    }
+
+    /**
+     * 刷新器
+     */
+    public static void flush(Flushable... c) {
         if (c == null) return;
-        for (Closeable able : c) try {able.close();} catch (Exception ignored) {}
+        for (Flushable able : c) try {able.flush();} catch (Exception ignored) {}
     }
 }
