@@ -264,7 +264,7 @@ public class Popup extends PopupWindow {
         ScaleAnimation sa = new ScaleAnimation(0, 1, 0, 1, animD[0], animD[1]);
         sa.setDuration(100);
         sa.setInterpolator(new AccelerateDecelerateInterpolator());
-        sa.setAnimationListener((A.End) animation -> rootView.clearAnimation());
+        sa.setAnimationListener((A.EndV) animation -> rootView.clearAnimation());
         rootView.startAnimation(sa);
     }
 
@@ -274,7 +274,7 @@ public class Popup extends PopupWindow {
         ScaleAnimation ea = new ScaleAnimation(1, 0, 1, 0, animD[0], animD[1]);
         ea.setDuration(100);
         ea.setInterpolator(new AccelerateDecelerateInterpolator());
-        ea.setAnimationListener((A.End) animation -> {
+        ea.setAnimationListener((A.EndV) animation -> {
             super.dismiss();
             lastSign = null;
             rootView.clearAnimation();

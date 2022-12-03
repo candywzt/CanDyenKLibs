@@ -218,7 +218,7 @@ public class ItemBar extends LinearLayout {
         view.setOnClickListener(item::onClick);
         view.setOnLongClickListener(item::onLongClick);
         Animation anim = createAnim(true, index);
-        anim.setAnimationListener((A.End) a -> {
+        anim.setAnimationListener((A.EndV) a -> {
             view.clearAnimation();
             if (callback != null) callback.run();
         });
@@ -231,7 +231,7 @@ public class ItemBar extends LinearLayout {
     private void hide(int index, Runnable callback) {
         ItemIcon view = items[index];
         Animation anim = createAnim(false, index);
-        anim.setAnimationListener((A.End) a -> {
+        anim.setAnimationListener((A.EndV) a -> {
             V.invisible(view);
             view.clearAnimation();
             if (callback != null) callback.run();

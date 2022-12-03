@@ -97,9 +97,8 @@ public class DialogLoading extends AlertDialog {
 
     @Override
     public void dismiss() {
-        //没有使用setDismissOverride
         mList.remove(this.parentView);
-        loadView.dismiss();
+        loadView.dismiss(l -> DialogLoading.super.dismiss());
     }
 
     @Override
@@ -119,7 +118,6 @@ public class DialogLoading extends AlertDialog {
         V.FL(cv).sizeDP(180, 200).lGravity(Gravity.CENTER).backgroundRes(R.color.back_view).radiusDP(20).parent(dialogView).refresh();
 
         loadView = new LoadView(context);
-        loadView.setCloseListener(DialogLoading.super::dismiss);
         loadView.setOnClickListener(v -> {});
         V.FL(loadView).sizeDP(180).lGravity(Gravity.CENTER_HORIZONTAL).parent(cv).refresh();
 

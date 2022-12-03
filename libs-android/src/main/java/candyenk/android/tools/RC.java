@@ -12,39 +12,39 @@ public final class RC {
     public static final int SIGN_CLOSE = Integer.MIN_VALUE + 1;//线程结束标志
     public static final int SIGN_DEFAULT = Integer.MIN_VALUE + 1;//线程默认标志
     /*************************************成员变量**************************************************/
-    private final Run r1;
-    private final RunCall r2;
-    private final ReturnCall r3;
+    private final Run<RC> r1;
+    private final RunCall<Object> r2;
+    private final ReturnCall<Object> r3;
     private Handler h;
 
     /**********************************************************************************************/
     /***************************************接口****************************************************/
     /**********************************************************************************************/
     /**
-     * 线程运行
+     * 通用Run接口
      */
-    public interface Run {
-        Object run(RC rc) throws Exception;
+    public interface Run<T> {
+        Object run(T t) throws Exception;
     }
 
     /**
-     * 线程中回调
+     * 通用CallBack接口
      */
-    public interface RunCall {
-        void runCall(int sign, Object msg);
+    public interface RunCall<T> {
+        void runCall(int sign, T msg);
     }
 
     /**
-     * 线程结束回调
+     * 通用Return接口
      */
-    public interface ReturnCall {
-        void returnCall(Object msg);
+    public interface ReturnCall<T> {
+        void returnCall(T msg);
     }
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
 
-    public RC(Run r1, RunCall r2, ReturnCall r3) {
+    public RC(Run<RC> r1, RunCall<Object> r2, ReturnCall<Object> r3) {
         this.r1 = r1;
         this.r2 = r2;
         this.r3 = r3;
