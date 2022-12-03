@@ -301,6 +301,13 @@ public class UArrays {
     }
 
     /**
+     * 查找项目对应索引
+     */
+    public static <T> int indexOf(T[] arrays, T t) {
+        return Arrays.asList(arrays).indexOf(t);
+    }
+
+    /**
      * 计算int/long/double数组的和
      */
     public static long sum(int[] array) {

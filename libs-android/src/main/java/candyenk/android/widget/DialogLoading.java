@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import candyenk.android.R;
+import candyenk.android.tools.RC;
 import candyenk.android.tools.V;
 import candyenk.android.view.LoadView;
 import com.google.android.material.card.MaterialCardView;
@@ -28,32 +29,12 @@ public class DialogLoading extends AlertDialog {
 
     private final Context context;//拉起弹窗的Context
     private final View parentView;//调用上拉弹窗的View对象
-    private boolean ok;//是否初始化成功
+    private final boolean ok;//是否初始化成功
     private FrameLayout dialogView;//弹窗布局对象
     private TextView titleView; //标题文字控件
     private LoadView loadView;//加载动画控件
-    private LoadingRun run;//线程执行事件
-    private LoadingCallBack callback;//回调
+    private RC rc;//线程执行事件
 
-
-    /**********************************************************************************************/
-    /*****************************************接口**************************************************/
-    /**********************************************************************************************/
-    /**
-     * 加载中子线程事件
-     * 返回值将在回调内接收
-     */
-    public interface LoadingRun {
-        Object run() throws Exception;
-    }
-
-    /**
-     * 加载结束主线程回调
-     * 返回子线程的结果
-     */
-    public interface LoadingCallBack {
-        void callback(Object o);
-    }
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
@@ -96,21 +77,21 @@ public class DialogLoading extends AlertDialog {
     public void show() {
         if (ok) {
             super.show();
-            if (run != null) {
-                Handler h = new Handler(Looper.myLooper(), msg -> {
-                    if (msg.what == 0) dismiss();
-                    else if (callback != null) callback.callback(msg.obj);
+            if (rc != null) {
+                rc.setHandler(new Handler(Looper.getMainLooper(), msg -> {
+                    if (msg.what == RC.SIGN_CLOSE) dismiss();
+                    else if (msg.what == RC.SIGN_RETURN) rc.returnCall(msg.obj);
+                    else rc.runCall(msg.what, msg.obj);
                     return true;
-                });
+                }));
                 new Thread(() -> {
-                    Object[] o = new Object[1];
-                    try {o[0] = run.run();} catch (Exception ignored) {}
-                    setOnDismissListener(d -> {
-                        h.sendMessage(h.obtainMessage(1, o[0]));//发送线程返回值
-                    });
-                    h.sendMessage(h.obtainMessage(0, null));//发送关闭弹窗消息
+                    Object[] r = new Object[1];
+                    try {r[0] = rc.run();} catch (Exception ignored) {}
+                    setOnDismissListener(d -> {rc.send(RC.SIGN_RETURN, r[0]);});
+                    rc.send(RC.SIGN_CLOSE, null);
                 }).start();
             }
+
         } else Log.e(TAG, "拦截重复调用");
     }
 
@@ -177,18 +158,14 @@ public class DialogLoading extends AlertDialog {
     }
 
     /**
-     * 设置子线程事件和结束回调
+     * 设置子线程事件和回调
      * 子线程代码运行结束后自动关闭弹窗并回调
      * 关闭弹窗之后才会回调!!!
-     *
-     * @param run      运行在子线程的代码
-     * @param callback 运行在主线程的回调,参数为子线程代码的返回值
-     *                 弹窗显示后无法调用
+     * sign不要使用RC内的返回值和结束值,已经被征用了
      */
-    public void setThreadRun(LoadingRun run, LoadingCallBack callback) {
+    public void setThreadRun(RC rc) {
         if (!ok || isShowing()) return;
-        this.run = run;
-        this.callback = callback;
+        this.rc = rc;
     }
 }
 

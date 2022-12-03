@@ -5,19 +5,20 @@ import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
 import candyenk.android.tools.CH;
+import candyenk.android.tools.L;
 import candyenk.android.utils.UApp;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationCDK extends Application {
-    private static final String TAG = "CDKApplication";
     private static ArrayList<Activity> activityList;
+    protected String TAG = "CDKApplication";
 
     @Override
     public void onCreate() {
+        this.TAG = this.getClass().getSimpleName();
         super.onCreate();
     }
     /**********************************************************************************************/
@@ -76,7 +77,7 @@ public class ApplicationCDK extends Application {
     public static void finishAllActivity() {
         for (int i = activityList.size() - 1; i >= 0; i--) {
             activityList.get(i).finish();
-            Log.e(TAG, "活动(" + activityList.get(i) + ")被销毁");
+            L.e(ApplicationCDK.class.getSimpleName(), "活动(" + activityList.get(i) + ")被销毁");
         }
         activityList.clear();
     }
@@ -88,7 +89,7 @@ public class ApplicationCDK extends Application {
         for (Activity a : activityList) {
             if (a.getClass().equals(activityClass)) {
                 a.finish();
-                Log.e(TAG, "活动(" + a + ")被销毁");
+                Log.e(ApplicationCDK.class.getSimpleName(), "活动(" + a + ")被销毁");
             }
         }
     }
@@ -97,7 +98,7 @@ public class ApplicationCDK extends Application {
         for (Activity a : activityList) {
             if (a.getClass().toString().equals(activityName)) {
                 a.finish();
-                Log.e(TAG, "活动(" + a + ")被销毁");
+                Log.e(ApplicationCDK.class.getSimpleName(), "活动(" + a + ")被销毁");
             }
         }
     }

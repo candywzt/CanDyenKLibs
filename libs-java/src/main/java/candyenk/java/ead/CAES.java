@@ -4,7 +4,6 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
-import java.util.Base64;
 
 /**
  * CDK加解密(AES)
@@ -52,16 +51,9 @@ public class CAES {
     /******************************************************************************************************************/
     /****************************************************加密相关*******************************************************/
     /******************************************************************************************************************/
-    /**
-     * 加密字符串数据
-     */
-    public static String EncryptionS(String data) {
-        return Base64.getEncoder().encodeToString(Encryption(data.getBytes()));
-    }
 
     /**
-     * 加密字节数组数据
-     * 切勿转为字符串再解密,达咩
+     * 加密数据
      */
     public static byte[] Encryption(byte[] data) {
         if (INSTANCE == null) initialization();
@@ -116,15 +108,9 @@ public class CAES {
     /******************************************************************************************************************/
     /****************************************************解密相关*******************************************************/
     /******************************************************************************************************************/
-    /**
-     * 解密字符串数据
-     */
-    public static String DecryptionS(String data) {
-        return new String(Decryption(Base64.getDecoder().decode(data)));
-    }
 
     /**
-     * 解密字节数组数据
+     * 解密数据
      * 只能解密Encryption的数据
      * 不要抱有侥幸心理
      */

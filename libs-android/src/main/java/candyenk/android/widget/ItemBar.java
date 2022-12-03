@@ -175,6 +175,20 @@ public class ItemBar extends LinearLayout {
         if (index < 0 || index > 4) return null;
         return items[index];
     }
+
+    /**
+     * 在指定位置展示指定标题
+     * 传参null则显示该位置Item的标题
+     */
+    public void showTitle(CharSequence title, int index) {
+        new Popup(getItem(index))
+                .setContent(title == null ? packs[index].getTitle() : title)
+                .show();
+    }
+
+    public void showTitle(int titleId, int index) {
+        showTitle(titleId == 0 ? null : context.getText(titleId), index);
+    }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/
@@ -236,6 +250,13 @@ public class ItemBar extends LinearLayout {
         public CharSequence title;
         public Drawable icon;
         public View.OnClickListener onClick, onLongClick;
+
+        public ItemWrapper(Context context, int titleId, int iconId, View.OnClickListener onClick, View.OnClickListener onLongClick) {
+            this.title = context.getText(titleId);
+            this.icon = context.getDrawable(iconId);
+            this.onClick = onClick;
+            this.onLongClick = onLongClick;
+        }
 
         public ItemWrapper(CharSequence title, Drawable icon, View.OnClickListener onClick, View.OnClickListener onLongClick) {
             this.title = title;

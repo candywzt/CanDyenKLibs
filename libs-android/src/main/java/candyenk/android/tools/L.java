@@ -1,12 +1,13 @@
 package candyenk.android.tools;
 
+import android.util.Base64;
 import android.util.Log;
 import candyenk.java.io.IO;
+import candyenk.java.utils.UArrays;
 import candyenk.java.utils.UFile;
+import candyenk.java.utils.UTime;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.PrintStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -18,9 +19,11 @@ import java.util.*;
  * msg的位置可以传Exception无妨
  */
 public class L implements Closeable {
-    public static final String INFO = "INFO";
-    public static final String DEBUG = "DEBUG";
-    public static final String ERROR = "ERROR";
+    public static final int INFO = 1;
+    public static final int DEBUG = 5;
+    public static final int ERROR = 10;
+    public static final String[] levelSA = {"Info", "Debug", "Error"};//日志级别文本数组
+    public static final Integer[] levelIA = {INFO, DEBUG, ERROR};//日志级别int数组
     private static L instance;//日志全局实例
     private final File folder;//日志文件夹
     private final List<File> fileList;//日志文件列表
@@ -47,6 +50,23 @@ public class L implements Closeable {
      */
     public static L getInstance() {
         return instance;
+    }
+
+
+    /**
+     * 获取日志级别文本
+     */
+    public static String getLevelString(int level) {
+        int index = UArrays.indexOf(levelIA, level);
+        return index == -1 ? null : levelSA[index];
+    }
+
+    /**
+     * 获取日志级别数值
+     */
+    public static int getLevelInt(String level) {
+        int index = UArrays.indexOf(levelSA, level);
+        return index == -1 ? -1 : levelIA[index];
     }
 
     /**
@@ -82,7 +102,8 @@ public class L implements Closeable {
      * 附带返回值Object
      */
     public static <T> T i(String tag, Object msg, T t) {
-        Log.i(tag, msg == null ? "NULL" : msg.toString());
+        //TODO:记得改回来
+        Log.e(tag, msg == null ? "NULL" : msg.toString());
         return t;
     }
 
@@ -119,7 +140,8 @@ public class L implements Closeable {
      * 附带返回值Object
      */
     public static <T> T d(String tag, Object msg, T t) {
-        Log.d(tag, msg == null ? "NULL" : msg.toString());
+        //TODO:记得改回来
+        Log.e(tag, msg == null ? "NULL" : msg.toString());
         return t;
     }
 
@@ -233,6 +255,16 @@ public class L implements Closeable {
     }
 
     /**
+     * 清空日志
+     */
+    public boolean clear() {
+        fileList.clear();
+        file = null;
+        out = IO.close(out);
+        return UFile.deleteFile(folder);
+    }
+
+    /**
      * 获取TagLoger
      * 没有会自行创建
      */
@@ -240,6 +272,13 @@ public class L implements Closeable {
         Loger loger = map.get(TAG);
         if (loger == null) loger = new Loger(this, TAG);
         return loger;
+    }
+
+    /**
+     * 获取所有TagLoger
+     */
+    public Map<String, Loger> getLogerMap() {
+        return map;
     }
 
     /**
@@ -264,11 +303,14 @@ public class L implements Closeable {
      * 顺序按时间排序
      * 返回字符串数组
      */
-    public List<String[]> getLogList(int index) {
-        List<String[]> list = new ArrayList<>();
+    public List<LogInfo> getLogList(int index) {
+        List<LogInfo> list = new ArrayList<>();
         int i = fileList.size() - 1 - index;
         File f = fileList.get(i);
-        if (f != null) IO.readString(UFile.getReader(f, Charset.defaultCharset()), s -> list.add(s.split("●")));
+        if (f != null) IO.readString(UFile.getReader(f, Charset.defaultCharset()), s -> {
+            LogInfo info = LogInfo.decode(s);
+            if (info != null) list.add(info);
+        });
         return list;
     }
 
@@ -302,9 +344,9 @@ public class L implements Closeable {
 
 
     /*** 写入一条日志 日志记录的关键所在 ***/
-    private void log(String tag, String level, Object msg) {
+    private void log(String tag, int level, Object msg, Exception e) {
         if (!sign || folder == null) return;
-        getOut().println(System.currentTimeMillis() + "●" + tag + "●" + level + "●" + (msg == null ? "NULL" : msg.toString()));
+        getOut().println(new LogInfo(tag, level, msg, e).encode());
     }
 
     /*** 启动回收器 ***/
@@ -329,11 +371,22 @@ public class L implements Closeable {
     public static class Loger {
         private final L l;
         private final String TAG;
+        private int targetLevel;//目标级别
 
         protected Loger(L l, String tag) {
             this.l = l;
             this.TAG = tag;
             l.map.put(TAG, this);
+        }
+
+        /**
+         * 设置日志纪录级别
+         * 低于指定级别的日志不会记录
+         * 但会打印
+         */
+        public Loger setTargetLevel(int level) {
+            this.targetLevel = level;
+            return this;
         }
 
         /**
@@ -365,7 +418,7 @@ public class L implements Closeable {
          * 附带返回值Object
          */
         public <T> T i(Object msg, T t) {
-            l.log(TAG, INFO, msg);
+            if (INFO >= targetLevel) l.log(TAG, INFO, msg, null);
             return L.i(TAG, msg, t);
         }
 
@@ -398,7 +451,7 @@ public class L implements Closeable {
          * 附带返回值Object
          */
         public <T> T d(Object msg, T t) {
-            l.log(TAG, DEBUG, msg);
+            if (DEBUG >= targetLevel) l.log(TAG, DEBUG, msg, null);
             return L.d(TAG, msg, t);
         }
 
@@ -407,8 +460,7 @@ public class L implements Closeable {
          * 附带返回值false
          */
         public boolean e(Object msg) {
-            l.log(TAG, ERROR, msg == null ? "NULL" : msg.toString());
-            return L.e(TAG, msg);
+            return e(msg, false);
         }
 
         /**
@@ -433,8 +485,7 @@ public class L implements Closeable {
          */
         public <T> T e(Object msg, T t) {
             if (msg instanceof Exception) return e((Exception) msg, null, t);
-            l.log(TAG, ERROR, msg == null ? "NULL" : msg.toString());
-            return L.e(TAG, msg, t);
+            return e(null, msg, t);
         }
 
         /**
@@ -470,8 +521,89 @@ public class L implements Closeable {
          * 附带返回值Object
          */
         public <T> T e(Exception e, Object msg, T t) {
+            if (ERROR >= targetLevel) l.log(TAG, ERROR, msg == null ? "NULL" : msg.toString(), e);
             String m = (msg == null ? "NULL" : msg.toString()) + (e == null ? "" : (":(" + e.getClass().getSimpleName() + ")" + e.getMessage()));
-            return e(m, t);
+            L.e(TAG, e, m);
+            return t;
+        }
+    }
+
+    /**
+     * 保存日志信息的类
+     */
+    public static class LogInfo implements Serializable {
+        public long time;//日志产生时间
+        public final String TAG;//日志标签
+        public final int level;//日志级别
+        public final String msg;//日志内容
+        public final Exception e;//日志异常
+
+        /**
+         * 解码一条日志
+         * 解码失败为null
+         */
+        public static LogInfo decode(String log) {
+            LogInfo info = null;
+            ObjectInputStream in = null;
+            try {
+                byte[] b = Base64.decode(log, Base64.NO_WRAP);
+                in = new ObjectInputStream(new ByteArrayInputStream(b));
+                info = (LogInfo) in.readObject();
+            } catch (Exception e) {
+                L.e("L", e, "日志解码失败");
+            } finally {IO.close(in);}
+            return info;
+        }
+
+        public LogInfo(String TAG, int level, Object msg, Exception e) {
+            this.time = System.currentTimeMillis();
+            this.TAG = TAG == null ? "NULL" : TAG;
+            this.level = level;
+            this.msg = msg == null ? "NULL" : msg.toString();
+            this.e = e;
+        }
+
+        /**
+         * 编码本条日志
+         */
+        public String encode() {
+            ObjectOutputStream out = null;
+            byte[] b = new byte[0];
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                out = new ObjectOutputStream(baos);
+                out.writeObject(this);
+                out.flush();
+                b = baos.toByteArray();
+            } catch (IOException e) {
+                L.e("L", e, "日志编码失败");
+            } finally {IO.close(out);}
+            return Base64.encodeToString(b, Base64.NO_WRAP);
+        }
+
+        /**
+         * 获取时间字符串
+         */
+        public String getTime() {
+            return UTime.D2S(time);
+        }
+
+        /**
+         * 获取级别字符串
+         */
+        public String getLevel() {
+            return L.getLevelString(level);
+        }
+
+        @Override
+        public String toString() {
+            return "LogInfo{" +
+                    "time=" + time +
+                    ", TAG='" + TAG + '\'' +
+                    ", level='" + level + '\'' +
+                    ", msg='" + msg + '\'' +
+                    ", e=" + e +
+                    '}';
         }
     }
 }
