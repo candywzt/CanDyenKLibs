@@ -67,100 +67,43 @@ public class DialogBottomTips extends DialogBottomView {
      */
     @Override
     public void setContent(int viewid) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setContent(int)");
+        L.e(TAG, "不支持的操作" + TAG +".setContent(int)");
     }
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence)}
      */
     @Override
     public void setContent(View view) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setContent(View)");
-    }
-    /**
-     * @deprecated 请使用 {@link #setContent(CharSequence)}
-     */
-    @Override
-    public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setContent(RecyclerView.Adapter)");
-    }
-    /**
-     * @deprecated 请使用 {@link #setContent(CharSequence)}
-     */
-    @Override
-    public void setContent(View... views) {
-        L.e("TAG", "不支持的操作DialogBottomTips.setContent(View...)");
-    }
-    /**
-     * @deprecated 请使用 {@link #setContent(CharSequence)}
-     */
-    @Override
-    public void setContent(int... resIds) {
-        L.e("TAG", "不支持的操作DialogBottomTips.setContent(int...)");
-    }
-    /**
-     * @deprecated 请使用 {@link #setContent(CharSequence)}
-     */
-    @Override
-    public void setContent(int resId, int count) {
-        L.e("TAG", "不支持的操作DialogBottomTips.setContent(int,int)");
+        L.e(TAG, "不支持的操作" + TAG +".setContent(View)");
     }
 
-
-    /**
-     * @deprecated 不允许使用
-     */
-    @Override
-    public void setLayoutManager(RecyclerView.LayoutManager lm) {
-        L.e("TAG", "不支持的操作DialogBottomTips.setLayoutManager(RecyclerView.LayoutManager)");
-    }
-    /**
-     * @deprecated 不允许使用
-     */
-    @Override
-    public void setOnBindViewHolder(Consumer<HolderCDK> c) {
-        L.e("TAG", "不支持的操作DialogBottomTips.setOnBindViewHolder(Consumer)");
-    }
-    /**
-     * @deprecated 不允许使用
-     */
-    @Override
-    public void setOnItemClickListener(BiConsumer<View, Integer> l) {
-        L.e("TAG", "不支持的操作DialogBottomTips.setOnItemClickListener(BiConsumer)");
-    }
-    /**
-     * @deprecated 不允许使用
-     */
-    @Override
-    public void setOnItemLongClickListener(BiConsumer<View, Integer> l) {
-        L.e("TAG", "不支持的操作DialogBottomTips.setOnItemLongClickListener(BiConsumer)");
-    }
     /**
      * @deprecated 不允许使用
      */
     @Override
     public <T extends View> T getContentView() {
-        return L.e(TAG, "不支持的操作DialogBottomTips.getContentView()", null);
+        return L.e(TAG, "不支持的操作" + TAG +".getContentView()", null);
     }
     /**
      * @deprecated 不允许使用
      */
     @Override
     public void setCancelable(boolean touchOff, boolean backOff) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setCancelable(boolean,boolean)");
+        L.e(TAG, "不支持的操作" + TAG +".setCancelable(boolean,boolean)");
     }
     /**
      * @deprecated 不允许使用
      */
     @Override
     public void setTitleCenter(boolean isCenter) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setTitleCenter(boolean)");
+        L.e(TAG, "不支持的操作" + TAG +".setTitleCenter(boolean)");
     }
     /**
      * @deprecated 不允许使用
      */
     @Override
     public void setShowClose(boolean isShow) {
-        L.e(TAG, "不支持的操作DialogBottomTips.setShowClose(boolean)");
+        L.e(TAG, "不支持的操作" + TAG +".setShowClose(boolean)");
     }
 
     /**********************************************************************************************/

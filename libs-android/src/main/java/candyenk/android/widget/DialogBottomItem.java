@@ -54,7 +54,7 @@ public class DialogBottomItem extends DialogBottom {
      */
     @Override
     public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
-        L.e("TAG", "不允许使用DialogBottomItem.setContent(Adapter)");
+        L.e("TAG", "不支持的操作"  + TAG +  ".setContent(Adapter)");
     }
 /**********************************************************************************************/
     /*************************************公共方法**************************************************/

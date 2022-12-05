@@ -3,8 +3,11 @@ package candyenk.android.tools;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.util.function.Consumer;
+
 /**
  * Android 线程帮助类
+ * 好吧其实就是Handler的简易封装
  */
 public final class RC {
     /*************************************静态变量**************************************************/
@@ -12,39 +15,32 @@ public final class RC {
     public static final int SIGN_CLOSE = Integer.MIN_VALUE + 1;//线程结束标志
     public static final int SIGN_DEFAULT = Integer.MIN_VALUE + 1;//线程默认标志
     /*************************************成员变量**************************************************/
-    private final Run<RC> r1;
-    private final RunCall<Object> r2;
-    private final ReturnCall<Object> r3;
+    private final Run r1;
+    private final RunCall r2;
+    private final Consumer<Object> r3;
     private Handler h;
 
     /**********************************************************************************************/
     /***************************************接口****************************************************/
     /**********************************************************************************************/
     /**
-     * 通用Run接口
+     * Run接口
      */
-    public interface Run<T> {
-        Object run(T t) throws Exception;
+    public interface Run {
+        Object run(RC t) throws Exception;
     }
 
     /**
-     * 通用CallBack接口
+     * CallBack接口
      */
-    public interface RunCall<T> {
-        void runCall(int sign, T msg);
-    }
-
-    /**
-     * 通用Return接口
-     */
-    public interface ReturnCall<T> {
-        void returnCall(T msg);
+    public interface RunCall {
+        void runCall(int sign, Object msg);
     }
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
 
-    public RC(Run<RC> r1, RunCall<Object> r2, ReturnCall<Object> r3) {
+    public RC(Run r1, RunCall r2, Consumer<Object> r3) {
         this.r1 = r1;
         this.r2 = r2;
         this.r3 = r3;
@@ -88,7 +84,7 @@ public final class RC {
      * Run结束回调
      */
     public void returnCall(Object msg) {
-        if (r3 != null) r3.returnCall(msg);
+        if (r3 != null) r3.accept(msg);
     }
 
     /**

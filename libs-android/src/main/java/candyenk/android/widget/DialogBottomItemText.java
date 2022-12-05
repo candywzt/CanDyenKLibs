@@ -49,13 +49,6 @@ public class DialogBottomItemText extends DialogBottomItem {
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
     /**********************************************************************************************/
-    /**
-     * @deprecated 请使用 {@link #setContent(CharSequence...)}
-     */
-    @Override
-    public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
-        L.e("TAG", "不允许使用DialogBottomView.setContent(Adapter)");
-    }
 
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence...)}

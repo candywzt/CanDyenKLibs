@@ -4,6 +4,7 @@ package candyenk.android.widget;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -28,6 +29,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textview.MaterialTextView;
 
+import java.util.function.Consumer;
+
 
 /**
  * 自定义Adapter上拉弹窗
@@ -49,7 +52,10 @@ public class DialogBottom extends BottomSheetDialog {
     protected ImageView closeView;  //关闭控件
     protected RecyclerView listView; //列表控件
     protected Button leftButton, rightButton;  //左右按钮控件
+    protected View centerView;//按钮中间分割区域
+    protected LinearLayout buttonGroup;//按钮父级控件
     protected RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter;
+    protected final ListenerSave ls;//事件监听
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
@@ -71,6 +77,8 @@ public class DialogBottom extends BottomSheetDialog {
         this.context = context;
         this.viewContext = new ContextThemeWrapper(context, R.style.Theme_CDK);
         this.parentView = view;
+        this.ls = new ListenerSave();
+        super.setOnDismissListener(ls::OnDismissListener);
         this.ok = checkSign();
         if (!ok) L.e(TAG, "弹窗创建重复");
         if (ok) initLayout();
@@ -81,6 +89,14 @@ public class DialogBottom extends BottomSheetDialog {
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
     /**********************************************************************************************/
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setOnDismissListener(OnDismissListener listener) {
+        L.e(TAG, "不支持的操作" + TAG + ".setOnDismissListener(OnDismissListener)");
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -107,33 +123,41 @@ public class DialogBottom extends BottomSheetDialog {
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
     /**
-     * 设置上拉弹窗底部按钮点击事件
-     * 该方法参数决定按钮显示数量
+     * 设置上拉弹窗底部左侧按钮
+     * 监听事件为空则不显示按钮
+     * text为null则显示默认文本
      */
-    public void setOnButtonClickListener(View.OnClickListener left, View.OnClickListener right) {
+    public void setLeftButton(CharSequence text, Consumer<? extends DialogBottom> leftClick, Consumer<? extends DialogBottom> leftLong) {
         if (!ok) return;
-        leftButton.setOnClickListener(left);
-        rightButton.setOnClickListener(right);
-        leftButton.setVisibility(left == null ? View.GONE : View.VISIBLE);
-        rightButton.setVisibility(right == null ? View.GONE : View.VISIBLE);
-        V.getParent(leftButton).setVisibility((left == null && right == null) ? View.GONE : View.VISIBLE);
-        if (left == null || right == null) {
-            V.LL(rightButton).marginDP(0, 0, 0, 0).refresh();
-            V.LL(leftButton).marginDP(0, 0, 0, 0).refresh();
+        this.ls.leftClick = leftClick;
+        this.ls.leftLong = leftLong;
+        this.leftButton.setText(text == null ? context.getText(R.string.yes) : text);
+        if (leftClick == null && leftLong == null) {
+            V.hide(leftButton, centerView);
+            if (V.isHide(rightButton)) V.hide(buttonGroup);
         } else {
-            V.LL(rightButton).marginDP(20, 0, 0, 0).refresh();
-            V.LL(leftButton).marginDP(0, 0, 20, 0).refresh();
+            V.visible(leftButton, buttonGroup);
+            if (V.isVisible(rightButton)) V.visible(centerView);
         }
     }
 
     /**
-     * 设置左右按钮文本
-     * 设置按键监听才会显示按钮
+     * 设置上拉弹窗底部右侧按钮
+     * 监听事件为空则不显示按钮
+     * text为null则显示默认文本
      */
-    public void setButtonText(CharSequence left, CharSequence right) {
+    public void setRightButton(CharSequence text, Consumer<? extends DialogBottom> rightClick, Consumer<? extends DialogBottom> rightLong) {
         if (!ok) return;
-        leftButton.setText(left);
-        rightButton.setText(right);
+        this.ls.rightClick = rightClick;
+        this.ls.rightLong = rightLong;
+        this.rightButton.setText(text == null ? context.getText(R.string.no) : text);
+        if (rightClick == null && rightLong == null) {
+            V.hide(rightButton, centerView);
+            if (V.isHide(leftButton)) V.hide(buttonGroup);
+        } else {
+            V.visible(rightButton, buttonGroup);
+            if (V.isVisible(leftButton)) V.visible(centerView);
+        }
     }
 
     /**
@@ -202,6 +226,15 @@ public class DialogBottom extends BottomSheetDialog {
         listView.setLayoutManager(lm);
     }
 
+    /**
+     * 带监听关闭
+     *
+     * @param dismissRun 弹窗关闭后触发的事件
+     */
+    public void dismiss(Consumer<? extends DialogBottom> dismissRun) {
+        this.ls.dismissRun = dismissRun;
+        dismiss();
+    }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/
@@ -228,14 +261,21 @@ public class DialogBottom extends BottomSheetDialog {
         V.LL(listView).size(-1, -2).weight(1).parent(ll).refresh();
         listView.setLayoutManager(new LinearLayoutManager(context));
 
-        LinearLayout ll1 = new LinearLayout(viewContext);
-        V.LL(ll1).size(-1, -2).orientation(0).paddingDP(20, 0, 20, 20).hide().parent(ll).refresh();
+        buttonGroup = new LinearLayout(viewContext);
+        V.LL(buttonGroup).size(-1, -2).orientation(0).paddingDP(20, 0, 20, 20).hide().parent(ll).refresh();
 
         leftButton = new MaterialButton(viewContext);
-        V.LL(leftButton).sizeDP(-1, 50).marginDP(0, 0, 20, 0).weight(1).text(R.string.yes).hide().parent(ll1).refresh();
+        V.LL(leftButton).sizeDP(-1, 50).weight(1).text(R.string.yes).hide().parent(buttonGroup).refresh();
+        leftButton.setOnClickListener(this.ls::OnLeftClick);
+        leftButton.setOnLongClickListener(this.ls::OnLiftLong);
+
+        centerView = new View(viewContext);
+        V.LL(centerView).sizeDP(40, 50).hide().parent(buttonGroup).refresh();
 
         rightButton = new MaterialButton(viewContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
-        V.LL(rightButton).sizeDP(-1, 50).marginDP(20, 0, 0, 0).weight(1).text(R.string.no).hide().parent(ll1).refresh();
+        V.LL(rightButton).sizeDP(-1, 50).weight(1).text(R.string.no).hide().parent(buttonGroup).refresh();
+        rightButton.setOnClickListener(this.ls::OnRightClick);
+        rightButton.setOnLongClickListener(this.ls::OnRightLong);
         super.setContentView(dialogView);
     }
 
@@ -245,6 +285,46 @@ public class DialogBottom extends BottomSheetDialog {
             lastSign = this.parentView;
             return true;
         } else return false;
+    }
+    /**********************************************************************************************/
+    /*******************************************内部类**********************************************/
+    /**********************************************************************************************/
+    /*** 保存各种监听的类 ***/
+    private class ListenerSave {
+        private Consumer dismissRun;
+        private Consumer leftClick;
+        private Consumer leftLong;
+        private Consumer rightClick;
+        private Consumer rightLong;
+
+        /*** 弹窗结束监听 ***/
+        private void OnDismissListener(DialogInterface di) {
+            if (dismissRun != null) dismissRun.accept(DialogBottom.this);
+        }
+
+        /*** 左按钮点按监听 ***/
+        private void OnLeftClick(View v) {
+            if (leftClick != null) leftClick.accept(DialogBottom.this);
+        }
+
+        /*** 左按钮长按监听 ***/
+        private boolean OnLiftLong(View v) {
+            if (leftLong != null) leftLong.accept(DialogBottom.this);
+            return true;
+        }
+
+        /*** 右按钮点按监听 ***/
+        private void OnRightClick(View v) {
+            if (rightClick != null) rightClick.accept(DialogBottom.this);
+        }
+
+        /*** 右按钮长按监听 ***/
+        private boolean OnRightLong(View v) {
+            if (rightLong != null) rightLong.accept(DialogBottom.this);
+            return true;
+        }
+
+
     }
 }
 

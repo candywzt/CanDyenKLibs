@@ -215,21 +215,21 @@ public class V<T extends View> {
      * 设置控件隐藏
      */
     public static void hide(View... v) {
-        for (View view : v) if (view != null) view.setVisibility(View.GONE);
+        for (View view : v) if (view != null && !V.isHide(view)) view.setVisibility(View.GONE);
     }
 
     /**
      * 设置控件可见
      */
     public static void visible(View... v) {
-        for (View view : v) if (view != null) view.setVisibility(View.VISIBLE);
+        for (View view : v) if (view != null && !V.isVisible(view)) view.setVisibility(View.VISIBLE);
     }
 
     /**
      * 设置控件不可见
      */
     public static void invisible(View... v) {
-        for (View view : v) if (view != null) view.setVisibility(View.INVISIBLE);
+        for (View view : v) if (view != null && !V.isInvisible(view)) view.setVisibility(View.INVISIBLE);
     }
 
     /**

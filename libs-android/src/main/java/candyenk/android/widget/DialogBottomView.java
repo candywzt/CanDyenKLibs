@@ -37,20 +37,13 @@ public class DialogBottomView extends DialogBottomItem {
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
     /**********************************************************************************************/
-    /**
-     * @deprecated 请使用 {@link #setContent(View)}{@link #setContent(int)}
-     */
-    @Override
-    public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
-        L.e("TAG", "不允许使用DialogBottomView.setContent(Adapter)");
-    }
 
     /**
      * @deprecated 请使用 {@link #setContent(View)}{@link #setContent(int)}
      */
     @Override
     public void setContent(View... views) {
-        L.e("TAG", "不允许使用DialogBottomView.setContent(View...)");
+        L.e("TAG", "不支持的操作" + TAG + ".setContent(View...)");
     }
 
     /**
@@ -58,7 +51,7 @@ public class DialogBottomView extends DialogBottomItem {
      */
     @Override
     public void setContent(int... resIds) {
-        L.e("TAG", "不允许使用DialogBottomView.setContent(int...)");
+        L.e("TAG", "不支持的操作"  + TAG + ".setContent(int...)");
     }
 
     /**
@@ -66,7 +59,7 @@ public class DialogBottomView extends DialogBottomItem {
      */
     @Override
     public void setContent(int resId, int count) {
-        L.e("TAG", "不允许使用DialogBottomView.setContent(int,int)");
+        L.e("TAG", "不支持的操作" + TAG + ".setContent(int,int)");
     }
 
     /**
@@ -74,7 +67,7 @@ public class DialogBottomView extends DialogBottomItem {
      */
     @Override
     public void setLayoutManager(RecyclerView.LayoutManager lm) {
-        L.e("TAG", "不允许使用DialogBottomView.setLayoutManager(RecyclerView.LayoutManager)");
+        L.e("TAG", "不支持的操作"  + TAG + ".setLayoutManager(RecyclerView.LayoutManager)");
     }
 
     /**
@@ -82,7 +75,7 @@ public class DialogBottomView extends DialogBottomItem {
      */
     @Override
     public void setOnBindViewHolder(Consumer<HolderCDK> c) {
-        L.e("TAG", "不允许使用DialogBottomView.setOnBindViewHolder(Consumer)");
+        L.e("TAG", "不支持的操作" + TAG + ".setOnBindViewHolder(Consumer)");
     }
 
     /**
@@ -90,7 +83,7 @@ public class DialogBottomView extends DialogBottomItem {
      */
     @Override
     public void setOnItemClickListener(BiConsumer<View, Integer> l) {
-        L.e("TAG", "不允许使用DialogBottomView.setOnItemClickListener(BiConsumer)");
+        L.e("TAG", "不支持的操作" + TAG +".setOnItemClickListener(BiConsumer)");
     }
 
     /**
@@ -98,7 +91,7 @@ public class DialogBottomView extends DialogBottomItem {
      */
     @Override
     public void setOnItemLongClickListener(BiConsumer<View, Integer> l) {
-        L.e("TAG", "不允许使用DialogBottomView.setOnItemLongClickListener(BiConsumer)");
+        L.e("TAG", "不支持的操作" + TAG +".setOnItemLongClickListener(BiConsumer)");
     }
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/

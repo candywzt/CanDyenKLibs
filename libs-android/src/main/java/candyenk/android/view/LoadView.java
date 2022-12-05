@@ -10,8 +10,8 @@ import android.view.animation.CycleInterpolator;
 import androidx.annotation.ColorInt;
 import candyenk.android.R;
 import candyenk.android.tools.A;
-import candyenk.android.tools.L;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
@@ -21,16 +21,13 @@ import java.util.function.Consumer;
  * 一次重构
  */
 public class LoadView extends View {
-
     /*************************************静态变量**************************************************/
-
     private static final String TAG = LoadView.class.getSimpleName();
     protected static final float startP = 0.6f;//呼吸起点百分比
     protected static final float endP = 0.4f;//呼吸终点百分比
-
     /*************************************成员变量**************************************************/
-
-    protected Context context;
+    protected final Context context;
+    private final AtomicReference<Consumer<LoadView>> cb = new AtomicReference<>();//关闭回调
     private Paint loadPaint;//画笔
     private ValueAnimator loadA, startA, closeA;//加载动画,启动动画,结束动画
 
@@ -190,32 +187,29 @@ public class LoadView extends View {
     }
 
     private void initAnimations() {
+        ValueAnimator.AnimatorUpdateListener al = a -> changeRadius((float) a.getAnimatedValue());
         loadA = ValueAnimator.ofFloat(startP, endP);
         loadA.setDuration(4000);
         loadA.setRepeatMode(ValueAnimator.RESTART);
         loadA.setRepeatCount(-1);
         loadA.setInterpolator(new CycleInterpolator(1));
-        loadA.addUpdateListener(a -> {
-            L.e(TAG, "动画更新");
-            changeRadius((float) a.getAnimatedValue());
-        });
+        loadA.addUpdateListener(al);
         startA = new ValueAnimator();
         startA.setDuration(200);
+        startA.addUpdateListener(al);
+        startA.addListener((A.EndA) (a, b) -> loadA.start());
         closeA = new ValueAnimator();
         closeA.setDuration(200);
-    }
-
-    /*** 停止动画 ***/
-    private void cancle(ValueAnimator... anim) {
-        for (ValueAnimator a : anim) if (a.isStarted()) a.cancel();
+        closeA.addUpdateListener(al);
+        closeA.addListener((A.EndA) (a, b) -> {
+            if (cb.get() != null) cb.get().accept(LoadView.this);
+        });
     }
 
     /*** 播放启动动画 ***/
     private void startAnimation() {
         if (startA.isStarted() || loadA.isStarted() || closeA.isStarted()) return;
         startA.setFloatValues(nowP, startP);
-        startA.addUpdateListener(a -> changeRadius((float) a.getAnimatedValue()));
-        startA.addListener((A.EndA) (a, b) -> loadA.start());
         startA.start();
     }
 
@@ -223,11 +217,16 @@ public class LoadView extends View {
     private void closeAnimation(Consumer<LoadView> dismissRun) {
         if (closeA.isStarted()) return;
         cancle(startA, loadA);
+        cb.set(dismissRun);
         closeA.setFloatValues(nowP, 0);
-        closeA.addUpdateListener(a -> changeRadius((float) a.getAnimatedValue()));
-        closeA.addListener((A.EndA) (a, b) -> {
-            if (dismissRun != null) dismissRun.accept(LoadView.this);
-        });
         closeA.start();
     }
+
+    /*** 停止动画 ***/
+    private void cancle(ValueAnimator... anim) {
+        for (ValueAnimator a : anim) if (a.isStarted()) a.cancel();
+    }
+    /**********************************************************************************************/
+    /**************************************内部类***************************************************/
+    /**********************************************************************************************/
 }

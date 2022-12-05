@@ -86,7 +86,7 @@ public class DialogFileChooser extends DialogBottom {
      */
     @Override
     public void setTitleCenter(boolean isCenter) {
-        L.e(TAG, "不支持的操作DialogFileChooser.setTitleCenter(boolean)");
+        L.e(TAG, "不支持的操作" + TAG + ".setTitleCenter(boolean)");
     }
 
     /**
@@ -94,7 +94,7 @@ public class DialogFileChooser extends DialogBottom {
      */
     @Override
     public void setShowClose(boolean isShow) {
-        L.e(TAG, "不支持的操作DialogFileChooser.setShowClose(boolean)");
+        L.e(TAG, "不支持的操作" + TAG + ".setShowClose(boolean)");
     }
 
     /**
@@ -102,14 +102,14 @@ public class DialogFileChooser extends DialogBottom {
      */
     @Override
     public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
-        L.e(TAG, "不支持的操作DialogFileChooser.setContent(RecyclerView.Adapter)");
+        L.e(TAG, "不支持的操作" + TAG + ".setContent(RecyclerView.Adapter)");
     }
 
     /**
      * @deprecated 不允许使用
      */
     public void setLayoutManager(RecyclerView.LayoutManager lm) {
-        L.e(TAG, "不支持的操作DialogFileChooser.setLayoutManager(RecyclerView.LayoutManager)");
+        L.e(TAG, "不支持的操作" + TAG + ".setLayoutManager(RecyclerView.LayoutManager)");
     }
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
