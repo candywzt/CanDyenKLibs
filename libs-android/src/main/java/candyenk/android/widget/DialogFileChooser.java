@@ -10,8 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.R;
+import candyenk.android.asbc.AdapterRVCDK;
 import candyenk.android.asbc.HolderCDK;
-import candyenk.android.asbc.RVAdapterCDK;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import candyenk.java.io.FileInfo;
@@ -38,7 +38,7 @@ import java.util.function.Predicate;
  * 同时只能存在一个弹窗
  * 没有动画,遗憾
  */
-public class DialogFileChooser extends DialogBottom {
+public class DialogFileChooser extends DialogBottomRV {
     /*************************************成员变量**************************************************/
     private final FileAdapter adapter;//文件适配器
     private Context lastSign;//重复标记
@@ -101,8 +101,8 @@ public class DialogFileChooser extends DialogBottom {
      * @deprecated 不允许使用
      */
     @Override
-    public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
-        L.e(TAG, "不支持的操作" + TAG + ".setContent(RecyclerView.Adapter)");
+    public void setContent(AdapterRVCDK<? extends HolderCDK> adapter) {
+        L.e(TAG, "不支持的操作" + TAG + ".setContent(RVAdapterCDK)");
     }
 
     /**
@@ -237,7 +237,7 @@ public class DialogFileChooser extends DialogBottom {
     /**************************************内部类***************************************************/
     /**********************************************************************************************/
     /*** 文件配器类 ***/
-    private static class FileAdapter extends RVAdapterCDK<FileHolder> {
+    public static class FileAdapter extends AdapterRVCDK<FileHolder> {
         private final RecyclerView listView;
         private final Context context;
         private final List<FileInfo> infoList = new ArrayList<>();//当前展示Info列表
@@ -280,12 +280,12 @@ public class DialogFileChooser extends DialogBottom {
         }
 
         @Override
-        public void onBindViewHolder(@NotNull FileHolder holder, int position) {
-            holder.setContent(infoList.get(position));
+        public void onBind(@NotNull FileHolder h, int p) {
+            h.setContent(infoList.get(p));
         }
 
         @Override
-        public int getItemCount() {
+        public int getCount() {
             return infoList.size();
         }
 
@@ -297,8 +297,8 @@ public class DialogFileChooser extends DialogBottom {
          * 3:文件
          */
         @Override
-        public int getItemViewType(int position) {
-            FileInfo info = infoList.get(position);
+        public int getType(int p) {
+            FileInfo info = infoList.get(p);
             if (info == FileInfo.emptyInfo) {
                 return 0;
             } else if (info == FileInfo.superInfo) {
@@ -326,10 +326,10 @@ public class DialogFileChooser extends DialogBottom {
                 V.RV(l1).size(-1, -2).orientation(1).gravity(Gravity.CENTER_HORIZONTAL).backgroundRes(R.drawable.bg_cdk).refresh();
 
                 ImageView iv = new ImageView(context);
-                V.LL(iv).sizeDP(120).scaleType(ImageView.ScaleType.CENTER_CROP).drawable(R.drawable.ic_file_unknown).parent(l1).refresh();
+                V.LL(iv).sizeDP(120).paddingDP(8).scaleType(ImageView.ScaleType.CENTER_CROP).drawable(R.drawable.ic_file_unknown).parent(l1);
 
                 TextView tv = new MaterialTextView(context);
-                V.LL(tv).size(-2).paddingDP(0, 0, 0, 40).textSize(20).textColorRes(R.color.text_main).text(R.string.file_chooser_no_file).parent(l1).refresh();
+                V.LL(tv).size(-2).paddingDP(0, 0, 0, 40).textSize(16).textColorRes(R.color.text_main).text(R.string.file_chooser_no_file).parent(l1);
                 return l1;
             }
         }

@@ -180,12 +180,12 @@ public class BottomBar extends LinearLayout {
         if (v != null) l1.setOnClickListener(v);
 
         ImageView iv = new ImageView(context);
-        V.LL(iv).sizeDP(-1, 40).parent(l1).refresh();
+        V.LL(iv).sizeDP(-1, 40).parent(l1);
         if (icon == null) iv.setImageResource(android.R.drawable.ic_delete);
         else iv.setImageDrawable(icon);
 
         TextView tv = new MaterialTextView(context);
-        V.LL(tv).size(-1, -2).gravity(Gravity.CENTER).text(title).parent(l1).refresh();
+        V.LL(tv).size(-1, -2).gravity(Gravity.CENTER).text(title).parent(l1);
         return l1;
     }
 

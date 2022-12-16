@@ -67,13 +67,13 @@ public final class ItemNimble extends FrameLayout {
         V.ML(this).size(-1, -2).backgroundRes(0).nimble().refresh();
 
         backView = new ShapeableImageView(context);
-        V.FL(backView).size(-2, -2).marginDP(20).ele(0).scaleType(ImageView.ScaleType.CENTER_CROP).radiusDP(20).parent(this).refresh();
+        V.FL(backView).size(-2, -2).marginDP(20).ele(0).scaleType(ImageView.ScaleType.CENTER_CROP).radiusDP(20).parent(this);
 
         iconView = new ImageView(context);
-        V.FL(iconView).size(-2, -2).ele(1).scaleType(ImageView.ScaleType.FIT_START).parent(this).refresh();
+        V.FL(iconView).size(-2, -2).ele(1).scaleType(ImageView.ScaleType.FIT_START).parent(this);
 
         titleView = new TextView(context);
-        V.FL(titleView).sizeDP(-2, -2).ele(2).textSize(20).textColorRes(R.color.text_title).parent(this).refresh();
+        V.FL(titleView).sizeDP(-2, -2).ele(2).textSize(20).textColorRes(R.color.text_title).parent(this);
     }
 
     private void initAttrs(AttributeSet attrs) {

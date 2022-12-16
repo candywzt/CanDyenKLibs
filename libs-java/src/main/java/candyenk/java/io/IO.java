@@ -251,7 +251,7 @@ public class IO {
     /**
      * 关闭器
      * 会自动刷新
-     * ( 返回NULL方便赋值
+     * 返回NULL
      */
     public static <T> T close(Closeable... c) {
         if (c == null) return null;

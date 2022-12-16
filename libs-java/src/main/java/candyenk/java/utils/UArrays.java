@@ -203,21 +203,11 @@ public class UArrays {
      */
     public static <T, R> void addArrays(Collection<R> list, T[] array, Function<T, R> action) {
         if (array == null || list == null) return;
-        for (T t : array) {
-            //TODO:泛型怎么检查啊,算了就这样吧
-            if (action == null) {
-                list.add((R) t);
-            } else {
-                R r = action.apply(t);
-                if (r != null) {
-                    list.add(r);
-                }
-            }
-        }
+        addArrays(list, toArray(array, (Class<R>) array.getClass().getComponentType(), action));
     }
 
     public static <T> void addArrays(Collection<T> list, T[] array) {
-        addArrays(list, array, null);
+        list.addAll(Arrays.asList(array));
     }
 
     /**

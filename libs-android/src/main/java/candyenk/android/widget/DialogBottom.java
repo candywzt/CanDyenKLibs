@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,8 +17,6 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.R;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
@@ -33,7 +32,7 @@ import java.util.function.Consumer;
 
 
 /**
- * 自定义Adapter上拉弹窗
+ * 自定义上拉弹窗
  * 拦截层叠创建
  * 四次重构
  */
@@ -45,16 +44,15 @@ public class DialogBottom extends BottomSheetDialog {
     protected String TAG;
     protected Context context; //拉起弹窗的Activity
     protected Context viewContext;
-    protected View parentView; //调用上拉弹窗的View对象
+    protected View targetView; //调用上拉弹窗的View对象
     protected boolean ok;//是否已经初始化成功
     protected CardView dialogView;//弹窗布局对象
+    protected LinearLayout parentView;//内容父级
     protected TextView titleView;  //标题控件
     protected ImageView closeView;  //关闭控件
-    protected RecyclerView listView; //列表控件
     protected Button leftButton, rightButton;  //左右按钮控件
     protected View centerView;//按钮中间分割区域
     protected LinearLayout buttonGroup;//按钮父级控件
-    protected RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter;
     protected final ListenerSave ls;//事件监听
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
@@ -76,7 +74,7 @@ public class DialogBottom extends BottomSheetDialog {
         this.TAG = this.getClass().getSimpleName();
         this.context = context;
         this.viewContext = new ContextThemeWrapper(context, R.style.Theme_CDK);
-        this.parentView = view;
+        this.targetView = view;
         this.ls = new ListenerSave();
         super.setOnDismissListener(ls::OnDismissListener);
         this.ok = checkSign();
@@ -93,9 +91,26 @@ public class DialogBottom extends BottomSheetDialog {
      * @deprecated 不允许使用
      */
     @Override
-    public void setOnDismissListener(OnDismissListener listener) {
-        L.e(TAG, "不支持的操作" + TAG + ".setOnDismissListener(OnDismissListener)");
+    public void setContentView(View view) {
+        L.e(TAG, "不支持的操作" + TAG + ".setContentView(View)");
     }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setContentView(int layoutResId) {
+        L.e(TAG, "不支持的操作" + TAG + ".setContentView(int)");
+    }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        L.e(TAG, "不支持的操作" + TAG + ".setContentView(View,ViewGroup.LayoutParams)");
+    }
+
 
     @Override
     protected void onStart() {
@@ -106,7 +121,6 @@ public class DialogBottom extends BottomSheetDialog {
     @Override
     public void show() {
         if (!ok || isShowing()) return;
-        if (listView.getAdapter() == null) return;
         super.show();
     }
 
@@ -122,6 +136,16 @@ public class DialogBottom extends BottomSheetDialog {
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
+    /**
+     * 带监听关闭
+     *
+     * @param dismissRun 弹窗关闭后触发的事件
+     */
+    public void dismiss(Consumer<? extends DialogBottom> dismissRun) {
+        this.ls.dismissRun = dismissRun;
+        dismiss();
+    }
+
     /**
      * 设置上拉弹窗底部左侧按钮
      * 监听事件为空则不显示按钮
@@ -194,7 +218,7 @@ public class DialogBottom extends BottomSheetDialog {
      */
     public void setTitleCenter(boolean isCenter) {
         if (!ok) return;
-        V.LL(titleView).gravity(isCenter ? Gravity.CENTER : Gravity.LEFT).paddingDP(isCenter ? 0 : 20, 0, 0, 0).refresh();
+        V.LL(titleView).gravity(isCenter ? Gravity.CENTER : Gravity.START).paddingDP(isCenter ? 0 : 20, 0, 0, 0).refresh();
     }
 
     /**
@@ -209,32 +233,11 @@ public class DialogBottom extends BottomSheetDialog {
      * 设置内容-自定义适配器
      * 拉起弹窗后不可修改
      */
-    public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
+    public void setContent(View view) {
         if (!ok) return;
-        if (adapter == null) return;
-        this.adapter = adapter;
-        listView.setAdapter(adapter);
+        V.LL(view).weight(1).parent(parentView, 1);
     }
 
-    /**
-     * 设置内容布局管理器
-     * 默认 LinearLayoutManager
-     */
-    public void setLayoutManager(RecyclerView.LayoutManager lm) {
-        if (!ok) return;
-        if (lm == null) lm = new LinearLayoutManager(context);
-        listView.setLayoutManager(lm);
-    }
-
-    /**
-     * 带监听关闭
-     *
-     * @param dismissRun 弹窗关闭后触发的事件
-     */
-    public void dismiss(Consumer<? extends DialogBottom> dismissRun) {
-        this.ls.dismissRun = dismissRun;
-        dismiss();
-    }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/
@@ -245,35 +248,32 @@ public class DialogBottom extends BottomSheetDialog {
         V.LL(dialogView).size(-1, -2).backgroundRes(R.color.back_all).radiusDP(20).refresh();
 
         ImageView iv = new AppCompatImageView(viewContext);
-        V.FL(iv).sizeDP(-1, 120).drawable(R.drawable.background_transparent_gradual_change).scaleType(ImageView.ScaleType.FIT_XY).parent(dialogView).refresh();
+        V.FL(iv).sizeDP(-1, 120).drawable(R.drawable.background_transparent_gradual_change).scaleType(ImageView.ScaleType.FIT_XY).parent(dialogView);
 
-        LinearLayout ll = new LinearLayout(viewContext);
-        V.FL(ll).size(-1, -2).paddingDP(0, 20, 0, 0).orientation(1).parent(dialogView).refresh();
+        parentView = new LinearLayout(viewContext);
+        V.FL(parentView).size(-1, -2).paddingDP(0, 20, 0, 0).orientation(1).parent(dialogView);
 
         titleView = new MaterialTextView(viewContext);
-        V.LL(titleView).size(-1, -2).textSize(20).textColorRes(R.color.text_title).hide().paddingDP(20, 0, 0, 0).parent(ll).refresh();
+        V.LL(titleView).size(-1, -2).textSize(20).textColorRes(R.color.text_title).hide().paddingDP(20, 0, 0, 0).parent(parentView);
 
         closeView = new ImageView(viewContext);
-        V.FL(closeView).sizeDP(40, 40).lGravity(Gravity.TOP | Gravity.RIGHT).hide().drawable(android.R.drawable.ic_delete).paddingDP(0, 10, 10, 0).parent(dialogView).refresh();
+        V.FL(closeView).sizeDP(40, 40).lGravity(Gravity.TOP | Gravity.RIGHT).hide().drawable(R.drawable.ic_close).paddingDP(0, 10, 10, 0).parent(dialogView);
         closeView.setOnClickListener(v -> dismiss());
 
-        listView = new RecyclerView(viewContext);
-        V.LL(listView).size(-1, -2).weight(1).parent(ll).refresh();
-        listView.setLayoutManager(new LinearLayoutManager(context));
 
         buttonGroup = new LinearLayout(viewContext);
-        V.LL(buttonGroup).size(-1, -2).orientation(0).paddingDP(20, 0, 20, 20).hide().parent(ll).refresh();
+        V.LL(buttonGroup).size(-1, -2).orientation(0).paddingDP(20, 0, 20, 20).hide().parent(parentView);
 
         leftButton = new MaterialButton(viewContext);
-        V.LL(leftButton).sizeDP(-1, 50).weight(1).text(R.string.yes).hide().parent(buttonGroup).refresh();
+        V.LL(leftButton).sizeDP(-1, 50).weight(1).text(R.string.yes).hide().parent(buttonGroup);
         leftButton.setOnClickListener(this.ls::OnLeftClick);
         leftButton.setOnLongClickListener(this.ls::OnLiftLong);
 
         centerView = new View(viewContext);
-        V.LL(centerView).sizeDP(40, 50).hide().parent(buttonGroup).refresh();
+        V.LL(centerView).sizeDP(40, 50).hide().parent(buttonGroup);
 
         rightButton = new MaterialButton(viewContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
-        V.LL(rightButton).sizeDP(-1, 50).weight(1).text(R.string.no).hide().parent(buttonGroup).refresh();
+        V.LL(rightButton).sizeDP(-1, 50).weight(1).text(R.string.no).hide().parent(buttonGroup);
         rightButton.setOnClickListener(this.ls::OnRightClick);
         rightButton.setOnLongClickListener(this.ls::OnRightLong);
         super.setContentView(dialogView);
@@ -281,8 +281,8 @@ public class DialogBottom extends BottomSheetDialog {
 
     /*** 检查是否合法 ***/
     private boolean checkSign() {
-        if (lastSign == null || this.parentView != lastSign) {
-            lastSign = this.parentView;
+        if (lastSign == null || this.targetView != lastSign) {
+            lastSign = this.targetView;
             return true;
         } else return false;
     }

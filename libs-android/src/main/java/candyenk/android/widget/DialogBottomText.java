@@ -9,6 +9,8 @@ import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import com.google.android.material.textview.MaterialTextView;
 
+import java.util.function.Consumer;
+
 
 /**
  * Text展示上拉弹窗
@@ -62,11 +64,18 @@ public class DialogBottomText extends DialogBottomView {
      * @deprecated 不允许使用
      */
     @Override
-    public <T extends View> T getContentView() {
-        return super.getContentView();
+    public void bindContent(Consumer<View> binder) {
+        L.e("TAG", "不支持的操作" + TAG + ".bindContent(Consumer)");
     }
 
-    /**********************************************************************************************/
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public View getContent() {
+        return L.e("TAG", "不支持的操作" + TAG + ".getContent()", null);
+    }
+/**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
 

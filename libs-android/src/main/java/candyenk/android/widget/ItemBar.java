@@ -1,5 +1,6 @@
 package candyenk.android.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -195,7 +196,7 @@ public class ItemBar extends LinearLayout {
     /*** 创建Item ***/
     private ItemIcon createItem() {
         ItemIcon icon = new ItemIcon(context);
-        V.LL(icon).size(-2, -2).marginDP(12, 0, 12, 0).invisible().parent(this).refresh();
+        V.LL(icon).size(-2, -2).marginDP(12, 0, 12, 0).invisible().parent(this);
         return icon;
     }
 
@@ -251,9 +252,10 @@ public class ItemBar extends LinearLayout {
         public Drawable icon;
         public View.OnClickListener onClick, onLongClick;
 
+        @SuppressLint("UseCompatLoadingForDrawables")
         public ItemWrapper(Context context, int titleId, int iconId, View.OnClickListener onClick, View.OnClickListener onLongClick) {
-            this.title = context.getText(titleId);
-            this.icon = context.getDrawable(iconId);
+            this.title = titleId == 0 ? null : context.getText(titleId);
+            this.icon = iconId == 0 ? null : context.getDrawable(iconId);
             this.onClick = onClick;
             this.onLongClick = onLongClick;
         }

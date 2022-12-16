@@ -6,14 +6,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.R;
-import candyenk.android.asbc.HolderCDK;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import com.google.android.material.textview.MaterialTextView;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 
@@ -67,43 +64,55 @@ public class DialogBottomTips extends DialogBottomView {
      */
     @Override
     public void setContent(int viewid) {
-        L.e(TAG, "不支持的操作" + TAG +".setContent(int)");
+        L.e(TAG, "不支持的操作" + TAG + ".setContent(int)");
     }
+
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence)}
      */
     @Override
     public void setContent(View view) {
-        L.e(TAG, "不支持的操作" + TAG +".setContent(View)");
+        L.e(TAG, "不支持的操作" + TAG + ".setContent(View)");
     }
 
     /**
      * @deprecated 不允许使用
      */
     @Override
-    public <T extends View> T getContentView() {
-        return L.e(TAG, "不支持的操作" + TAG +".getContentView()", null);
+    public void bindContent(Consumer<View> binder) {
+        L.e(TAG, "不支持的操作" + TAG + ".bindContent(Consumer)");
     }
+
+    /**
+     * @deprecated 不允许使用
+     */
+    @Override
+    public View getContent() {
+        return L.e(TAG, "不支持的操作" + TAG + ".getContent()", null);
+    }
+
     /**
      * @deprecated 不允许使用
      */
     @Override
     public void setCancelable(boolean touchOff, boolean backOff) {
-        L.e(TAG, "不支持的操作" + TAG +".setCancelable(boolean,boolean)");
+        L.e(TAG, "不支持的操作" + TAG + ".setCancelable(boolean,boolean)");
     }
+
     /**
      * @deprecated 不允许使用
      */
     @Override
     public void setTitleCenter(boolean isCenter) {
-        L.e(TAG, "不支持的操作" + TAG +".setTitleCenter(boolean)");
+        L.e(TAG, "不支持的操作" + TAG + ".setTitleCenter(boolean)");
     }
+
     /**
      * @deprecated 不允许使用
      */
     @Override
     public void setShowClose(boolean isShow) {
-        L.e(TAG, "不支持的操作" + TAG +".setShowClose(boolean)");
+        L.e(TAG, "不支持的操作" + TAG + ".setShowClose(boolean)");
     }
 
     /**********************************************************************************************/
@@ -146,16 +155,16 @@ public class DialogBottomTips extends DialogBottomView {
         V.RL(layout).size(-1, -2).orientation(1).paddingDP(20).refresh();
 
         LinearLayout l1 = new LinearLayout(viewContext);
-        V.LL(l1).size(-1, -2).orientation(0).gravity(Gravity.CENTER).parent(layout).refresh();
+        V.LL(l1).size(-1, -2).orientation(0).gravity(Gravity.CENTER).parent(layout);
 
         iconView = new ImageView(viewContext);
-        V.LL(iconView).sizeDP(80).drawable(R.drawable.ic_ok).parent(l1).refresh();
+        V.LL(iconView).sizeDP(80).drawable(R.drawable.ic_ok).parent(l1);
 
         titleView = new MaterialTextView(viewContext);
-        V.LL(titleView).size(-1, -1).gravity(Gravity.CENTER).textSize(24).parent(l1).hide().refresh();
+        V.LL(titleView).size(-1, -1).gravity(Gravity.CENTER).textSize(24).hide().parent(l1);
 
         contentView = new MaterialTextView(viewContext);
-        V.LL(contentView).size(-1, -2).paddingDP(0, 20, 0, 0).parent(layout).hide().refresh();
+        V.LL(contentView).size(-1, -2).paddingDP(0, 20, 0, 0).hide().parent(layout);
         super.setContent(layout);
     }
 

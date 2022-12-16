@@ -1,5 +1,6 @@
 package candyenk.android.asbc;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
@@ -8,22 +9,45 @@ import android.util.Log;
 import candyenk.android.tools.CH;
 import candyenk.android.tools.L;
 import candyenk.android.utils.UApp;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 代码初始化LitePal
+ * Operator.initialize(this);
+ * LitePalDB ldb = new LitePalDB("test", 1);
+ * ldb.addClassName(DB.class.getName());
+ * Operator.use(ldb);
+ */
 public class ApplicationCDK extends Application {
+    @SuppressLint("StaticFieldLeak")
+    private static ApplicationCDK app;
     private static ArrayList<Activity> activityList;
+    public final Gson gson = new Gson();
     protected String TAG = "CDKApplication";
 
     @Override
     public void onCreate() {
         this.TAG = this.getClass().getSimpleName();
+        ApplicationCDK.app = this;
         super.onCreate();
     }
     /**********************************************************************************************/
     /******************************************静态方法*********************************************/
     /**********************************************************************************************/
+    /**
+     * 获取实例
+     */
+    public static <T extends ApplicationCDK> T app() {
+        return (T) ApplicationCDK.app;
+    }
+
+    public static <T extends ApplicationCDK> T app(Class<T> c) {
+        return app();
+    }
+
     /**
      * 获取栈顶activity
      * 可用来获取全局Context

@@ -32,7 +32,7 @@
     </style>
     <!--*****************************************************************************************-->
     <!--Chip风格-->
-    <style name="CDK.Chip" parent="Widget.MaterialComponents.Chip.Choice">
+    <style name="CDK.Chip" parent="Widget.MaterialComponents.Chip.Filter">
 
     </style>
     <!--*****************************************************************************************-->

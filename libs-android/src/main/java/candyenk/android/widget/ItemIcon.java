@@ -49,10 +49,10 @@ public class ItemIcon extends Item {
         this.setBackgroundResource(R.drawable.bg_cdk);
 
         iconView = new ImageView(context);
-        V.LL(iconView).padding(8).sizeDP(48).parent(this).refresh();
+        V.LL(iconView).padding(8).sizeDP(48).parent(this);
 
         titleView = new MaterialTextView(context);
-        V.LL(titleView).size(-2, -2).textSize(16).gravity(Gravity.CENTER).textColorRes(R.color.text_main).parent(this).refresh();
+        V.LL(titleView).size(-2, -2).textSize(16).gravity(Gravity.CENTER).textColorRes(R.color.text_main).parent(this);
     }
 
     @Override

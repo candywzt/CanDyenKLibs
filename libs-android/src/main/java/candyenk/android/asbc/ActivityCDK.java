@@ -1,5 +1,6 @@
 package candyenk.android.asbc;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -336,6 +337,7 @@ public abstract class ActivityCDK extends AppCompatActivity {
     }
 
     /*** 初始化根布局 ***/
+    @SuppressLint("ResourceType")
     private void initLayout() {
         container = new FrameLayout(this);
         container.setId(31636368);
@@ -344,12 +346,12 @@ public abstract class ActivityCDK extends AppCompatActivity {
         super.setContentView(container);
 
         ImageView iv = new ImageView(this);
-        V.FL(iv).size(-1, -1).eleDP(-90).parent(container).refresh();
+        V.FL(iv).size(-1, -1).eleDP(-90).parent(container);
         iv.setScaleType(ImageView.ScaleType.FIT_START);
         iv.setImageResource(R.drawable.bg_cdk_head);
 
         titleBar = new MaterialTextView(this);
-        V.FL(titleBar).size(-1, -2).paddingDP(40, 60, 0, 40).eleDP(100).parent(container).refresh();
+        V.FL(titleBar).size(-1, -2).paddingDP(40, 60, 0, 40).eleDP(100).parent(container);
         if (getTitle() != null) setTitle(getTitle());
         else titleBar.setVisibility(View.GONE);
         titleBar.setTextColor(getColor(R.color.text_title));
@@ -366,8 +368,7 @@ public abstract class ActivityCDK extends AppCompatActivity {
                 .lGravity(Gravity.BOTTOM)
                 .paddingDP(10, 10, 10, 10)
                 .marginDP(0, 0, 0, 40)
-                .parent(container)
-                .refresh();
+                .parent(container);
     }
 
     /*** 创建Fragment ***/

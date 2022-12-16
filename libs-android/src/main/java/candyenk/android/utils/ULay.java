@@ -6,8 +6,12 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.os.Build;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import androidx.annotation.LayoutRes;
+
+import java.util.function.Consumer;
 
 /**
  * Android布局工具
@@ -82,6 +86,15 @@ public class ULay {
         return px / scale + 0.5f;
     }
 
+    /**
+     * 解析XML布局
+     * 自带布局绑定
+     */
+    public static <T extends View> T parseXML(Context context, @LayoutRes int id, Consumer<T> c) {
+        T view = (T) LayoutInflater.from(context).inflate(id, null);
+        if (c != null) c.accept(view);
+        return view;
+    }
 
     /**
      * View转Bitmap

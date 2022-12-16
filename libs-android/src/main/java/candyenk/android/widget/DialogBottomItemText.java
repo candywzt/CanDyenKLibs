@@ -54,7 +54,7 @@ public class DialogBottomItemText extends DialogBottomItem {
      * @deprecated 请使用 {@link #setContent(CharSequence...)}
      */
     @Override
-    public void setContent(View... views) {
+    public void setContent(View[] views) {
         L.e("TAG", "不允许使用DialogBottomView.setContent(View...)");
     }
 
@@ -149,10 +149,8 @@ public class DialogBottomItemText extends DialogBottomItem {
         super.setOnBindViewHolder(h -> {
             int p = h.getAdapterPosition();
             CharSequence text = items[p];
-            boolean l = p == items.length - 1;
-            V.RL(h.itemView).marginDP(0, 0, 0, l ? 20 : 0).refresh();//ItemView
             V.LL(V.getChild(h.itemView, 0)).text(text);//TextView
-            if (showSplitLine) V.LL(V.getChild(h.itemView, 1)).visibility(l ? View.GONE : View.VISIBLE).refresh();//分割线
+            if (showSplitLine) V.LL(V.getChild(h.itemView, 1)).visibility(p == items.length - 1 ? View.GONE : View.VISIBLE).refresh();//分割线
         });
     }
 
@@ -173,10 +171,10 @@ public class DialogBottomItemText extends DialogBottomItem {
         nl.setFocusable(true);
 
         TextView tv = new MaterialTextView(viewContext);
-        V.LL(tv).size(-1).textColorRes(R.color.text_main).gravity(itemCenter ? Gravity.CENTER : Gravity.START | Gravity.CENTER).textSize(18).paddingDP(itemCenter ? 0 : 20, 0, 0, 0).parent(nl).refresh();
+        V.LL(tv).size(-1).textColorRes(R.color.text_main).gravity(itemCenter ? Gravity.CENTER : Gravity.START | Gravity.CENTER).textSize(18).paddingDP(itemCenter ? 0 : 20, 0, 0, 0).parent(nl);
         if (showSplitLine) {
             View v = new View(viewContext);
-            V.LL(v).sizeDP(-1, 2).marginDP(20, -1, 20, 0).backgroundRes(R.color.main_01).parent(nl).refresh();
+            V.LL(v).sizeDP(-1, 2).marginDP(20, -1, 20, 0).backgroundRes(R.color.main_01).parent(nl);
         }
         return nl;
     }

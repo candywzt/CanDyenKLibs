@@ -65,15 +65,15 @@ public class ItemSeekBar extends Item {
         setOrientation(VERTICAL);
 
         LinearLayout ll2 = new LinearLayout(context);
-        V.LL(ll2).size(-1, -2).orientation(0).gravity(Gravity.CENTER).parent(this).refresh();
+        V.LL(ll2).size(-1, -2).orientation(0).gravity(Gravity.CENTER).parent(this);
         ll2.addView(iconView);
         ll2.addView(ll);
 
         progressTextView = new MaterialTextView(context);
-        V.LL(progressTextView).size(-2, -2).lGravity(Gravity.TOP).paddingDP(0, 5, 0, 0).textColorRes(R.color.text_main).parent(ll2).refresh();
+        V.LL(progressTextView).size(-2, -2).lGravity(Gravity.TOP).paddingDP(0, 5, 0, 0).textColorRes(R.color.text_main).parent(ll2);
 
         seekBarView = new SeekBarCDK(context);
-        V.LL(seekBarView).size(-1, -2).paddingDP(0, 10, 0, 0).parent(this).refresh();
+        V.LL(seekBarView).size(-1, -2).paddingDP(0, 10, 0, 0).parent(this);
         seekBarView.setDisplayMode(SeekBarCDK.DM_EXTREMUM | SeekBarCDK.DM_PERCENT);
 
     }

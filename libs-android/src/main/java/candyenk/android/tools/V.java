@@ -9,10 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.*;
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.StringRes;
+import androidx.annotation.*;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.utils.ULay;
@@ -41,7 +38,6 @@ public class V<T extends View> {
     private final T view;
     private final Context context;
     private ViewGroup.LayoutParams lp;
-
     /**********************************************************************************************/
     /***********************************公共静态方法*************************************************/
     /**********************************************************************************************/
@@ -78,6 +74,18 @@ public class V<T extends View> {
      */
     public static RecyclerView.LayoutParams getRVL(View v) {
         return (RecyclerView.LayoutParams) v.getLayoutParams();
+    }
+
+    /**
+     * 获取子控件
+     * 按ID获取
+     */
+    public static <T extends View> T findId(View v, @IdRes int id) {
+        return (T) v.findViewById(id);
+    }
+
+    public static <T extends View> T findId(View v, @IdRes int id, Class<T> c) {
+        return findId(v, id);
     }
 
     /**
@@ -278,145 +286,145 @@ public class V<T extends View> {
     /**
      * 创建LinearLayout.LayoutParams
      */
-    public static V LL(View v) {
-        V view = new V(v);
-        if (view.lp == null) view.lp = new LinearLayout.LayoutParams(-2, -2);
-        return view;
+    public static <T extends View> V<T> LL(T v) {
+        V<T> vh = new V<>(v);
+        if (vh.lp == null) vh.lp = new LinearLayout.LayoutParams(-2, -2);
+        return vh;
     }
 
     /**
      * 创建FrameLayout.LayoutParams
      */
-    public static V FL(View v) {
-        V view = new V(v);
-        if (view.lp == null) view.lp = new FrameLayout.LayoutParams(-2, -2);
-        return view;
+    public static <T extends View> V<T> FL(T v) {
+        V<T> vh = new V<>(v);
+        if (vh.lp == null) vh.lp = new FrameLayout.LayoutParams(-2, -2);
+        return vh;
     }
 
     /**
      * 创建RelativeLayout.LayoutParams
      */
-    public static V RL(View v) {
-        V view = new V(v);
-        if (view.lp == null) view.lp = new RelativeLayout.LayoutParams(-2, -2);
-        return view;
+    public static <T extends View> V<T> RL(T v) {
+        V<T> vh = new V<>(v);
+        if (vh.lp == null) vh.lp = new RelativeLayout.LayoutParams(-2, -2);
+        return vh;
     }
 
     /**
      * 创建RecyclerView.LayoutParams
      */
-    public static V RV(View v) {
-        V view = new V(v);
-        if (view.lp == null) view.lp = new RecyclerView.LayoutParams(-2, -2);
-        return view;
+    public static <T extends View> V<T> RV(T v) {
+        V<T> vh = new V<>(v);
+        if (vh.lp == null) vh.lp = new RecyclerView.LayoutParams(-2, -2);
+        return vh;
     }
 
     /**
      * 创建ViewGroup.MarginLayoutParams
      */
-    public static V ML(View v) {
-        V view = new V(v);
-        if (view.lp == null) view.lp = new ViewGroup.MarginLayoutParams(-2, -2);
-        return view;
+    public static <T extends View> V<T> ML(T v) {
+        V<T> vh = new V<>(v);
+        if (vh.lp == null) vh.lp = new ViewGroup.MarginLayoutParams(-2, -2);
+        return vh;
     }
 
     /**
      * 创建ViewGroup.LayoutParams
      */
-    public static V LP(View v) {
-        V view = new V(v);
-        if (view.lp == null) view.lp = new ViewGroup.LayoutParams(-2, -2);
-        return view;
+    public static <T extends View> V<T> LP(T v) {
+        V<T> vh = new V<>(v);
+        if (vh.lp == null) vh.lp = new ViewGroup.LayoutParams(-2, -2);
+        return vh;
     }
 
 
     /**
      * 设置控件宽高
      */
-    public static V size(View v, int w, int h) {
-        return new V(v).size(w, h);
+    public static <T extends View> V<T> size(T v, int w, int h) {
+        return new V<>(v).size(w, h);
     }
 
-    public static V size(View v, int vv) {
-        return new V(v).size(vv);
+    public static <T extends View> V<T> size(T v, int vv) {
+        return new V<T>(v).size(vv);
     }
 
-    public static V sizeDP(View v, int w, int h) {
-        return new V(v).sizeDP(w, h);
+    public static <T extends View> V<T> sizeDP(T v, int w, int h) {
+        return new V<T>(v).sizeDP(w, h);
     }
 
-    public static V sizeDP(View v, int vv) {
-        return new V(v).sizeDP(vv);
+    public static <T extends View> V<T> sizeDP(T v, int vv) {
+        return new V<T>(v).sizeDP(vv);
     }
 
 
     /**
      * 设置控件外边距
      */
-    public static V margin(View v, int l, int t, int r, int b) {
-        return new V(v).margin(l, t, r, b);
+    public static <T extends View> V<T> margin(T v, int l, int t, int r, int b) {
+        return new V<>(v).margin(l, t, r, b);
     }
 
-    public static V margin(View v, int vv) {
-        return new V(v).margin(vv);
+    public static <T extends View> V<T> margin(T v, int vv) {
+        return new V<>(v).margin(vv);
     }
 
-    public static V marginDP(View v, int l, int t, int r, int b) {
-        return new V(v).marginDP(l, t, r, b);
+    public static <T extends View> V<T> marginDP(T v, int l, int t, int r, int b) {
+        return new V<>(v).marginDP(l, t, r, b);
     }
 
-    public static V marginDP(View v, int vv) {
-        return new V(v).marginDP(vv);
+    public static <T extends View> V<T> marginDP(T v, int vv) {
+        return new V<>(v).marginDP(vv);
     }
 
     /**
      * 设置控件Weight属性
      */
-    public static V weight(View v, int w) {
-        return new V(v).weight(w);
+    public static <T extends View> V<T> weight(T v, int w) {
+        return new V<>(v).weight(w);
     }
 
     /**
      * 设置控件Layout_Gravity属性
      */
-    public static V lGravity(View v, int g) {
-        return new V(v).lGravity(g);
+    public static <T extends View> V<T> lGravity(T v, int g) {
+        return new V<>(v).lGravity(g);
     }
 
     /**
      * 设置控件Padding属性
      * 无需刷新
      */
-    public static V padding(View v, int s, int t, int e, int b) {
-        return new V(v).padding(s, t, e, b);
+    public static <T extends View> V<T> padding(T v, int s, int t, int e, int b) {
+        return new V<>(v).padding(s, t, e, b);
     }
 
-    public static V padding(View v, int vv) {
-        return new V(v).padding(vv);
+    public static <T extends View> V<T> padding(T v, int vv) {
+        return new V<>(v).padding(vv);
     }
 
-    public static V paddingDP(View v, int s, int t, int e, int b) {
-        return new V(v).paddingDP(s, t, e, b);
+    public static <T extends View> V<T> paddingDP(T v, int s, int t, int e, int b) {
+        return new V<>(v).paddingDP(s, t, e, b);
     }
 
-    public static V paddingDP(View v, int vv) {
-        return new V(v).paddingDP(vv);
+    public static <T extends View> V<T> paddingDP(T v, int vv) {
+        return new V<>(v).paddingDP(vv);
     }
 
     /**
      * 设置控件Elevation属性(厚度)
      * 无需刷新
      */
-    public static V eleDP(View v, int e) {
-        return new V(v).eleDP(e);
+    public static <T extends View> V<T> eleDP(T v, int e) {
+        return new V<>(v).eleDP(e);
     }
 
     /**
      * 设置控件Radius属性(圆角)
      * 无需刷新
      */
-    public static V radiusDP(View v, int r) {
-        return new V(v).radiusDP(r);
+    public static <T extends View> V<T> radiusDP(T v, int r) {
+        return new V<>(v).radiusDP(r);
     }
 
     /**********************************************************************************************/
@@ -446,29 +454,29 @@ public class V<T extends View> {
     /**
      * 设置控件宽高
      */
-    public V size(int w, int h) {
+    public V<T> size(int w, int h) {
         if (lp == null) throw new NullPointerException("控件没有LayoutParams,请先创建");
         lp.width = w == UN ? lp.width : w;
         lp.height = h == UN ? lp.height : h;
         return this;
     }
 
-    public V size(int v) {
+    public V<T> size(int v) {
         return size(v, v);
     }
 
-    public V sizeDP(int w, int h) {
+    public V<T> sizeDP(int w, int h) {
         return size(w < 0 ? w : (int) DP(w), h < 0 ? h : (int) DP(h));
     }
 
-    public V sizeDP(int v) {
+    public V<T> sizeDP(int v) {
         return sizeDP(v, v);
     }
 
     /**
      * 设置控件外边距
      */
-    public V margin(int s, int t, int e, int b) {
+    public V<T> margin(int s, int t, int e, int b) {
         if (lp == null) throw new NullPointerException("控件没有LayoutParams,请先创建");
         if (lp instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams lp1 = (ViewGroup.MarginLayoutParams) lp;
@@ -481,25 +489,25 @@ public class V<T extends View> {
         return this;
     }
 
-    public V margin(int v) {
+    public V<T> margin(int v) {
         return margin(v, v, v, v);
     }
 
-    public V marginDP(int s, int t, int e, int b) {
+    public V<T> marginDP(int s, int t, int e, int b) {
         return margin((int) DP(s),
                 (int) DP(t),
                 (int) DP(e),
                 (int) DP(b));
     }
 
-    public V marginDP(int v) {
+    public V<T> marginDP(int v) {
         return marginDP(v, v, v, v);
     }
 
     /**
      * 设置控件Weight属性
      */
-    public V weight(int w) {
+    public V<T> weight(int w) {
         if (lp == null) throw new NullPointerException("控件没有LayoutParams,请先创建");
         if (lp instanceof LinearLayout.LayoutParams) ((LinearLayout.LayoutParams) lp).weight = (float) w;
         return this;
@@ -508,7 +516,7 @@ public class V<T extends View> {
     /**
      * 设置控件Layout_Gravity属性
      */
-    public V lGravity(int g) {
+    public V<T> lGravity(int g) {
         if (lp == null) throw new NullPointerException("控件没有LayoutParams,请先创建");
         if (lp instanceof LinearLayout.LayoutParams) ((LinearLayout.LayoutParams) lp).gravity = g;
         else if (lp instanceof FrameLayout.LayoutParams) ((FrameLayout.LayoutParams) lp).gravity = g;
@@ -519,7 +527,7 @@ public class V<T extends View> {
     /**
      * 设置控件ID
      */
-    public V id(int id) {
+    public V<T> id(int id) {
         view.setId(id);
         return this;
     }
@@ -527,7 +535,7 @@ public class V<T extends View> {
     /**
      * 设置灵动效果
      */
-    public V nimble() {
+    public V<T> nimble() {
         NV.apply(view);
         return this;
     }
@@ -536,7 +544,7 @@ public class V<T extends View> {
      * 设置控件Padding属性
      * 无需刷新
      */
-    public V padding(int s, int t, int e, int b) {
+    public V<T> padding(int s, int t, int e, int b) {
         s = s == UN ? view.getPaddingLeft() : s;
         t = t == UN ? view.getPaddingTop() : t;
         e = e == UN ? view.getPaddingRight() : e;
@@ -547,18 +555,18 @@ public class V<T extends View> {
         return this;
     }
 
-    public V padding(int v) {
+    public V<T> padding(int v) {
         return padding(v, v, v, v);
     }
 
-    public V paddingDP(int s, int t, int e, int b) {
+    public V<T> paddingDP(int s, int t, int e, int b) {
         return padding((int) DP(s),
                 (int) DP(t),
                 (int) DP(e),
                 (int) DP(b));
     }
 
-    public V paddingDP(int v) {
+    public V<T> paddingDP(int v) {
         return paddingDP(v, v, v, v);
     }
 
@@ -566,7 +574,7 @@ public class V<T extends View> {
      * 设置控件Elevation属性(厚度)
      * 无需刷新
      */
-    public V ele(float e) {
+    public V<T> ele(float e) {
         if (view instanceof CardView) {
             ((CardView) view).setCardElevation(e);
             ((CardView) view).setMaxCardElevation(e);
@@ -574,21 +582,8 @@ public class V<T extends View> {
         return this;
     }
 
-    public V eleDP(int e) {
+    public V<T> eleDP(int e) {
         return ele((float) DP(e));
-    }
-
-    /**
-     * 设置控件父级
-     * 无需刷新
-     */
-    public V parent(ViewGroup p) {
-        return parent(p, -1);
-    }
-
-    public V parent(ViewGroup p, int i) {
-        if (p != null) p.addView(view, i);
-        return this;
     }
 
     /**
@@ -596,7 +591,7 @@ public class V<T extends View> {
      * 支持ShapeableImageView
      * 无需刷新
      */
-    public V radius(float r) {
+    public V<T> radius(float r) {
         if (view instanceof CardView) ((CardView) view).setRadius(r);
         else if (view instanceof ShapeableImageView) {
             ((ShapeableImageView) view).setShapeAppearanceModel(ShapeAppearanceModel
@@ -610,7 +605,7 @@ public class V<T extends View> {
         return this;
     }
 
-    public V radiusDP(int r) {
+    public V<T> radiusDP(int r) {
         return radius((float) DP(r));
     }
 
@@ -618,35 +613,36 @@ public class V<T extends View> {
      * 设置控件显隐
      * 无需刷新
      */
-    public V visibility(int v) {
+    public V<T> visibility(int v) {
         view.setVisibility(v);
         return this;
     }
 
-    public V hide() {
+    public V<T> hide() {
         return visibility(View.GONE);
     }
 
-    public V visible() {
+    public V<T> visible() {
         return visibility(View.VISIBLE);
     }
 
-    public V invisible() {
+    public V<T> invisible() {
         return visibility(View.INVISIBLE);
     }
 
     /**
      * 设置控件开关
+     * 务必实现 Checkable接口
      */
-    public V checkTrue() {
+    public V<T> checkTrue() {
         return check(true);
     }
 
-    public V checkFalse() {
+    public V<T> checkFalse() {
         return check(false);
     }
 
-    public V check(boolean checked) {
+    public V<T> check(boolean checked) {
         if (view instanceof Checkable) ((Checkable) view).setChecked(checked);
         else L.e(TAG, "控件:" + view + "不允许使用setChecked(boolean)");
         return this;
@@ -658,7 +654,7 @@ public class V<T extends View> {
      * 无需刷新
      */
     @SuppressLint("UseCompatLoadingForDrawables")
-    public V backgroundRes(int resID) {
+    public V<T> backgroundRes(int resID) {
         if (resID == 0) return background(null);
         if (isColor(resID)) return background(context.getColor(resID));
         else return background(context.getDrawable(resID));
@@ -667,13 +663,13 @@ public class V<T extends View> {
     /**
      * 设置控件背景色
      */
-    public V background(@ColorInt int color) {
+    public V<T> background(@ColorInt int color) {
         if (view instanceof CardView) ((CardView) view).setCardBackgroundColor(color);
         else view.setBackgroundColor(color);
         return this;
     }
 
-    public V background(Drawable drawable) {
+    public V<T> background(Drawable drawable) {
         if (view instanceof CardView) view.setForeground(drawable);
         else view.setBackground(drawable);
         return this;
@@ -690,11 +686,11 @@ public class V<T extends View> {
      * 无需刷新
      */
 
-    public V hint(@StringRes int resID) {
+    public V<T> hint(@StringRes int resID) {
         return hint(context.getText(resID));
     }
 
-    public V hint(CharSequence s) {
+    public V<T> hint(CharSequence s) {
         String name = "setHint";
         UReflex.UM um = find(name, CharSequence.class);
         um.invoke(view, s);
@@ -707,11 +703,11 @@ public class V<T extends View> {
      * TextView
      * 无需刷新
      */
-    public V text(@StringRes int resID) {
+    public V<T> text(@StringRes int resID) {
         return text(context.getText(resID));
     }
 
-    public V text(CharSequence s) {
+    public V<T> text(CharSequence s) {
         String name = "setText";
         UReflex.UM um = find(name, CharSequence.class);
         um.invoke(view, s);
@@ -724,7 +720,7 @@ public class V<T extends View> {
      * Textiew
      * 无需刷新
      */
-    public V textColorRes(@ColorRes int resId) {
+    public V<T> textColorRes(@ColorRes int resId) {
         return textColor(context.getColor(resId));
     }
 
@@ -734,7 +730,7 @@ public class V<T extends View> {
      * TextView
      * 无需刷新
      */
-    public V textColor(@ColorInt int color) {
+    public V<T> textColor(@ColorInt int color) {
         String name = "setTextColor";
         UReflex.UM um = find(name, int.class);
         um.invoke(view, color);
@@ -746,7 +742,7 @@ public class V<T extends View> {
      * 设置文本大小
      * 无需刷新
      */
-    public V textSize(float sp) {
+    public V<T> textSize(float sp) {
         String name = "setTextSize";
         UReflex.UM um = find(name, float.class);
         um.invoke(view, sp);
@@ -760,12 +756,12 @@ public class V<T extends View> {
      * 无需刷新
      */
     @SuppressLint("UseCompatLoadingForDrawables")
-    public V drawable(@DrawableRes int resID) {
+    public V<T> drawable(@DrawableRes int resID) {
         if (resID == 0) return drawable((Drawable) null);
         return drawable(context.getDrawable(resID));
     }
 
-    public V drawable(Drawable drawable) {
+    public V<T> drawable(Drawable drawable) {
         String name = "setImageDrawable";
         UReflex.UM um = find(name, Drawable.class);
         um.invoke(view, drawable);
@@ -777,7 +773,7 @@ public class V<T extends View> {
      * 设置图片显示方式
      * 无需刷新
      */
-    public V scaleType(ImageView.ScaleType type) {
+    public V<T> scaleType(ImageView.ScaleType type) {
         String name = "setScaleType";
         UReflex.UM um = find(name, ImageView.ScaleType.class);
         um.invoke(view, type);
@@ -788,7 +784,7 @@ public class V<T extends View> {
      * 设置布局方向(0横1纵)
      * 无需刷新
      */
-    public V orientation(int o) {
+    public V<T> orientation(int o) {
         String name = "setOrientation";
         UReflex.UM um = find(name, int.class);
         um.invoke(view, o);
@@ -799,7 +795,7 @@ public class V<T extends View> {
      * 设置控件Gravity属性
      * hhh我是不是应该把所有属性都用反射弄啊
      */
-    public V gravity(int g) {
+    public V<T> gravity(int g) {
         String name = "setGravity";
         UReflex.UM um = find(name, int.class);
         um.invoke(view, g);
@@ -809,7 +805,7 @@ public class V<T extends View> {
     /**
      * 设置控件Max属性
      */
-    public V max(int m) {
+    public V<T> max(int m) {
         String name = "setMax";
         UReflex.UM um = find(name, int.class);
         um.invoke(view, m);
@@ -819,7 +815,7 @@ public class V<T extends View> {
     /**
      * 设置控件Min属性
      */
-    public V min(int m) {
+    public V<T> min(int m) {
         String name = "setMin";
         UReflex.UM um = find(name, int.class);
         um.invoke(view, m);
@@ -827,11 +823,25 @@ public class V<T extends View> {
     }
 
     /**
+     * 设置控件父级
+     * 自带刷新效果
+     */
+    public T parent(ViewGroup p) {
+        return parent(p, -1);
+    }
+
+    public T parent(ViewGroup p, int i) {
+        if (p != null) p.addView(view, i, lp);
+        return view;
+    }
+
+    /**
      * 刷新控件的布局参数
      */
-    public void refresh() {
+    public T refresh() {
         if (this.lp != null) view.setLayoutParams(this.lp);
         map.remove(view, this);
+        return view;
     }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
@@ -848,7 +858,7 @@ public class V<T extends View> {
         return false;
     }
 
-    private V log(UReflex.UM um, String m, Class<?>... c) {
+    private V<T> log(UReflex.UM um, String m, Class<?>... c) {
         if (um.isNull() || um.e != null) {
             String log = String.format("控件[%s].%s(%s)失败", view.getClass().getName(), m, UArrays.toString(c, Class::getSimpleName));
             L.e(TAG, um.e, log);

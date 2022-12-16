@@ -66,19 +66,19 @@ public class Item extends LinearLayout {
         V.paddingDP(this, 8).orientation(0).gravity(Gravity.CENTER).backgroundRes(R.drawable.bg_cdk);
 
         iconView = new ImageView(context);
-        V.LL(iconView).sizeDP(56).parent(this).refresh();
+        V.LL(iconView).sizeDP(56).paddingDP(8).parent(this);
 
         LinearLayout ll = new LinearLayout(context);
-        V.LL(ll).size(-1, -2).orientation(1).paddingDP(8, 0, 8, 0).weight(1).parent(this).refresh();
+        V.LL(ll).size(-1, -2).orientation(1).paddingDP(8, 0, 8, 0).weight(1).parent(this);
 
         titleView = new MaterialTextView(context);
-        V.LL(titleView).size(-1, -2).textSize(16).textColorRes(R.color.text_main).parent(ll).refresh();
+        V.LL(titleView).size(-1, -2).textSize(16).textColorRes(R.color.text_main).parent(ll);
 
         summaryView = new MaterialTextView(context);
-        V.LL(summaryView).size(-1, -2).textSize(12).textColorRes(R.color.text_deputy).hide().parent(ll).refresh();
+        V.LL(summaryView).size(-1, -2).textSize(12).textColorRes(R.color.text_deputy).hide().parent(ll);
 
         arrowView = new ImageView(context);
-        V.LL(arrowView).sizeDP(18).parent(this).drawable(R.drawable.ic_arrow_right).refresh();
+        V.LL(arrowView).sizeDP(18).drawable(R.drawable.ic_arrow_right).parent(this);
     }
 
     protected void initAttrs(AttributeSet attrs) {

@@ -6,7 +6,6 @@ import android.view.View;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.asbc.HolderCDK;
 import candyenk.android.tools.L;
-import candyenk.android.tools.V;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -42,8 +41,8 @@ public class DialogBottomView extends DialogBottomItem {
      * @deprecated 请使用 {@link #setContent(View)}{@link #setContent(int)}
      */
     @Override
-    public void setContent(View... views) {
-        L.e("TAG", "不支持的操作" + TAG + ".setContent(View...)");
+    public void setContent(View[] views) {
+        L.e("TAG", "不支持的操作" + TAG + ".setContent(View[])");
     }
 
     /**
@@ -51,7 +50,7 @@ public class DialogBottomView extends DialogBottomItem {
      */
     @Override
     public void setContent(int... resIds) {
-        L.e("TAG", "不支持的操作"  + TAG + ".setContent(int...)");
+        L.e("TAG", "不支持的操作" + TAG + ".setContent(int...)");
     }
 
     /**
@@ -67,7 +66,7 @@ public class DialogBottomView extends DialogBottomItem {
      */
     @Override
     public void setLayoutManager(RecyclerView.LayoutManager lm) {
-        L.e("TAG", "不支持的操作"  + TAG + ".setLayoutManager(RecyclerView.LayoutManager)");
+        L.e("TAG", "不支持的操作" + TAG + ".setLayoutManager(RecyclerView.LayoutManager)");
     }
 
     /**
@@ -83,7 +82,7 @@ public class DialogBottomView extends DialogBottomItem {
      */
     @Override
     public void setOnItemClickListener(BiConsumer<View, Integer> l) {
-        L.e("TAG", "不支持的操作" + TAG +".setOnItemClickListener(BiConsumer)");
+        L.e("TAG", "不支持的操作" + TAG + ".setOnItemClickListener(BiConsumer)");
     }
 
     /**
@@ -91,7 +90,7 @@ public class DialogBottomView extends DialogBottomItem {
      */
     @Override
     public void setOnItemLongClickListener(BiConsumer<View, Integer> l) {
-        L.e("TAG", "不支持的操作" + TAG +".setOnItemLongClickListener(BiConsumer)");
+        L.e("TAG", "不支持的操作" + TAG + ".setOnItemLongClickListener(BiConsumer)");
     }
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
@@ -111,19 +110,27 @@ public class DialogBottomView extends DialogBottomItem {
      */
     public void setContent(View view) {
         if (!ok) return;
-        V.RL(view).padding(V.UN, V.UN, V.UN, (int) (view.getPaddingBottom() + dp2px(20)));
-        super.setContent(view);
+        super.setContent(new View[]{view});
         adapter.clearListener();
     }
 
     /**
-     * 获取设置的控件
-     * 方便使用xml的控件设置事件监听
+     * 内容绑定
      */
-    public <T extends View> T getContentView() {
-        return (T) adapter.items[0];
+    public void bindContent(Consumer<View> binder) {
+        binder.accept(adapter.items[0]);
     }
 
+    /**
+     * 获取设置的View
+     */
+    public View getContent() {
+        if (adapter.items != null) return adapter.items[0];
+        else return null;
+    }
+    /**********************************************************************************************/
+    /**************************************内部类***************************************************/
+    /**********************************************************************************************/
 
 }
 

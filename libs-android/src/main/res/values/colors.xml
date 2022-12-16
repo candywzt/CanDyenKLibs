@@ -22,6 +22,13 @@
     <color name="back_all">#FFEEEEEE</color>
     <color name="back_group">#FFFFFFFF</color>
     <color name="back_view">#FFF2F2F2</color>
+    <!--MD颜色-->
+    <color name="md_red_500">#FFF44336</color><!--红色500-->
+    <color name="md_red_100">#FFFFCDD2</color><!--红色100-->
+    <color name="md_yellow_500">#FFFFEB3B</color><!--黄色500-->
+    <color name="md_yellow_100">#FFFFF9C4</color><!--黄色100-->
+    <color name="md_green_500">#FF4CAF50</color><!--绿色500-->
+    <color name="md_green_100">#FFC8E6C9</color><!--绿色500-->
     <!--固定颜色-->
     <color name="transparent">#00000000</color><!--透明-->
     <color name="translucent">#33000000</color><!--半透明-->

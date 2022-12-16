@@ -5,10 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.LayoutRes;
-import androidx.recyclerview.widget.RecyclerView;
+import candyenk.android.asbc.AdapterRVCDK;
 import candyenk.android.asbc.HolderCDK;
-import candyenk.android.asbc.RVAdapterCDK;
 import candyenk.android.tools.L;
+import candyenk.android.tools.V;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  * 自动拦截重复调用
  * 这个东西没人用吧
  */
-public class DialogBottomItem extends DialogBottom {
+public class DialogBottomItem extends DialogBottomRV {
     /*************************************成员变量**************************************************/
     protected ItemAdapter adapter;
     /**********************************************************************************************/
@@ -43,6 +43,7 @@ public class DialogBottomItem extends DialogBottom {
         super(context, view);
         this.TAG = this.getClass().getSimpleName();
         this.adapter = new ItemAdapter(context);
+        this.adapter.setFooter(new HolderCDK(createFoot()));
         if (ok) super.setContent(this.adapter);
     }
 
@@ -53,10 +54,15 @@ public class DialogBottomItem extends DialogBottom {
      * @deprecated Use {@link #setContent(View...)}{@link #setContent(int...)}{@link #setContent(int, int)} instead.
      */
     @Override
-    public void setContent(RecyclerView.Adapter<? extends RecyclerView.ViewHolder> adapter) {
-        L.e("TAG", "不支持的操作"  + TAG +  ".setContent(Adapter)");
+    public void setContent(AdapterRVCDK<? extends HolderCDK> adapter) {
+        L.e("TAG", "不支持的操作" + TAG + ".setContent(Adapter)");
     }
-/**********************************************************************************************/
+
+    @Override
+    public ItemAdapter getAdapter() {
+        return adapter;
+    }
+    /**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
     /**
@@ -72,6 +78,22 @@ public class DialogBottomItem extends DialogBottom {
         this.adapter.setItems(() -> LayoutInflater.from(context).inflate(resId, null), count);
     }
 
+    /**
+     * 设置内容-项目列表
+     * 弹窗显示后不可用
+     */
+    public void setContent(View[] views) {
+        if (!ok || isShowing()) return;
+        this.adapter.setItems(views);
+    }
+
+    public void setContent(@LayoutRes int... resIds) {
+        if (!ok || isShowing()) return;
+        LayoutInflater li = LayoutInflater.from(context);
+        View[] items = new View[resIds.length];
+        for (int i = 0; i < resIds.length; i++) items[i] = li.inflate(resIds[i], null);
+        setContent(items);
+    }
 
     /**
      * 绑定布局处理器
@@ -100,28 +122,20 @@ public class DialogBottomItem extends DialogBottom {
         this.adapter.setOnClickListener(listView, h -> l.accept(h.itemView, h.getAdapterPosition()));
     }
 
-    /**
-     * 设置内容-项目列表
-     * 弹窗显示后不可用
-     */
-    public void setContent(View... views) {
-        if (!ok || isShowing()) return;
-        this.adapter.setItems(views);
+    /**********************************************************************************************/
+    /*************************************私有方法**************************************************/
+    /**********************************************************************************************/
+    /*** 创建页脚 ***/
+    private View createFoot() {
+        View view = new View(context);
+        V.RL(view).sizeDP(-1, 20).refresh();
+        return view;
     }
-
-    public void setContent(@LayoutRes int... resIds) {
-        if (!ok || isShowing()) return;
-        LayoutInflater li = LayoutInflater.from(context);
-        View[] items = new View[resIds.length];
-        for (int i = 0; i < resIds.length; i++) items[i] = li.inflate(resIds[i], null);
-        setContent(items);
-    }
-
     /**********************************************************************************************/
     /**************************************内部类***************************************************/
     /**********************************************************************************************/
     /*** 上拉弹窗适配器 ***/
-    protected static class ItemAdapter extends RVAdapterCDK<HolderCDK> {
+    public static class ItemAdapter extends AdapterRVCDK<HolderCDK> {
         private final Context context;
         protected View[] items;
         protected Supplier<View> supplier;
@@ -163,18 +177,20 @@ public class DialogBottomItem extends DialogBottom {
         }
 
         @Override
-        public void onBindViewHolder(@NotNull HolderCDK h, int p) {
+        public void onBind(@NotNull HolderCDK h, int p) {
             if (c != null) c.accept(h);
         }
 
         @Override
-        public int getItemCount() {return count;}
+        public int getCount() {
+            return count;
+        }
 
         /**
          * 唯一res为-1,其他的为p
          */
         @Override
-        public int getItemViewType(int p) {
+        public int getType(int p) {
             return items == null ? -1 : p;
         }
     }
