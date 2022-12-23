@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 /**
  * Android 线程帮助类
  * 好吧其实就是Handler的简易封装
- * Run里面发生的异常会发送到runCall
+ * Run里面发生的异常会发送到throwCall
  * Run没有异常会将结果发送到returnCall
  */
 public class RC {
@@ -33,6 +33,8 @@ public class RC {
     /*************************************成员变量**************************************************/
     public final Run run;
     public final RunCall runCall;
+    public final Consumer<Object> returnCall;
+    public final Consumer<Throwable> throwCall;
     protected Handler h;
 
     /**********************************************************************************************/
@@ -41,8 +43,8 @@ public class RC {
     /**
      * Run接口
      */
-    public interface Run {
-        Object run(RC t) throws Exception;
+    public interface Run<T extends RC> {
+        Object run(T t) throws Exception;
     }
 
     /**
@@ -54,12 +56,37 @@ public class RC {
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
-
-    public RC(Run run, RunCall runCall) {
-        this.run = run;
-        this.runCall = runCall;
+    /**
+     * run内所有事件全部发送到runCall
+     */
+    public RC(Run<? extends RC> run, RunCall runCall) {
+        this(run, runCall, null);
     }
 
+    /**
+     * 忽略run内所有事件(除了returnCall)
+     */
+    public RC(Run<? extends RC> run, Consumer<Object> returnCall) {
+        this(run, null, returnCall);
+    }
+
+    /**
+     * run内return事件发送到returnCall
+     * run内异常事件发送到runCall
+     */
+    public RC(Run<? extends RC> run, RunCall runCall, Consumer<Object> returnCall) {
+        this(run, runCall, returnCall, null);
+    }
+
+    /**
+     * 各司其职
+     */
+    public RC(Run<? extends RC> run, RunCall runCall, Consumer<Object> returnCall, Consumer<Throwable> throwCall) {
+        this.run = run;
+        this.runCall = runCall;
+        this.returnCall = returnCall;
+        this.throwCall = throwCall;
+    }
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
     /**********************************************************************************************/
@@ -110,49 +137,30 @@ public class RC {
     }
 
     /**
+     * Return结束回调
+     */
+    public void returnCall(Object msg) {
+        if (returnCall != null) returnCall.accept(msg);
+        else runCall(SIGN_RETURN, msg);
+    }
+
+    /**
+     * Throw回调
+     */
+    public void throwCall(Object msg) {
+        if (throwCall != null) throwCall.accept((Throwable) msg);
+    }
+
+    /**
      * 运行当前事件在子线程中
      */
     public void runThread() {
         setHandler(new Handler(Looper.getMainLooper(), msg -> {
-            runCall(msg.what, msg.obj);
+            if (msg.what == SIGN_RETURN) returnCall(msg.obj);
+            else if (msg.what == SIGN_ERROR) throwCall(msg.obj);
+            else runCall(msg.what, msg.obj);
             return true;
         }));
         newThread();
-    }
-
-    /**********************************************************************************************/
-    /**************************************内部类***************************************************/
-    /**********************************************************************************************/
-    /**
-     * 将Return结果独立出来的RC
-     */
-    public static class RCR extends RC {
-        public final Consumer<Object> returnCall;
-
-        public interface Run extends RC.Run {
-            Object run(RCR t) throws Exception;
-        }
-
-        public RCR(Run run, RunCall runCall, Consumer<Object> returnCall) {
-            super(run, runCall);
-            this.returnCall = returnCall;
-        }
-
-        /**
-         * Run结束回调
-         */
-        public void returnCall(Object msg) {
-            if (returnCall != null) returnCall.accept(msg);
-        }
-
-        @Override
-        public void runThread() {
-            setHandler(new Handler(Looper.getMainLooper(), msg -> {
-                if (msg.what == SIGN_RETURN) returnCall(msg.obj);
-                else runCall(msg.what, msg.obj);
-                return true;
-            }));
-            newThread();
-        }
     }
 }

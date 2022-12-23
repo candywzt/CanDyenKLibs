@@ -4,15 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.ColorStateListDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
+import android.graphics.drawable.*;
 import android.util.AttributeSet;
 import candyenk.android.R;
-import candyenk.android.tools.L;
+import candyenk.android.utils.USDK;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.Random;
@@ -26,22 +23,13 @@ import java.util.Random;
 public class LabelView extends MaterialTextView {
     private static final String TAG = LabelView.class.getSimpleName();
     private static final int strokeWidth = 4;
+    private static int[] colorList1;
+    private static int[] colorList5;
     private final Context context;
     private GradientDrawable drawable;//背景
-    private final int[] sign = {0, 0, 0, 0, 0};//边距和高
+    private int ss, st, se, sb, sh;//边距,左,上,右,下,高度
     private Drawable icon;//头图
-    private static final int[][] colorList = {
-            {0xFFFFCDD2, 0xFFF44336}, {0xFFF8BBD0, 0xFFE91E63},
-            {0xFFE1BEE7, 0xFF9C27B0}, {0xFFD1C4E9, 0xFF673AB7},
-            {0xFFC5CAE9, 0xFF3F51B5}, {0xFFBBDEFB, 0xFF2196F3},
-            {0xFFB3E5FC, 0xFF03A9F4}, {0xFFB2EBF2, 0xFF00BCD4},
-            {0xFFB2DFDB, 0xFF009688}, {0xFFC8E6C9, 0xFF4CAF50},
-            {0xFFDCEDC8, 0xFF8BC34A}, {0xFFF0F4C3, 0xFFCDDC39},
-            {0xFFFFF9C4, 0xFFFFEB3B}, {0xFFFFECB3, 0xFFFFC107},
-            {0xFFFFE0B2, 0xFFFF9800}, {0xFFFFCCBC, 0xFFFF5722},
-            {0xFFD7CCC8, 0xFF795548}, {0xFFF5F5F5, 0xFF9E9E9E},
-            {0xFFCFD8DC, 0xFF607D8B}
-    };//预制颜色表
+
 
     /**********************************************************************************************/
     /*****************************************接口**************************************************/
@@ -65,8 +53,9 @@ public class LabelView extends MaterialTextView {
     public LabelView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
+        if (colorList1 == null) colorList1 = context.getResources().getIntArray(R.array.color_md100);
+        if (colorList5 == null) colorList5 = context.getResources().getIntArray(R.array.color_md500);
         initAttrs(attrs);
-
     }
     /**********************************************************************************************/
     /*****************************************重写方法***********************************************/
@@ -76,41 +65,35 @@ public class LabelView extends MaterialTextView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (icon != null) {
-            icon.setBounds(getPaddingLeft() - getMeasuredHeight() + getPaddingTop() + getPaddingBottom(), getPaddingTop(), getPaddingLeft(), getMeasuredHeight() - getPaddingBottom());
+            icon.setBounds(getPaddingLeft() - sh - st, getPaddingTop(), getPaddingLeft() - st, getMeasuredHeight() - getPaddingBottom());
             icon.draw(canvas);
         }
     }
 
     @Override
-    public void setPadding(int l, int t, int r, int b) {
-        L.e(TAG, "不许动");
+    public void setPaddingRelative(int start, int top, int end, int bottom) {
+        super.setPaddingRelative(start + ss, top + st, end + se, bottom + sb);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int height = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
-        int width = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
-        if (sign[0] == 0 || height != sign[4]) {
-            sign[1] = sign[3] = (int) ((sign[0] = sign[2] = (int) (getMeasuredHeight() * 0.4)) * 0.5);
+        int height = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();//内容高度
+        if (sh != height) {//高度改变
+            sh = height;
+            se = (int) (getMeasuredHeight() * 0.4);
+            st = sb = (int) (getMeasuredHeight() * 0.2);
+            setImageDrawable(icon);
         }
-        sign[0] = icon == null ? sign[2] : (height + sign[2]);
-        sign[4] = height;
-        super.setPadding(sign[0], sign[1], sign[2], sign[3]);
-        setMeasuredDimension(sign[0] + width + sign[2], sign[1] + height + sign[3]);
-        if (this.drawable == null) this.drawable = new GradientDrawable();
-        this.drawable.setCornerRadius((float) (Math.min(getMeasuredHeight(), getMeasuredWidth()) * 0.5));
-        setBackground(this.drawable);
     }
 
     @Override
     public void setBackground(Drawable bg) {
-        if (this.drawable == null) this.drawable = new GradientDrawable();
-        if (bg != this.drawable) {
+        if (bg != getBG()) {
             if (bg instanceof ColorDrawable) {
                 int color = ((ColorDrawable) bg).getColor();
                 this.drawable.setColor(color);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && bg instanceof ColorStateListDrawable) {
+            } else if (USDK.Q() && bg instanceof ColorStateListDrawable) {
                 ColorStateList csl = ((ColorStateListDrawable) bg).getColorStateList();
                 this.drawable.setColor(csl);
             }
@@ -125,8 +108,7 @@ public class LabelView extends MaterialTextView {
 
     @Override
     public void setTextColor(ColorStateList colors) {
-        if (this.drawable == null) this.drawable = new GradientDrawable();
-        this.drawable.setStroke(strokeWidth, colors);
+        getBG().setStroke(strokeWidth, colors);
         this.setBackgroundDrawable(this.drawable);
         super.setTextColor(colors);
     }
@@ -137,13 +119,26 @@ public class LabelView extends MaterialTextView {
         try {
             @SuppressLint({"CustomViewStyleable", "Recycle"})
             TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CDKLabelView);
+            Drawable bg = ta.getDrawable(R.styleable.CDKLabelView_android_background);
+            Drawable tc = ta.getDrawable(R.styleable.CDKLabelView_android_textColor);
             this.icon = ta.getDrawable(R.styleable.CDKLabelView_android_src);
             boolean rc = ta.getBoolean(R.styleable.CDKLabelView_randomColor, true);
             int index = ta.getInt(R.styleable.CDKLabelView_colorIndex, -1);
             ta.recycle();
+            setBackground(bg);
+            if (USDK.Q() && tc instanceof ColorStateListDrawable)
+                setTextColor(((ColorStateListDrawable) tc).getColorStateList());
             if (rc) randomColor();
             setColorIndex(index);
         } catch (Exception ignored) {}
+    }
+
+    private GradientDrawable getBG() {
+        if (this.drawable == null) {
+            this.drawable = new GradientDrawable();
+            this.drawable.setCornerRadius(666);
+        }
+        return this.drawable;
     }
     /**********************************************************************************************/
     /*****************************************公开方法***********************************************/
@@ -152,7 +147,7 @@ public class LabelView extends MaterialTextView {
      * 启用随机色彩
      */
     public void randomColor() {
-        int index = new Random().nextInt(colorList.length);
+        int index = new Random().nextInt(colorList1.length);
         setColorIndex(index);
     }
 
@@ -162,6 +157,12 @@ public class LabelView extends MaterialTextView {
      */
     public void setImageDrawable(Drawable drawable) {
         this.icon = drawable;
+        if (icon == null) ss = se;
+        else if (icon instanceof BitmapDrawable) {
+            Bitmap bm = ((BitmapDrawable) icon).getBitmap();
+            ss = (bm.getWidth() / bm.getHeight() * sh) + se + st;
+        } else ss = sh + se + st;
+        setPaddingRelative(0, 0, 0, 0);
         requestLayout();
     }
 
@@ -181,7 +182,7 @@ public class LabelView extends MaterialTextView {
      */
     public void setColorIndex(int index) {
         if (index < 0 || index > 18) return;
-        this.drawable.setColor(colorList[index][0]);
-        setTextColor(colorList[index][1]);
+        this.drawable.setColor(colorList1[index]);
+        setTextColor(colorList5[index]);
     }
 }

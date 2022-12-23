@@ -241,6 +241,13 @@ public class V<T extends View> {
     }
 
     /**
+     * 设置控件可见性
+     */
+    public static void visibility(@View.Visibility int i, View... v) {
+        for (View view : v) if (view != null) view.setVisibility(i);
+    }
+
+    /**
      * 判断控件隐藏
      */
     public static boolean isHide(View v) {
@@ -613,7 +620,7 @@ public class V<T extends View> {
      * 设置控件显隐
      * 无需刷新
      */
-    public V<T> visibility(int v) {
+    public V<T> visibility(@View.Visibility int v) {
         view.setVisibility(v);
         return this;
     }

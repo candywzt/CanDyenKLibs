@@ -131,7 +131,7 @@ public class DialogLoading extends AlertDialog {
     public void setThreadRun(RC rc) {
         if (!ok || isShowing()) return;
         this.rc = new RC(rc.run, (sign, msg) -> {
-            if (sign == RC.SIGN_RETURN) dismiss(d -> rc.runCall(sign, msg));
+            if (sign == RC.SIGN_RETURN) dismiss(d -> rc.returnCall(msg));
             else rc.runCall(sign, msg);
         });
     }

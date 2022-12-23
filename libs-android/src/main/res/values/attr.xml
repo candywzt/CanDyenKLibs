@@ -16,6 +16,8 @@
     <!--LabelView小标签组件-->
     <declare-styleable name="CDKLabelView">
         <attr name="android:src"/>
+        <attr name="android:background"/>
+        <attr name="android:textColor"/>
         <attr name="randomColor" format="boolean"/>
         <attr name="colorIndex" format="integer"/>
     </declare-styleable>

@@ -288,7 +288,7 @@ public class UFile {
     public static boolean deleteFile(File... files) {
         if (UArrays.isEmpty(files)) return true;
         for (File file : files) {
-            if (!file.exists()) continue;
+            if (file == null || !file.exists()) continue;
             if (file.isDirectory() && !deleteFile(file.listFiles())) return false;
             if (!file.delete()) return false;
         }
