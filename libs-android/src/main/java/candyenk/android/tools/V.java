@@ -289,6 +289,25 @@ public class V<T extends View> {
         for (View view : v) if (view instanceof Checkable) ((Checkable) view).setChecked(c);
     }
 
+    /**
+     * 设置控件点按监听
+     */
+    public static void click(View.OnClickListener l, View... v) {
+        for (View view : v) if (view != null) view.setOnClickListener(l);
+    }
+
+    /**
+     * 设置控件长按监听
+     * 自动返回true
+     */
+    public static void lClick(View.OnClickListener l, View... v) {
+        for (View view : v)
+            if (view != null) view.setOnLongClickListener(vv -> {
+                l.onClick(vv);
+                return true;
+            });
+    }
+
 
     /**
      * 创建LinearLayout.LayoutParams

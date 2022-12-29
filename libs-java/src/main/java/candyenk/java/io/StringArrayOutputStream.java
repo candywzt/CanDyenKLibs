@@ -32,11 +32,13 @@ public class StringArrayOutputStream extends OutputStream {
 
     /**
      * 无用
+     * 刷不刷无所谓
      */
     public void flush() {}
 
     /**
      * 无用
+     * 即便关掉也能读取内容
      */
     public void close() {}
 

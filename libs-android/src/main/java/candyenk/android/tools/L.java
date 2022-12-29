@@ -661,15 +661,13 @@ public class L implements Closeable {
          * 获取堆栈列表
          */
         public List<String> getStackList() {
-            List<String> list = new ArrayList<>();
-            if (error == null) return list;
+            if (error == null) return new ArrayList<>();
             StringArrayOutputStream saos = new StringArrayOutputStream();
             PrintStream ps = new PrintStream(saos);
             error.printStackTrace(ps);
             ps.flush();
-            list.addAll(saos.toStringList());
             IO.close(ps);
-            return list;
+            return saos.toStringList();
         }
 
         @NotNull

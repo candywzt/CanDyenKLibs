@@ -3,6 +3,7 @@ package candyenk.android.asbc;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,8 +11,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
+import android.widget.Toast;
+import androidx.annotation.*;
 import androidx.appcompat.app.AppCompatActivity;
 import candyenk.android.R;
 import candyenk.android.tools.L;
@@ -230,6 +231,16 @@ public abstract class ActivityCDK extends AppCompatActivity {
         if (stringResourceId <= 0) setTitle(null);
         else setTitle(getString(stringResourceId));
     }
+
+    /*** 便捷吐司 ***/
+    protected void toast(CharSequence text) {
+        Toast.makeText(this, "text", Toast.LENGTH_SHORT).show();
+    }
+
+    /*** 便捷吐司 ***/
+    protected void toast(@StringRes int id) {
+        toast(getString(id));
+    }
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
@@ -296,6 +307,35 @@ public abstract class ActivityCDK extends AppCompatActivity {
         if (pcbMap.containsKey(requestCode)) return false;
         pcbMap.put(requestCode, callBack);
         return true;
+    }
+
+    /**
+     * 获取String
+     */
+    public String string(@StringRes int id) {
+        return getString(id);
+    }
+
+    /**
+     * 获取Text
+     */
+    public CharSequence text(@StringRes int id) {
+        return getText(id);
+    }
+
+    /**
+     * 获取Drawable
+     */
+    @SuppressLint("UseCompatLoadingForDrawables")
+    public Drawable icon(@DrawableRes int id) {
+        return getDrawable(id);
+    }
+
+    /**
+     * 获取Color
+     */
+    public int color(@ColorRes int id) {
+        return getColor(id);
     }
 
     /**
