@@ -201,7 +201,7 @@ public abstract class ActivityCDK extends AppCompatActivity {
      */
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
-        this.setContentView(LayoutInflater.from(this).inflate(layoutResID, null));
+        this.setContentView(LayoutInflater.from(this).inflate(layoutResID, container, false));
     }
 
     @Override

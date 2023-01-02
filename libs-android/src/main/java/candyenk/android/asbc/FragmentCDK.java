@@ -30,6 +30,7 @@ public abstract class FragmentCDK extends Fragment {
     protected String TAG = this.getClass().getSimpleName();
     protected ActivityCDK activity;//创建和使用本Fragment的Activity
     protected Bundle saveData;//保存的数据
+    protected ViewGroup parent;//父级控件
     protected View container;//根控件
     protected LayoutInflater inflater;
     private final Map<Integer, ActivityCDK.ActivityCallBack> acbMap = new HashMap<>();//Activity回调表
@@ -94,6 +95,7 @@ public abstract class FragmentCDK extends Fragment {
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle saveData) {
         this.inflater = inflater;
         this.saveData = saveData;
+        this.parent = container;
         viewInit();
         contentInit(saveData);
         eventInit();
@@ -179,7 +181,7 @@ public abstract class FragmentCDK extends Fragment {
      * 通过布局资源ID
      */
     public void setContentView(int layoutResID) {
-        this.setContentView(inflater.inflate(layoutResID, null));
+        this.setContentView(inflater.inflate(layoutResID, parent, false));
     }
 
     /**

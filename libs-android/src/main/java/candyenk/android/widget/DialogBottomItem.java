@@ -75,7 +75,7 @@ public class DialogBottomItem extends DialogBottomRV {
      */
     public void setContent(@LayoutRes int resId, int count) {
         if (!ok || isShowing()) return;
-        this.adapter.setItems(() -> LayoutInflater.from(context).inflate(resId, null), count);
+        this.adapter.setItems(() -> LayoutInflater.from(context).inflate(resId, listView, false), count);
     }
 
     /**
@@ -91,7 +91,7 @@ public class DialogBottomItem extends DialogBottomRV {
         if (!ok || isShowing()) return;
         LayoutInflater li = LayoutInflater.from(context);
         View[] items = new View[resIds.length];
-        for (int i = 0; i < resIds.length; i++) items[i] = li.inflate(resIds[i], null);
+        for (int i = 0; i < resIds.length; i++) items[i] = li.inflate(resIds[i], listView, false);
         setContent(items);
     }
 

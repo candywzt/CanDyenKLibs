@@ -101,7 +101,7 @@ public class DialogBottomView extends DialogBottomItem {
      */
     public void setContent(int viewid) {
         if (!ok) return;
-        this.setContent(LayoutInflater.from(context).inflate(viewid, null));
+        this.setContent(LayoutInflater.from(context).inflate(viewid, listView, false));
     }
 
     /**
