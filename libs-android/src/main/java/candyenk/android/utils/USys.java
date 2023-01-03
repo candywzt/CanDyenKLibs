@@ -10,14 +10,14 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import androidx.activity.ComponentActivity;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.PermissionChecker;
-import androidx.fragment.app.Fragment;
-import candyenk.android.asbc.ActivityCDK;
-import candyenk.android.asbc.FragmentCDK;
 
-import java.util.Random;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Android系统工具类
@@ -34,6 +34,7 @@ public class USys {
     public static final String GET_SENSOR = Manifest.permission.BODY_SENSORS;//获取身体传感器权限
     public static final String SET_FILE = Manifest.permission.WRITE_EXTERNAL_STORAGE;//文件读写权限
     public static final String SET_SMS = Manifest.permission.SEND_SMS;//短信权限
+
 
     /**
      * 获取系统服务
@@ -79,28 +80,26 @@ public class USys {
     }
 
     /**
-     * 申请权限
+     * 申请单个权限
+     * ResultAPI
+     *
+     * @param permissions 权限
+     * @param callback    申请结果
      */
-    public static void requestPermission(Activity activity, int requestCode, String... permissions) {
-        ActivityCompat.requestPermissions(activity, permissions, requestCode);
+    public static void requestPermission(@NonNull ComponentActivity activity, Consumer<Boolean> callback, @NonNull String permissions) {
+        UShare.register(activity, new ActivityResultContracts.RequestPermission(), callback == null ? null : callback::accept).launch(permissions);
     }
 
-    public static void requestPermission(Fragment fragment, int requestCode, String... permissions) {
-        fragment.requestPermissions(permissions, requestCode);
-    }
-
-    public static void reauestPermission(ActivityCDK activity, ActivityCDK.PermissionsCallBack callback, String... permissions) {
-        int requestCode = new Random().nextInt(65535);
-        if (activity.addPermissionCallback(requestCode, callback)) {
-            ActivityCompat.requestPermissions(activity, permissions, requestCode);
-        } else reauestPermission(activity, callback, permissions);
-    }
-
-    public static void reauestPermission(FragmentCDK fragment, ActivityCDK.PermissionsCallBack callback, String... permissions) {
-        int requestCode = new Random().nextInt(65535);
-        if (fragment.addPermissionCallback(requestCode, callback)) {
-            fragment.requestPermissions(permissions, requestCode);
-        } else reauestPermission(fragment, callback, permissions);
+    /**
+     * 申请多个权限
+     * ResultAPI
+     *
+     * @param permissions 权限组
+     * @param callback    申请结果组
+     */
+    public static void requestPermission(@NonNull ComponentActivity activity, Consumer<Map<String, Boolean>> callback, @NonNull String... permissions) {
+        if (permissions.length == 0) return;
+        UShare.register(activity, new ActivityResultContracts.RequestMultiplePermissions(), callback == null ? null : callback::accept).launch(permissions);
     }
 
     /**
@@ -108,11 +107,11 @@ public class USys {
      * MF权限:MANAGE_EXTERNAL_STORAGE
      */
     @RequiresApi(api = Build.VERSION_CODES.R)
-    public static void requestAllFiles(Activity activity) {
-        if (hasAllFiles()) return;
+    public static void requestAllFiles(@NonNull ComponentActivity activity, Consumer<Boolean> callback) {
+        if (hasAllFiles() || callback != null) callback.accept(true);
         Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
         intent.setData(Uri.parse("package:" + activity.getPackageName()));
-        activity.startActivity(intent);
+        UShare.startActivity(activity, intent, null, callback == null ? null : i -> callback.accept(false), callback == null ? null : i -> callback.accept(true));
     }
 
     /**
@@ -122,7 +121,6 @@ public class USys {
     public static boolean hasAllFiles() {
         return Environment.isExternalStorageManager();
     }
-
 
 
 }

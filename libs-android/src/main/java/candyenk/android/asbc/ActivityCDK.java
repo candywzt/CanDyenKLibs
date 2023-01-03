@@ -1,7 +1,6 @@
 package candyenk.android.asbc;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,7 +11,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.*;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import candyenk.android.R;
 import candyenk.android.tools.L;
@@ -23,9 +25,7 @@ import com.google.android.material.textview.MaterialTextView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * CDKActivity
@@ -38,8 +38,6 @@ public abstract class ActivityCDK extends AppCompatActivity {
     protected String TAG;//TAG
     protected Bundle saveData;//保存的数据
     protected FrameLayout container;//根布局
-    private final Map<Integer, ActivityCallBack> acbMap = new HashMap<>();//Activity回调表
-    private final Map<Integer, PermissionsCallBack> pcbMap = new HashMap<>();//权限申请回调表
     private TextView titleBar;//标题栏控件
     private BottomBar bottomBar;//底栏控件
     private View child;//添加的子控件
@@ -53,46 +51,6 @@ public abstract class ActivityCDK extends AppCompatActivity {
     /**********************************************************************************************/
     /***********************************私有静态方法*************************************************/
     /**********************************************************************************************/
-
-    /**********************************************************************************************/
-    /***************************************接口****************************************************/
-    /**********************************************************************************************/
-    /**
-     * Activity回调
-     */
-    public interface ActivityCallBack {
-        /**
-         * @param code 返回结果
-         * @param data 返回内容
-         * @return 返回false则用后即焚
-         */
-        boolean callback(int code, Intent data);
-    }
-
-    /**
-     * Activity成功回调
-     * 一次性回调
-     */
-    public interface OK extends ActivityCallBack {
-        void ok(Intent data);
-
-        @Override
-        default boolean callback(int code, Intent data) {
-            if (code == RESULT_OK) ok(data);
-            return false;
-        }
-    }
-
-    /**
-     * 权限申请回调
-     */
-    public interface PermissionsCallBack {
-        /**
-         * @param codes 授权结果
-         * @return 返回false则用后即焚
-         */
-        void callback(int[] codes);
-    }
 
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
@@ -176,24 +134,6 @@ public abstract class ActivityCDK extends AppCompatActivity {
         super.onSaveInstanceState(save);
     }
 
-    //Activity回调函数
-    @Override
-    protected final void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        ActivityCallBack acb = acbMap.get(requestCode);
-        if (acb != null && !acb.callback(resultCode, data)) removeActiveCallback(requestCode);
-    }
-
-    //权限回调
-    @Override
-    public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PermissionsCallBack pcb = pcbMap.get(requestCode);
-        if (pcb != null) {
-            pcb.callback(grantResults);
-            removePermissionCallback(requestCode);
-        }
-    }
 
     /**
      * 设置内容布局
@@ -241,6 +181,7 @@ public abstract class ActivityCDK extends AppCompatActivity {
     protected void toast(@StringRes int id) {
         toast(getString(id));
     }
+
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
@@ -283,31 +224,6 @@ public abstract class ActivityCDK extends AppCompatActivity {
         return (T) child;
     }
 
-    /**
-     * 添加Activity回调
-     *
-     * @param requestCode 回调代码,唯一
-     * @param callBack    回调体
-     * @return 返回false说明代码重复, 添加失败
-     */
-    public boolean addActiveCallback(int requestCode, ActivityCallBack callBack) {
-        if (acbMap.containsKey(requestCode)) return false;
-        acbMap.put(requestCode, callBack);
-        return true;
-    }
-
-    /**
-     * 添加权限申请回调
-     *
-     * @param requestCode 回调代码,唯一
-     * @param callBack    回调体
-     * @return 返回false说明代码重复, 添加失败
-     */
-    public boolean addPermissionCallback(int requestCode, PermissionsCallBack callBack) {
-        if (pcbMap.containsKey(requestCode)) return false;
-        pcbMap.put(requestCode, callBack);
-        return true;
-    }
 
     /**
      * 获取String
@@ -338,19 +254,7 @@ public abstract class ActivityCDK extends AppCompatActivity {
         return getColor(id);
     }
 
-    /**
-     * 移除Activity回调
-     */
-    public void removeActiveCallback(int requestCode) {
-        acbMap.remove(requestCode);
-    }
 
-    /**
-     * 移除权限回调
-     */
-    public void removePermissionCallback(int requestCode) {
-        pcbMap.remove(requestCode);
-    }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/

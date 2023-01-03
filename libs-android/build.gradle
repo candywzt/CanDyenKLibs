@@ -3,12 +3,12 @@ plugins {
     //id 'com.kezong.fat-aar'
 }
 android {
-    compileSdk 32
-    buildToolsVersion '32.0.0'
+    compileSdk 33
+    buildToolsVersion '33.0.1'
 
     defaultConfig {
         minSdk 24
-        targetSdkVersion 32
+        targetSdkVersion 33
         consumerProguardFiles "consumer-rules.pro"
     }
     compileOptions {
@@ -48,8 +48,9 @@ android {
 dependencies {
     api project(':libs-java')
     implementation fileTree(dir: 'libs', includes: ['*.aar'])
+    implementation 'androidx.activity:activity:1.6.0'//AndroidX
     implementation 'com.google.code.gson:gson:2.10'//Gson
-    implementation 'com.google.android.material:material:1.6.1'//AndroidX
+    implementation 'com.google.android.material:material:1.6.1'//Google MD
     implementation 'com.squareup.okio:okio:3.2.0'//OkHttp3
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.8'//OkHttp3
     implementation 'com.sun.mail:android-mail:1.6.7'//Mail

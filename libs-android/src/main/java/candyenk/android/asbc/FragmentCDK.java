@@ -33,8 +33,6 @@ public abstract class FragmentCDK extends Fragment {
     protected ViewGroup parent;//父级控件
     protected View container;//根控件
     protected LayoutInflater inflater;
-    private final Map<Integer, ActivityCDK.ActivityCallBack> acbMap = new HashMap<>();//Activity回调表
-    private final Map<Integer, ActivityCDK.PermissionsCallBack> pcbMap = new HashMap<>();//权限申请回调表
     /**********************************************************************************************/
     /***********************************公共静态方法*************************************************/
     /**********************************************************************************************/
@@ -155,24 +153,6 @@ public abstract class FragmentCDK extends Fragment {
         super.onSaveInstanceState(saveData(outState));
     }
 
-    //Activity回调函数
-    @Override
-    public final void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        ActivityCDK.ActivityCallBack acb = acbMap.get(requestCode);
-        if (acb != null && acb.callback(resultCode, data)) removeActiveCallback(requestCode);
-    }
-
-    //权限回调
-    @Override
-    public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        ActivityCDK.PermissionsCallBack pcb = pcbMap.get(requestCode);
-        if (pcb != null) {
-            pcb.callback(grantResults);
-            removePermissionCallback(requestCode);
-        }
-    }
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
@@ -200,45 +180,6 @@ public abstract class FragmentCDK extends Fragment {
         return container.findViewById(id);
     }
 
-    /**
-     * 添加Activity回调
-     *
-     * @param requestCode 回调代码,唯一
-     * @param callBack    回调体
-     * @return 返回false说明代码重复, 添加失败
-     */
-    public boolean addActiveCallback(int requestCode, ActivityCDK.ActivityCallBack callBack) {
-        if (acbMap.containsKey(requestCode)) return false;
-        acbMap.put(requestCode, callBack);
-        return true;
-    }
-
-    /**
-     * 添加权限申请回调
-     *
-     * @param requestCode 回调代码,唯一
-     * @param callBack    回调体
-     * @return 返回false说明代码重复, 添加失败
-     */
-    public boolean addPermissionCallback(int requestCode, ActivityCDK.PermissionsCallBack callBack) {
-        if (pcbMap.containsKey(requestCode)) return false;
-        pcbMap.put(requestCode, callBack);
-        return true;
-    }
-
-    /**
-     * 移除Activity回调
-     */
-    public void removeActiveCallback(int requestCode) {
-        acbMap.remove(requestCode);
-    }
-
-    /**
-     * 移除权限回调
-     */
-    public void removePermissionCallback(int requestCode) {
-        pcbMap.remove(requestCode);
-    }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/

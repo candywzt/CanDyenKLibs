@@ -2,6 +2,8 @@ package candyenk.android.utils;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Environment;
+import androidx.annotation.Nullable;
 import androidx.annotation.RawRes;
 
 import java.io.*;
@@ -38,6 +40,14 @@ public class UFile extends candyenk.java.utils.UFile {
      */
     public static String getCachePath(Context context) {
         return context.getCacheDir().getAbsolutePath();
+    }
+
+    /**
+     * 主共享目录
+     * 获取共享Data目录(/storage/emulated/0/Android/data/APPID
+     */
+    public static String getEDataPath(@Nullable Context context) {
+        return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
     /**
@@ -111,6 +121,18 @@ public class UFile extends candyenk.java.utils.UFile {
     }
 
     /**
+     * Data文件(夹)重命名(data/data/包名/files/目录)
+     *
+     * @param filePath 重命名文件路径
+     * @param newName  新文件名
+     * @return 重命名成功返回true, 其他情况通通返回false
+     */
+    public static boolean renameData(Context context, String filePath, String newName) {
+        File file = context.getFileStreamPath(filePath);
+        return renameFile(file, newName);
+    }
+
+    /**
      * Uri文件读取
      *
      * @param context 应用上下文
@@ -128,19 +150,6 @@ public class UFile extends candyenk.java.utils.UFile {
      */
     public static OutputStream writeUri(Context context, Uri uri) {
         try {return context.getContentResolver().openOutputStream(uri);} catch (Exception e) {return null;}
-    }
-
-
-    /**
-     * Data文件(夹)重命名(data/data/包名/files/目录)
-     *
-     * @param filePath 重命名文件路径
-     * @param newName  新文件名
-     * @return 重命名成功返回true, 其他情况通通返回false
-     */
-    public static boolean renameData(Context context, String filePath, String newName) {
-        File file = context.getFileStreamPath(filePath);
-        return renameFile(file, newName);
     }
 
 }

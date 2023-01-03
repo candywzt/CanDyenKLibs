@@ -103,7 +103,6 @@ public class UReflex {
             e = e1;
         }
         return f == null ? new UF(e) : new UF(f);
-
     }
 
     /**
@@ -131,6 +130,7 @@ public class UReflex {
             try {
                 return c.newInstance(a);
             } catch (Exception e) {
+                e.printStackTrace(System.err);
                 this.e = e;
                 return null;
             }
@@ -169,6 +169,7 @@ public class UReflex {
             try {
                 return (T) m.invoke(o, a);
             } catch (Exception e) {
+                e.printStackTrace(System.err);
                 this.e = e;
                 return null;
             }
@@ -182,6 +183,7 @@ public class UReflex {
             try {
                 return (T) m.invoke(o, a);
             } catch (Exception e) {
+                e.printStackTrace(System.err);
                 this.e = e;
                 return null;
             }
@@ -221,6 +223,7 @@ public class UReflex {
                 f.setAccessible(true);
                 f.set(o, a);
             } catch (Exception e) {
+                e.printStackTrace(System.err);
                 this.e = e;
             }
         }
@@ -231,8 +234,10 @@ public class UReflex {
         public <T> T get(Object o) {
             if (f == null || o == null) return null;
             try {
+                f.setAccessible(true);
                 return (T) f.get(o);
             } catch (Exception e) {
+                e.printStackTrace(System.err);
                 this.e = e;
                 return null;
             }
