@@ -40,4 +40,8 @@ public class USDK {
     public static boolean S() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S;
     }
+
+    public static boolean T() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU;
+    }
 }

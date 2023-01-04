@@ -28,9 +28,13 @@ public class UArrays {
         if (array == null) return "";
         String[] strs = new String[array.length];
         for (int i = 0; i < array.length; i++) {
-            strs[i] = action.apply(array[i]);
+            strs[i] = action == null ? array[i].toString() : action.apply(array[i]);
         }
         return Arrays.toString(strs);
+    }
+
+    public static <T> String toString(T[] array) {
+        return toString(array, null);
     }
 
     /**

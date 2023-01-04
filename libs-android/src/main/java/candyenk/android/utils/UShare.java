@@ -7,15 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import androidx.activity.ComponentActivity;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.ActivityResultRegistry;
-import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
@@ -24,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -43,7 +46,7 @@ import java.util.function.Consumer;
  * <p>
  * <?xml version="1.0" encoding="utf-8"?>
  * <paths>
- * <files-path path="images/" name="myimages"/>
+ * <files-path path="images/" name="my_images"/>
  * </paths>
  * <files-path/> —— Context.getFilesDir()
  * <cache-path/> —— Context.getCacheDir()
@@ -86,82 +89,97 @@ public class UShare {
     }
 
     /**
-     * 启动Activity
+     * 启动ResultAPI
      * ResultAPI
      *
-     * @param intent          启动目标和传递数据
-     * @param data            启动参数
-     * @param callbackFail    失败回调
-     * @param callbackSuccess 成功回调
+     * @param intent   启动目标和传递数据
+     * @param data     启动参数
+     * @param callback 回调
      */
-    public static void startActivity(@NonNull ComponentActivity activity, @NonNull Intent intent, Bundle data, Consumer<Intent> callbackFail, Consumer<Intent> callbackSuccess) {
-        register(activity, new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (callbackSuccess != null && result.getResultCode() == Activity.RESULT_OK)
-                callbackSuccess.accept(result.getData());
-            else if (callbackFail != null) callbackFail.accept(result.getData());
-        }).launch(intent);
+    public static void start(@NonNull ComponentActivity activity, @NonNull Intent intent, Bundle data, @NonNull BiConsumer<Boolean, Intent> callback) {
+        register(activity, new ActivityResultContracts.StartActivityForResult(), result -> callback.accept(result.getResultCode() == Activity.RESULT_OK, result.getData())).launch(intent);
     }
 
     /**
-     * 获取文件(只读)
+     * 获取媒体文件(使用多媒体提供器)
      * ResultAPI
      *
      * @param type     文件类型(MIME)
-     * @param callback 文件Uri
+     *                 API(TIRAMISU)可传入null以同时选择image和video
+     * @param callback 文件Uri(或null)
      */
-    public static void readDocumentFile(@NonNull ComponentActivity activity, Consumer<Uri> callback, String... type) {
-        register(activity, new ActivityResultContracts.OpenDocument() {
+    public static void getMediaFile(@NonNull ComponentActivity activity, @NonNull Consumer<Uri> callback, @NonNull String type) {
+        register(activity, new ActivityResultContracts.GetContent() {
             @NotNull
             @Override
-            public Intent createIntent(@NotNull Context context, @NotNull String[] input) {
-                return super.createIntent(context, input)
-                        .setAction(Intent.ACTION_GET_CONTENT)
-                        .addCategory(Intent.CATEGORY_OPENABLE);
+            public Intent createIntent(@NotNull Context context, @NotNull String input) {
+                Intent intent = super.createIntent(context, input);
+                if (USDK.T()) intent.setAction(MediaStore.ACTION_PICK_IMAGES);
+                intent.removeCategory(Intent.CATEGORY_OPENABLE);
+                return intent;
             }
-        }, callback == null ? null : callback::accept).launch(type);
-
+        }, callback::accept).launch(type);
     }
 
+
     /**
-     * 获取多个文件(只读)
+     * 获取多个媒体文件(使用多媒体提供器)
      * ResultAPI
      *
      * @param type     文件类型(MIME)
-     * @param callback 文件Uri
+     * @param callback 文件Uri(或空List)
      */
-    public static void readDocumentFiles(@NonNull ComponentActivity activity, Consumer<List<Uri>> callback, String... type) {
-        register(activity, new ActivityResultContracts.OpenMultipleDocuments() {
+    public static void getMediaFiles(@NonNull ComponentActivity activity, @NonNull Consumer<List<Uri>> callback, String type) {
+        if (USDK.T()) getMediaFiles(activity, callback, type, 0);
+        else {
+            register(activity, new ActivityResultContracts.GetMultipleContents() {
+                @NotNull
+                @Override
+                public Intent createIntent(@NotNull Context context, @NotNull String input) {
+                    Intent intent = super.createIntent(context, input);
+                    intent.removeCategory(Intent.CATEGORY_OPENABLE);
+                    return intent;
+                }
+            }, callback::accept).launch(type);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    public static void getMediaFiles(@NonNull ComponentActivity activity, @NonNull Consumer<List<Uri>> callback, @NonNull String type, int maxItems) {
+        register(activity, new ActivityResultContracts.GetMultipleContents() {
             @NotNull
             @Override
-            public Intent createIntent(@NotNull Context context, @NotNull String[] input) {
-                return super.createIntent(context, input)
-                        .setAction(Intent.ACTION_GET_CONTENT)
-                        .addCategory(Intent.CATEGORY_OPENABLE);
+            public Intent createIntent(@NotNull Context context, @NotNull String input) {
+                Intent intent = super.createIntent(context, input);
+                intent.setAction(MediaStore.ACTION_PICK_IMAGES);
+                intent.removeCategory(Intent.CATEGORY_OPENABLE);
+                if (maxItems > 0) intent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, maxItems);
+                return intent;
             }
-        }, callback == null ? null : callback::accept).launch(type);
-
+        }, callback::accept).launch(type);
     }
 
     /**
-     * 获取文件(可读写)
+     * 获取文件(系统文件提供器)
      * ResultAPI
      *
      * @param type     文件类型(MIME)
-     * @param callback 文件Uri
+     * @param callback 文件Uri(或null)
      */
-    public static void getDocumentFile(@NonNull ComponentActivity activity, Consumer<Uri> callback, String... type) {
-        register(activity, new ActivityResultContracts.OpenDocument(), callback == null ? null : callback::accept).launch(type);
+    public static void getDocumentFile(@NonNull ComponentActivity activity, @NonNull Consumer<Uri> callback, String... type) {
+        register(activity, new ActivityResultContracts.OpenDocument(), callback::accept).launch(type);
     }
 
     /**
-     * 获取多个文件(可读写)
+     * 获取多个文件(系统文件提供器)
      * ResultAPI
      *
      * @param type     文件类型(MIME)
-     * @param callback 文件Uri列表
+     * @param callback 文件Uri列表(或空list)
      */
-    public static void getDocumentFiles(@NonNull ComponentActivity activity, String[] type, Consumer<List<Uri>> callback) {
-        register(activity, new ActivityResultContracts.OpenMultipleDocuments(), callback == null ? null : callback::accept).launch(type);
+    public static void getDocumentFiles(@NonNull ComponentActivity
+                                                activity, @NonNull Consumer<List<Uri>> callback, String... type) {
+        register(activity, new ActivityResultContracts.OpenMultipleDocuments(), callback::accept).launch(type);
     }
 
     /**
@@ -169,10 +187,10 @@ public class UShare {
      * ResultAPI
      *
      * @param from     默认指向
-     * @param callback 文件夹Uri
+     * @param callback 文件夹Uri(或null)
      */
-    public static void authDocuments(@NonNull ComponentActivity activity, Uri from, Consumer<Uri> callback) {
-        register(activity, new ActivityResultContracts.OpenDocumentTree(), callback == null ? null : callback::accept).launch(from);
+    public static void authDocuments(@NonNull ComponentActivity activity, @NonNull Consumer<Uri> callback, Uri from) {
+        register(activity, new ActivityResultContracts.OpenDocumentTree(), callback::accept).launch(from);
     }
 
     /**
@@ -184,8 +202,8 @@ public class UShare {
      * @param fileName 文件名(包括后缀)
      * @param callback 文件Uri
      */
-    public static void saveFile(@NonNull ComponentActivity activity, String type, String fileName, Consumer<Uri> callback) {
-        register(activity, new ActivityResultContracts.CreateDocument(type), callback == null ? null : callback::accept).launch(fileName);
+    public static void saveFile(@NonNull ComponentActivity activity, @NonNull Consumer<Uri> callback, String type, String fileName) {
+        register(activity, new ActivityResultContracts.CreateDocument(type), callback::accept).launch(fileName);
     }
 
     /**
@@ -195,7 +213,7 @@ public class UShare {
      * @param uri      图片保存位置
      * @param callback 保存结果
      */
-    public static void takePicture(@NonNull ComponentActivity activity, Uri uri, Consumer<Boolean> callback) {
+    public static void takePicture(@NonNull ComponentActivity activity, Consumer<Boolean> callback, Uri uri) {
         register(activity, new ActivityResultContracts.TakePicture(), callback == null ? null : callback::accept).launch(uri);
     }
 
@@ -206,8 +224,8 @@ public class UShare {
      *
      * @param callback Bitmap图像
      */
-    public static void takePicturePreview(@NonNull ComponentActivity activity, Consumer<Bitmap> callback) {
-        register(activity, new ActivityResultContracts.TakePicturePreview(), callback == null ? null : callback::accept).launch(null);
+    public static void takePicturePreview(@NonNull ComponentActivity activity, @NonNull Consumer<Bitmap> callback) {
+        register(activity, new ActivityResultContracts.TakePicturePreview(), callback::accept).launch(null);
     }
 
     /**
@@ -217,34 +235,8 @@ public class UShare {
      * @param uri      视频保存位置
      * @param callback 保存结果
      */
-    public static void takeVedio(@NonNull ComponentActivity activity, Uri uri, Consumer<Boolean> callback) {
+    public static void takeVideo(@NonNull ComponentActivity activity, Consumer<Boolean> callback, Uri uri) {
         register(activity, new ActivityResultContracts.CaptureVideo(), callback == null ? null : callback::accept).launch(uri);
-    }
-
-    /**
-     * 选择单个媒体(只读)
-     * ResultAPI
-     *
-     * @param type     媒体类型(MIME)(image/*或video/*或自定义)
-     * @param callback 媒体Uri
-     */
-    public static void takeMedia(@NonNull ComponentActivity activity, @NonNull String type, Consumer<Uri> callback) {
-        ActivityResultContracts.PickVisualMedia.SingleMimeType mime = new ActivityResultContracts.PickVisualMedia.SingleMimeType(type);
-        PickVisualMediaRequest pmr = new PickVisualMediaRequest.Builder().setMediaType(mime).build();
-        register(activity, new ActivityResultContracts.PickVisualMedia(), callback::accept).launch(pmr);
-    }
-
-    /**
-     * 选择多个媒体(只读)
-     * ResultAPI
-     *
-     * @param type     媒体类型(MIME)(image/*或video/*或自定义)
-     * @param callback 媒体Uri
-     */
-    public static void takeMedias(@NonNull ComponentActivity activity, @NonNull String type, Consumer<List<Uri>> callback) {
-        ActivityResultContracts.PickVisualMedia.SingleMimeType mime = new ActivityResultContracts.PickVisualMedia.SingleMimeType(type);
-        PickVisualMediaRequest pmr = new PickVisualMediaRequest.Builder().setMediaType(mime).build();
-        register(activity, new ActivityResultContracts.PickMultipleVisualMedia(), callback::accept).launch(pmr);
     }
 
     /**
@@ -301,12 +293,7 @@ public class UShare {
     /**********************************************************************************************/
     /*** 创建key ***/
     private static String createKey() {
-        return "activity_rq_for_result#" + ai.getAndIncrement();
+        return "activity_rq#" + ai.getAndIncrement();
     }
-
-    /**********************************************************************************************/
-    /**************************************内部类***************************************************/
-    /**********************************************************************************************/
-
 
 }

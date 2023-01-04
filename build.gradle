@@ -28,6 +28,7 @@ task cacheToLocalMavenRepository(type: Copy) {
     eachFile {
         List<String> parts = it.path.split('/')
         it.path = (parts[0] + '/' + parts[1]).replace('.', '/') + '/' + parts[2] + '/' + parts[4]
+        println("复制:" + it.path)
     }
     includeEmptyDirs false
 }

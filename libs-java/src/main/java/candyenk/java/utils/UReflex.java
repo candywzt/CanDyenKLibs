@@ -249,6 +249,5 @@ public class UReflex {
         public <T> T get(Object o, Class<T> c) {
             return (T) get(o);
         }
-
     }
 }
