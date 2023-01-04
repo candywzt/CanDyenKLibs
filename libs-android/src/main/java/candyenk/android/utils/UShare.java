@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import androidx.activity.ComponentActivity;
 import androidx.activity.result.ActivityResultCallback;
@@ -21,6 +20,7 @@ import androidx.annotation.RequiresApi;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
+import candyenk.android.tools.L;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 /**
  * Android共享工具
  * 处理安卓应用间数据交换工具
+ * 文档操作:DocumentsContract
  * <p>
  * 清单添加内容:
  * <provider
@@ -57,6 +58,7 @@ import java.util.function.Consumer;
  */
 public class UShare {
     /*************************************静态变量**************************************************/
+    private static final String TAG = UShare.class.getSimpleName();
     public static final AtomicInteger ai = new AtomicInteger();//原子返回值
     /*************************************成员变量**************************************************/
 
@@ -92,12 +94,31 @@ public class UShare {
      * 启动ResultAPI
      * ResultAPI
      *
-     * @param intent   启动目标和传递数据
-     * @param data     启动参数
+     * @param intent   启动Intent
      * @param callback 回调
      */
-    public static void start(@NonNull ComponentActivity activity, @NonNull Intent intent, Bundle data, @NonNull BiConsumer<Boolean, Intent> callback) {
+    public static void start(@NonNull ComponentActivity activity, @NonNull Intent intent, @NonNull BiConsumer<Boolean, Intent> callback) {
         register(activity, new ActivityResultContracts.StartActivityForResult(), result -> callback.accept(result.getResultCode() == Activity.RESULT_OK, result.getData())).launch(intent);
+    }
+
+    /**
+     * 启动Activity
+     * 上下文不是ComponentActivity就不能使用CallBack
+     *
+     * @param classz   目标Activity
+     * @param callback OK回调
+     */
+    public static void startActivity(@NonNull Context context, Class<? extends Activity> classz, Consumer<Intent> callback) {
+        if (callback == null) context.startActivity(new Intent(context, classz));
+        else if (context instanceof ComponentActivity) {
+            start((ComponentActivity) context, new Intent(context, classz), (b, i) -> {
+                if (b) callback.accept(i);
+            });
+        } else L.e(TAG, "源Context不是ComponentActivity,无法使用CallBack");
+    }
+
+    public static void startActivity(@NonNull Context context, Class<? extends Activity> classz) {
+        startActivity(context, classz, null);
     }
 
     /**

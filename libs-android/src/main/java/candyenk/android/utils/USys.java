@@ -111,7 +111,7 @@ public class USys {
         if (hasAllFiles() || callback != null) callback.accept(true);
         Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
         intent.setData(Uri.parse("package:" + activity.getPackageName()));
-        UShare.start(activity, intent, null, callback == null ? (b, i) -> {} : (i, d) -> callback.accept(i));
+        UShare.start(activity, intent, callback == null ? (b, i) -> {} : (i, d) -> callback.accept(i));
     }
 
     /**

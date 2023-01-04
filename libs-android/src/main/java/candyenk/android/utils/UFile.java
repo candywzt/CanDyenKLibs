@@ -1,10 +1,14 @@
 package candyenk.android.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.OpenableColumns;
 import androidx.annotation.Nullable;
 import androidx.annotation.RawRes;
+import candyenk.java.io.IO;
 
 import java.io.*;
 
@@ -152,4 +156,30 @@ public class UFile extends candyenk.java.utils.UFile {
         try {return context.getContentResolver().openOutputStream(uri);} catch (Exception e) {return null;}
     }
 
+    /**
+     * 获取文件Meta信息
+     * 返回数组0:文件名 1:文件大小
+     * 若为空则为空字符串不是NULL
+     */
+    @SuppressLint("Range")
+    public static String[] getMetaData(Context context, Uri uri) {
+        String[] meta = {"", ""};
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    meta[0] = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    meta[1] = cursor.getString(cursor.getColumnIndex(OpenableColumns.SIZE));
+                }
+            } catch (Exception ignored) {
+            } finally {IO.close(cursor);}
+        }
+        //文件名(非Content)
+        if (meta[0].isEmpty()) {
+            meta[0] = uri.getPath();
+            int cut = meta[0].lastIndexOf('/');
+            if (cut != -1) meta[0] = meta[0].substring(cut + 1);
+        }
+        return meta;
+    }
 }
