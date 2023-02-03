@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import candyenk.android.R;
-import candyenk.android.tools.TH;
+import candyenk.android.tools.TX;
 
 
 public class ActivityCrash extends ActivityCDK {
@@ -135,7 +135,7 @@ public class ActivityCrash extends ActivityCDK {
      */
     private Spannable getCrashReport(Throwable ex) {
         SpannableStringBuilder sb = new SpannableStringBuilder();
-        sb.append(ex.getClass().toString()).append(":").append(String.valueOf(TH.color(ex.getMessage(), getColor(R.color.red)))).append("\n");
+        sb.append(ex.getClass().toString()).append(":").append(String.valueOf(TX.color(ex.getMessage(), getColor(R.color.red)))).append("\n");
         StackTraceElement[] elements = ex.getStackTrace();
         for (StackTraceElement ste : elements) sb.append(ste.toString()).append("\n");
         return sb;

@@ -5,7 +5,6 @@ import candyenk.java.utils.UFile;
 
 import java.io.File;
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * 文件信息实体类(对File类的包装拓展)
@@ -80,7 +79,7 @@ public class FileInfo implements Comparable<FileInfo> {
      */
     public static FileInfo[] toInfos(File[] files) {
         if (UArrays.isEmpty(files)) return new FileInfo[0];
-        return UArrays.toArray(files, FileInfo.class, FileInfo::create);
+        return UArrays.T2R(files, FileInfo.class, FileInfo::create);
     }
 
     /**
@@ -88,7 +87,7 @@ public class FileInfo implements Comparable<FileInfo> {
      */
     public static FileInfo[] toInfos(String[] path) {
         if (UArrays.isEmpty(path)) return new FileInfo[0];
-        return UArrays.toArray(path, FileInfo.class, FileInfo::custom);
+        return UArrays.T2R(path, FileInfo.class, FileInfo::custom);
     }
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
@@ -203,7 +202,9 @@ public class FileInfo implements Comparable<FileInfo> {
     /**
      * 获取文件类型
      */
-    public FileType getType() {return type;}
+    public FileType getType() {
+        return type;
+    }
 
     /**
      * 获取父级文件Info
@@ -223,7 +224,7 @@ public class FileInfo implements Comparable<FileInfo> {
         List<FileInfo> list = new ArrayList<>(size);
         if (showMove && file.getParent() != null) list.add(superInfo);
         if (size == 2) list.add(emptyInfo);
-        UArrays.forEach(paths, (s, i) -> {
+        UArrays.forEach(paths, (s) -> {
             if (showHide || !s.startsWith(".")) list.add(FileInfo.create(new File(file, s)));
         });
         return list.toArray(new FileInfo[list.size()]);
@@ -233,18 +234,24 @@ public class FileInfo implements Comparable<FileInfo> {
      * 获取当前文件是否隐藏
      * 自定义文件都是false
      */
-    public boolean isHide() {return isHide;}
+    public boolean isHide() {
+        return isHide;
+    }
 
     /**
      * 是不是自定义文件
      */
-    public boolean isCustom() {return UFile.isEmpty(file);}
+    public boolean isCustom() {
+        return UFile.isEmpty(file);
+    }
 
     /**
      * 是不是文件夹
      * 自定义文件默认都是文件夹
      */
-    public boolean isDirectory() {return getType() == FileType.DIRECTORY;}
+    public boolean isDirectory() {
+        return getType() == FileType.DIRECTORY;
+    }
     /**********************************************************************************************/
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/

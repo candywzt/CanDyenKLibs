@@ -1,61 +1,57 @@
 package candyenk.android.shell;
 
 import android.content.pm.PackageManager;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
-import androidx.annotation.RequiresApi;
 import candyenk.android.tools.L;
 import rikka.shizuku.Shizuku;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * ShizukuShell实现
  * 默认权限为root(如果有的话)可通过构造函数切换
  * 需拥有Shizuku权限
  */
-@RequiresApi(api = Build.VERSION_CODES.O)
+//@RequiresApi(api = Build.VERSION_CODES.O)
 public class ShizukuShell extends UserShell {
-
-    public ShizukuShell(boolean useADB, Handler handler) {
-        super(handler);
-        TAG = ShizukuShell.class.getSimpleName();
-        if (useADB && Shizuku.getUid() == 0) startCmd[0] = "/data/adb/libchid.so 2000";
+    public ShizukuShell() {
+        super();
     }
 
-    public ShizukuShell(boolean useADB, ShellCallBack callBack) {
-        this(useADB, new Handler(Looper.myLooper(), Shell.createHandlerCallback(callBack)));
-    }
-
-    public ShizukuShell(Handler handler) {
-        this(false, handler);
-    }
-
-    public ShizukuShell(ShellCallBack callBack) {
-        this(false, callBack);
+    public ShizukuShell(ShellCallBack cb) {
+        super(cb);
     }
 
     @Override
     public boolean ready() {
-        if (!overSign) close();
+        if (sign.isOk()) return true;
         if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_DENIED) {
             L.e(TAG, "Shizuku未授权");
             return false;
         }
         try {
-            process = Shizuku.newProcess(startCmd, null, null);
+            process = Shizuku.newProcess(new String[]{startCmd()}, null, null);
             in = process.getOutputStream();
             out = process.getInputStream();
             err = process.getErrorStream();
-            if (handler != null && overtime[0] > 0) {
-                outReader();
-                errorReader();
-            }
-            overSign = false;
+            sign.ready(true).free(true);//初始化结束,标记就绪,空闲
+            outReader();
+            errorReader();
+            timeOutTimer();
             return true;
         } catch (Exception e) {
-            L.e(TAG, "Shizuku Shell进程创建失败(" + hashCode() + "):" + e.getMessage());
-            e.printStackTrace();
-            return false;
+            return L.e(TAG, e, "Shizuku Shell进程创建失败(" + hashCode() + ")");
         }
+    }
+
+    @Override
+    public ShizukuShell setOverTime(int time) {
+        super.setOverTime(time);
+        return this;
+    }
+
+    @Override
+    public ShizukuShell setCallBack(ShellCallBack cb) {
+        super.setCallBack(cb);
+        return this;
     }
 }

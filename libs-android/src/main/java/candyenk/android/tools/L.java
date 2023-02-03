@@ -17,6 +17,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -67,7 +68,7 @@ public class L implements Closeable {
      * 获取日志级别文本
      */
     public static String getLevelString(int level) {
-        int index = UArrays.indexOf(levelIA, level);
+        int index = UArrays.indexOf(level, levelIA);
         return index == -1 ? null : levelSA[index];
     }
 
@@ -75,7 +76,7 @@ public class L implements Closeable {
      * 获取日志级别数值
      */
     public static int getLevelInt(String level) {
-        int index = UArrays.indexOf(levelSA, level);
+        int index = UArrays.indexOf(level, levelSA);
         return index == -1 ? -1 : levelIA[index];
     }
 
@@ -159,6 +160,7 @@ public class L implements Closeable {
     /**
      * Error级别日志打印
      * 只打印不记录
+     * msg可以使异常
      * 附带返回值false
      */
     public static boolean e(String tag, Object msg) {
@@ -236,7 +238,7 @@ public class L implements Closeable {
     public static <T> T e(String tag, Throwable e, Object msg, T t) {
         String m = (msg == null ? "NULL" : msg.toString()) + (e == null ? "" : (":(" + e.getClass().getSimpleName() + ")" + e.getMessage()));
         Log.e(tag, m);
-        if (e != null) e.printStackTrace(System.err);
+        if (e != null) Log.e(tag, Log.getStackTraceString(e));
         return t;
     }
 

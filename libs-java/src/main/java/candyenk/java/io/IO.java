@@ -9,6 +9,26 @@ import java.util.function.Consumer;
  * 尽量避免Stream到Reader的转换,效率会降低
  */
 public class IO {
+
+    /**
+     * 输入流读取字节数组(自动关闭)
+     */
+    public static byte[] read(InputStream in) {
+        return read(in, true);
+    }
+
+    /**
+     * 输入流读取字节数组
+     *
+     * @param in 输入流
+     * @return 流无法读取返回空数组
+     */
+    public static byte[] read(InputStream in, boolean isClose) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        streamRW(in, baos, isClose, false);
+        return baos.toByteArray();
+    }
+
     /**
      * 输入流读取字符串(默认编码)(自动关闭)
      */
@@ -43,7 +63,7 @@ public class IO {
      * @return 流无法读取返回空字符串
      */
     public static String readString(InputStream in, Charset charset, boolean isClose) {
-        return new String(readBytes(in, isClose), charset);
+        return new String(read(in, isClose), charset);
     }
 
 
@@ -100,25 +120,6 @@ public class IO {
     }
 
     /**
-     * 输入流读取字节数组(自动关闭)
-     */
-    public static byte[] readBytes(InputStream in) {
-        return readBytes(in, true);
-    }
-
-    /**
-     * 输入流读取字节数组
-     *
-     * @param in 输入流
-     * @return 流无法读取返回空数组
-     */
-    public static byte[] readBytes(InputStream in, boolean isClose) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        streamRW(in, baos, isClose, false);
-        return baos.toByteArray();
-    }
-
-    /**
      * 流间读写(自动关闭输入流)
      * 输出流不会关闭(关了还怎么输出)
      * 默认true,false
@@ -129,6 +130,8 @@ public class IO {
 
     /**
      * 流间读写
+     * 仅允许读取静态流
+     * 动态流会崩溃,请自行解决
      *
      * @param in         输入流
      * @param out        输出流
@@ -141,7 +144,7 @@ public class IO {
         try {
             BufferedInputStream bis = in instanceof BufferedInputStream ? (BufferedInputStream) in : new BufferedInputStream(in);
             BufferedOutputStream bos = out instanceof BufferedOutputStream ? (BufferedOutputStream) out : new BufferedOutputStream(out);
-            byte[] b = new byte[1024];
+            byte[] b = new byte[8192];
             int size;
             while ((size = bis.read(b)) > -1) bos.write(b, 0, size);
             bos.flush();
@@ -154,6 +157,31 @@ public class IO {
         }
     }
 
+    /**
+     * 字节数组写入到流(自动关闭)
+     */
+    public static boolean write(OutputStream out, byte[] content) {
+        return write(out, content, true);
+    }
+
+    /**
+     * 字节数组写入到流
+     *
+     * @param out     写入流
+     * @param content 写入内容
+     * @return 写入成功与否
+     */
+    public static boolean write(OutputStream out, byte[] content, boolean isClose) {
+        if (out == null || content == null) return false;
+        BufferedOutputStream bos = null;
+        try {
+            bos = out instanceof BufferedOutputStream ? (BufferedOutputStream) out : new BufferedOutputStream(out);
+            bos.write(content);
+            bos.flush();
+            return true;
+        } catch (IOException ignored) {} finally {if (isClose) close(bos);}
+        return false;
+    }
 
     /**
      * 字符串写入到流(默认编码)(自动关闭)
@@ -192,7 +220,7 @@ public class IO {
      */
     public static boolean writeString(OutputStream out, String text, Charset charset, boolean isClose) {
         if (out == null || text == null) return false;
-        return writeBytes(out, text.getBytes(charset), isClose);
+        return write(out, text.getBytes(charset), isClose);
     }
 
     /**
@@ -222,43 +250,24 @@ public class IO {
         return false;
     }
 
-    /**
-     * 字节数组写入到流(自动关闭)
-     */
-    public static boolean writeBytes(OutputStream out, byte[] content) {
-        return writeBytes(out, content, true);
-    }
-
-    /**
-     * 字节数组写入到流
-     *
-     * @param out     写入流
-     * @param content 写入内容
-     * @return 写入成功与否
-     */
-    public static boolean writeBytes(OutputStream out, byte[] content, boolean isClose) {
-        if (out == null || content == null) return false;
-        BufferedOutputStream bos = null;
-        try {
-            bos = out instanceof BufferedOutputStream ? (BufferedOutputStream) out : new BufferedOutputStream(out);
-            bos.write(content);
-            bos.flush();
-            return true;
-        } catch (IOException ignored) {} finally {if (isClose) close(bos);}
-        return false;
-    }
 
     /**
      * 关闭器
-     * 会自动刷新
      * 返回NULL
      */
     public static <T> T close(Closeable... c) {
         if (c == null) return null;
-        for (Closeable able : c) {
-            if (able instanceof Flushable) flush((Flushable) able);
-            try {able.close();} catch (Exception ignored) {}
-        }
+        for (Closeable able : c) try {able.close();} catch (Exception ignored) {}
+        return null;
+    }
+
+    /**
+     * Process关闭器
+     * 返回NULL
+     */
+    public static Process close(Process... p) {
+        if (p == null) return null;
+        for (Process pp : p) if (pp != null) pp.destroy();
         return null;
     }
 

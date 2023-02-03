@@ -194,7 +194,7 @@ public abstract class ActivityCDK extends AppCompatActivity {
         setContentView(null);
         if (bottomBar == null) createBottomLayout();
         bottomBar.removeAllItem();
-        bindingFragmentManager(UArrays.toArray(fragment, FragmentCDK.class, this::createFragment));
+        bindingFragmentManager(UArrays.T2R(fragment, FragmentCDK.class, this::createFragment));
     }
 
 
@@ -340,7 +340,7 @@ public abstract class ActivityCDK extends AppCompatActivity {
     private void bindingFragmentManager(FragmentCDK... fragments) {
         if (fList == null) fList = new ArrayList<>(fragments.length);
         fList.clear();
-        UArrays.addArrays(fList, fragments);
+        UArrays.add(fList, fragments);
         fList.forEach(f -> {
             bottomBar.addItem(f.getTitle(), f.getIcon(), v -> {
                 setCurrentItem(fList.indexOf(f));

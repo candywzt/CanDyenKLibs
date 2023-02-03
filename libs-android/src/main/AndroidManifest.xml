@@ -6,5 +6,12 @@
         <activity
                 android:name="candyenk.android.asbc.ActivityCrash"
                 android:process=":error_activity"/>
+        <provider android:name="androidx.core.content.FileProvider"
+                  android:authorities="${applicationId}.FileProvider"
+                  android:exported="false"
+                  android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                       android:resource="@xml/share_paths"/>
+        </provider>
     </application>
 </manifest>

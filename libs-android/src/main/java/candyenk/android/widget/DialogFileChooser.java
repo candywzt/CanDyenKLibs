@@ -373,7 +373,7 @@ public class DialogFileChooser extends DialogBottomRV {
             infoList.clear();
             FileInfo[] list = rootInfo.listInfos(this.isShowHide, true);
             if (list.length > 1) {
-                UArrays.addArrays(infoList, list, f -> {
+                UArrays.add(infoList, list, f -> {
                     if (f.equals(FileInfo.superInfo) || f.equals(FileInfo.emptyInfo)) return f;
                     if (!isShowHide && f.isHide()) return null;
                     if (filter != null && !filter.test(f)) return null;
@@ -385,7 +385,7 @@ public class DialogFileChooser extends DialogBottomRV {
                     if (o2.equals(FileInfo.superInfo)) return 1;
                     return sortOrder.compare(o1, o2);
                 });
-            } else UArrays.addArrays(infoList, list, null);
+            } else UArrays.add(infoList, list, null);
         }
 
         /**
@@ -396,7 +396,7 @@ public class DialogFileChooser extends DialogBottomRV {
                 throw new NullPointerException("Files地址不能不存在");
             this.rootInfo = null;
             this.infoList.clear();
-            UArrays.addArrays(infoList, infos, null);
+            UArrays.add(infoList, infos, null);
         }
     }
 

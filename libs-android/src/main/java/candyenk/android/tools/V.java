@@ -885,9 +885,9 @@ public class V<T extends View> {
     }
 
     private V<T> log(UReflex.UM um, String m, Class<?>... c) {
-        if (um.isNull() || um.e != null) {
+        if (um.isNull() || um.getE() != null) {
             String log = String.format("控件[%s].%s(%s)失败", view.getClass().getName(), m, UArrays.toString(c, Class::getSimpleName));
-            L.e(TAG, um.e, log);
+            L.e(TAG, um.getE(), log);
         }
         return this;
     }

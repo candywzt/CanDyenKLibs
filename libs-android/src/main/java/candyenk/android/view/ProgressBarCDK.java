@@ -23,7 +23,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * CDK ProgressBar
+ * ShizukuHelp ProgressBar
  * 支持负数的
  * 控件高度固定DP25
  * 一次重构

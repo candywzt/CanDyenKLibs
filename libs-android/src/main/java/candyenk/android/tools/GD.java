@@ -283,7 +283,7 @@ public class GD {
         }
 
         public TouchListeners add(View.OnTouchListener... ls) {
-            UArrays.addArrays(tList, ls);
+            UArrays.add(tList, ls);
             return this;
         }
 

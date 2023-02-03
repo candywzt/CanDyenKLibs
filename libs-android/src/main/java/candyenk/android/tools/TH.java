@@ -1,181 +1,84 @@
 package candyenk.android.tools;
 
-import android.graphics.Typeface;
-import android.os.Build;
-import android.os.Parcel;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.*;
-import android.view.View;
-import androidx.annotation.RequiresApi;
-
+import candyenk.android.shell.Shell;
 
 /**
- * 文本处理器
+ * 双线程等待处理器
  */
-public class TH {
+public class TH<T> {
+    public static int CODE_OVER = -12345;//默认超时代码,可自行修改
+    private final int ot;//超时时间ms(1~360000)6分钟
+    private final T or;//超时返回值
+    private boolean ok = true;//弃用标记
+    private int code = CODE_OVER;
+    private T obj;
 
-    /*************************************静态变量**************************************************/
-    private static final String TAG = TH.class.getSimpleName();
-    /*************************************成员变量**************************************************/
-    private final Spannable sp;
-    /**********************************************************************************************/
-    /***********************************公共静态方法*************************************************/
-    /**********************************************************************************************/
     /**
-     * 便捷修改颜色
+     * 不报错的休眠当前线程
      */
-    public static Spannable color(CharSequence text, int color) {
-        return create(text).setColor(0, text.length(), color).out();
+    public static void sleep(long time) {
+        try {Thread.sleep(time);} catch (InterruptedException ignored) {}
     }
 
     /**
-     * 便捷修改大小(sp)
-     */
-    public static Spannable size(CharSequence text, int size) {
-        return create(text).setSize(0, text.length(), size).out();
-    }
-
-    /**
-     * 便捷修改背景色
-     */
-    public static Spannable backColor(CharSequence text, int color) {
-        return create(text).setBackColor(0, text.length(), color).out();
-    }
-
-    /**
-     * 创建帮助类
-     */
-    public static TH create(CharSequence text) {
-        if (text == null) text = "";
-        return new TH(text);
-    }
-    /**********************************************************************************************/
-    /***********************************私有静态方法*************************************************/
-    /**********************************************************************************************/
-    /*** 创建Spannable ***/
-    private static Spannable createSB(CharSequence text) {
-        return text instanceof Spannable ? (Spannable) text : new SpannableString(text);
-    }
-    /**********************************************************************************************/
-    /***************************************接口****************************************************/
-    /**********************************************************************************************/
-    /**
-     * URL点击监听接口
-     */
-    public interface URLListener {
-        void onClick(View view, String url);
-    }
-    /**********************************************************************************************/
-    /*************************************构造方法**************************************************/
-    /**********************************************************************************************/
-    private TH(CharSequence text) {
-        this.sp = createSB(text);
-    }
-    /**********************************************************************************************/
-    /*************************************继承方法**************************************************/
-    /**********************************************************************************************/
-
-    /**********************************************************************************************/
-    /*************************************公共方法**************************************************/
-    /**********************************************************************************************/
-
-    //输出
-    public Spannable out() {
-        return sp;
-    }
-
-    /**
-     * 给文本换个颜色(十六进制颜色值)
-     */
-    public TH setColor(int s, int e, int c) {
-        if (s == e || s < 0 || e > sp.length()) return this;
-        sp.setSpan(new ForegroundColorSpan(c), s, e, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        return this;
-    }
-
-    /**
-     * 给文本换个背景颜色(十六进制颜色值)
-     */
-    public TH setBackColor(int s, int e, int c) {
-        if (s == e || s < 0 || e > sp.length()) return this;
-        sp.setSpan(new BackgroundColorSpan(c), s, e, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        return this;
-    }
-
-    /**
-     * 给文本换个字体
-     */
-    @RequiresApi(api = Build.VERSION_CODES.P)
-    public TH setFont(int s, int e, Typeface tf) {
-        if (s == e || s < 0 || e > sp.length()) return this;
-        sp.setSpan(new TypefaceSpan(tf), s, e, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        return this;
-    }
-
-    /**
-     * 给文本设置大小
-     * sp
-     */
-    public TH setSize(int s, int e, int size) {
-        if (s == e || s < 0 || e > sp.length()) return this;
-        sp.setSpan(new AbsoluteSizeSpan(size), s, e, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        return this;
-    }
-
-
-    /**
-     * 在前面加个标点
-     * 类似列表那种
+     * 创建
+     * 创建后默认不可用,请先调用reset
      *
-     * @param gw 点与文字的间距px
-     * @param c  标点颜色(如果颜色为透明,则不显示标点)
-     * @param r  标点半径px
+     * @param overTime   超时时间,超时自动返回(1-360000)
+     * @param overResult 超时返回值,超时自动返回该对象
      */
-    public TH setBullet(int s, int e, int gw, int c, int r) {
-        if (s == e || s < 0 || e > sp.length()) return this;
-        Parcel parcel = Parcel.obtain();
-        parcel.writeInt(gw);
-        parcel.writeInt(c);
-        parcel.writeInt(c);
-        parcel.writeInt(r);
-        parcel.setDataPosition(0);
-        sp.setSpan(new BulletSpan(parcel), s, e, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        return this;
+    public TH(int overTime, T overResult) {
+        this.ot = Math.max(1, Math.min(overTime, Shell.OT_MAX));
+        this.or = overResult;
     }
 
     /**
-     * 设置URL监听
-     * 记得给TextView控件设置
-     * setMovementMethod(LinkMovementMethod.getInstance())
+     * 在子线程中修改返回值
+     * 携带返回代码
+     * 在reset之前重复调用无效
      */
-    public TH setURLClick(URLListener l) {
-        URLSpan[] urls = sp.getSpans(0, sp.length(), URLSpan.class);
-        for (URLSpan url : urls) {
-            sp.setSpan(new URLSpan(url, l), sp.getSpanStart(url), sp.getSpanEnd(url), sp.getSpanFlags(url));
-            sp.removeSpan(url);
+    public TH<T> set(int code, T obj) {
+        if (ok) return this;
+        synchronized (this) {
+            this.obj = obj;
+            this.code = code;
+            this.ok = true;
+            return this;
         }
+    }
+
+
+    /**
+     * 在主线程中调用
+     * 等待set调用后返回
+     * 在reset之前重复调用直接返回上一次结果
+     */
+    public int code() {
+        if (ok) return this.code;
+        new Thread(() -> {
+            try {Thread.sleep(ot);} catch (Throwable ignored) {} finally {set(CODE_OVER, or);}
+        }).start();
+        while (!ok) sleep(1);
+        return this.code;
+    }
+
+    /**
+     * 返回当前Object
+     * 等待set调用后返回
+     * 在reset之前重复调用直接返回上一次结果
+     */
+    public T get() {
+        if (!ok) code();
+        return this.obj;
+    }
+
+    /**
+     * 重置状态
+     * 以便循环利用
+     */
+    public synchronized TH<T> reset() {
+        this.ok = false;
         return this;
     }
-    /**********************************************************************************************/
-    /*************************************私有方法**************************************************/
-    /**********************************************************************************************/
 
-    /**********************************************************************************************/
-    /**************************************内部类***************************************************/
-    /**********************************************************************************************/
-    static class URLSpan extends android.text.style.URLSpan {
-        private final URLListener l;
-
-        public URLSpan(android.text.style.URLSpan url, URLListener l) {
-            super(url.getURL());
-            this.l = l;
-        }
-
-        @Override
-        public void onClick(View widget) {
-            l.onClick(widget, getURL());
-        }
-    }
 }

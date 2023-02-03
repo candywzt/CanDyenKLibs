@@ -28,7 +28,14 @@ public class UTime {
     }
 
     public static String getNowTime() {
-        return D2S(System.currentTimeMillis());
+        return D2S(now());
+    }
+
+    /**
+     * 获取当前时间
+     */
+    public static long now() {
+        return System.currentTimeMillis();
     }
 
     /**

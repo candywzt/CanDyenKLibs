@@ -148,7 +148,7 @@ public class UFile {
         FileOutputStream out = getOutputStream(file, isAppend);
         if (out == null) return false;
         if (file.length() < 1 << 23) {//小于8MB采用IO方式
-            return IO.writeBytes(out, bytes);
+            return IO.write(out, bytes);
         } else return NIO.write(out.getChannel(), bytes);//大于8MB采用NIO方式
     }
 

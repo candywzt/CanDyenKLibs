@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * CDK BottomBar
+ * ShizukuHelp BottomBar
  * 底栏控件
  * 配合CDKActivity使用
  */
