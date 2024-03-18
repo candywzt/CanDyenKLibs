@@ -130,8 +130,6 @@ public class IO {
 
     /**
      * 流间读写
-     * 仅允许读取静态流
-     * 动态流会崩溃,请自行解决
      *
      * @param in         输入流
      * @param out        输出流
@@ -144,9 +142,14 @@ public class IO {
         try {
             BufferedInputStream bis = in instanceof BufferedInputStream ? (BufferedInputStream) in : new BufferedInputStream(in);
             BufferedOutputStream bos = out instanceof BufferedOutputStream ? (BufferedOutputStream) out : new BufferedOutputStream(out);
-            byte[] b = new byte[8192];
-            int size;
-            while ((size = bis.read(b)) > -1) bos.write(b, 0, size);
+            //            byte[] b = new byte[8192];
+            //            int size;
+            //            while ((size = bis.read(b)) > -1) bos.write(b, 0, size);
+            while (bis.available() > 0) {
+                byte[] bytes = new byte[bis.available()];
+                int size = bis.read(bytes);
+                bos.write(bytes, 0, size);
+            }
             bos.flush();
             return true;
         } catch (IOException e) {

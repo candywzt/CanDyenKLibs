@@ -84,6 +84,7 @@ public class DialogFileChooser extends DialogBottomRV {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setTitleCenter(boolean isCenter) {
         L.e(TAG, "不支持的操作" + TAG + ".setTitleCenter(boolean)");
@@ -92,6 +93,7 @@ public class DialogFileChooser extends DialogBottomRV {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setShowClose(boolean isShow) {
         L.e(TAG, "不支持的操作" + TAG + ".setShowClose(boolean)");
@@ -100,6 +102,7 @@ public class DialogFileChooser extends DialogBottomRV {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setContent(AdapterRVCDK<? extends HolderCDK> adapter) {
         L.e(TAG, "不支持的操作" + TAG + ".setContent(RVAdapterCDK)");
@@ -108,6 +111,7 @@ public class DialogFileChooser extends DialogBottomRV {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     public void setLayoutManager(RecyclerView.LayoutManager lm) {
         L.e(TAG, "不支持的操作" + TAG + ".setLayoutManager(RecyclerView.LayoutManager)");
     }
@@ -367,7 +371,7 @@ public class DialogFileChooser extends DialogBottomRV {
          * 更新Dialog数据
          */
         public void updateDialog(FileInfo rootInfo) {
-            if (rootInfo.isCustom() || rootInfo == null || rootInfo.getFile() == null)
+            if (rootInfo == null ||rootInfo.isCustom() ||  rootInfo.getFile() == null)
                 throw new NullPointerException("File地址不能为不存在");
             this.rootInfo = rootInfo;
             infoList.clear();

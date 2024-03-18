@@ -1,6 +1,9 @@
 package candyenk.java.utils;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -40,8 +43,11 @@ public class UTime {
 
     /**
      * Long时间戳转字符串
+     * 单字符看这里{@link DateTimeFormatter#ofPattern(String)}
      */
+    @SuppressWarnings("SimpleDateFormat")
     public static String D2S(long time, String formatType) {
+        if (formatType.length() == 1) return DateTimeFormatter.ofPattern(formatType).format(Instant.ofEpochMilli(time));
         return new SimpleDateFormat(formatType).format(new Date(time));
     }
 

@@ -81,8 +81,8 @@ public class CH implements UncaughtExceptionHandler {
                 Looper.prepare();
                 Intent intent = new Intent(mApplication, crashActivity);
                 intent.putExtra("crashReport", ex);
-                intent.putExtra("CurrentActivity", ApplicationCDK.getCurrentActivity().getClass());
-                ApplicationCDK.getCurrentActivity().startActivity(intent);
+                intent.putExtra("CurrentActivity", ApplicationCDK.app().getCurrentActivity().getClass());
+                ApplicationCDK.app().getCurrentActivity().startActivity(intent);
                 Looper.loop();
             }
         }.start();

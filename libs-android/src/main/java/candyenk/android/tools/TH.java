@@ -1,17 +1,22 @@
 package candyenk.android.tools;
 
-import candyenk.android.shell.Shell;
-
 /**
  * 双线程等待处理器
  */
 public class TH<T> {
-    public static int CODE_OVER = -12345;//默认超时代码,可自行修改
-    private final int ot;//超时时间ms(1~360000)6分钟
-    private final T or;//超时返回值
+    private final T or;
     private boolean ok = true;//弃用标记
-    private int code = CODE_OVER;
+    private int code;
     private T obj;
+
+    /**
+     * 新建
+     *
+     * @param or code为0时返回的值(超时值)
+     */
+    public TH(T or) {
+        this.or = or;
+    }
 
     /**
      * 不报错的休眠当前线程
@@ -20,28 +25,18 @@ public class TH<T> {
         try {Thread.sleep(time);} catch (InterruptedException ignored) {}
     }
 
-    /**
-     * 创建
-     * 创建后默认不可用,请先调用reset
-     *
-     * @param overTime   超时时间,超时自动返回(1-360000)
-     * @param overResult 超时返回值,超时自动返回该对象
-     */
-    public TH(int overTime, T overResult) {
-        this.ot = Math.max(1, Math.min(overTime, Shell.OT_MAX));
-        this.or = overResult;
-    }
 
     /**
      * 在子线程中修改返回值
      * 携带返回代码
      * 在reset之前重复调用无效
+     * code==0时obj无效
      */
     public TH<T> set(int code, T obj) {
         if (ok) return this;
         synchronized (this) {
-            this.obj = obj;
             this.code = code;
+            this.obj = obj;
             this.ok = true;
             return this;
         }
@@ -55,9 +50,6 @@ public class TH<T> {
      */
     public int code() {
         if (ok) return this.code;
-        new Thread(() -> {
-            try {Thread.sleep(ot);} catch (Throwable ignored) {} finally {set(CODE_OVER, or);}
-        }).start();
         while (!ok) sleep(1);
         return this.code;
     }
@@ -69,7 +61,7 @@ public class TH<T> {
      */
     public T get() {
         if (!ok) code();
-        return this.obj;
+        return code == 0 ? or : this.obj;
     }
 
     /**

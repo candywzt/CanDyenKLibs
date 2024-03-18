@@ -2,6 +2,7 @@ package candyenk.android.utils;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -69,7 +70,14 @@ public class USys {
                         InputMethodManager.HIDE_NOT_ALWAYS);
             }
         }
+    }
 
+    /**
+     * 获取NightMode,深色模式状态
+     * 详细{@link UiModeManager#getNightMode()}
+     */
+    public int getNightMode(Context context) {
+        return getSystemService(context, Context.UI_MODE_SERVICE, UiModeManager.class).getNightMode();
     }
 
     /**

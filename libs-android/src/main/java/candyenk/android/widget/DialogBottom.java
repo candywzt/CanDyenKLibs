@@ -90,6 +90,7 @@ public class DialogBottom extends BottomSheetDialog {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setContentView(View view) {
         L.e(TAG, "不支持的操作" + TAG + ".setContentView(View)");
@@ -98,6 +99,7 @@ public class DialogBottom extends BottomSheetDialog {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setContentView(int layoutResId) {
         L.e(TAG, "不支持的操作" + TAG + ".setContentView(int)");
@@ -106,6 +108,7 @@ public class DialogBottom extends BottomSheetDialog {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setContentView(View view, ViewGroup.LayoutParams params) {
         L.e(TAG, "不支持的操作" + TAG + ".setContentView(View,ViewGroup.LayoutParams)");
@@ -248,7 +251,7 @@ public class DialogBottom extends BottomSheetDialog {
         V.LL(dialogView).size(-1, -2).backgroundRes(R.color.back_all).radiusDP(20).refresh();
 
         ImageView iv = new AppCompatImageView(viewContext);
-        V.FL(iv).sizeDP(-1, 120).drawable(R.drawable.background_transparent_gradual_change).scaleType(ImageView.ScaleType.FIT_XY).parent(dialogView);
+        V.FL(iv).sizeDP(-1, 120).drawable(R.drawable.bg_transparent_gradual_change).scaleType(ImageView.ScaleType.FIT_XY).parent(dialogView);
 
         parentView = new LinearLayout(viewContext);
         V.FL(parentView).size(-1, -2).paddingDP(0, 20, 0, 0).orientation(1).parent(dialogView);

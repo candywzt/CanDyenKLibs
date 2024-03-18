@@ -5,6 +5,8 @@ import candyenk.java.utils.UFile;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * 文件信息实体类(对File类的包装拓展)
@@ -17,6 +19,7 @@ public class FileInfo implements Comparable<FileInfo> {
     protected static final Map<String, FileInfo> infoMap = new HashMap<>();//实际存在的FileInfoMap
     public static final FileInfo superInfo = custom("../");//上级文件夹
     public static final FileInfo emptyInfo = custom("File No Found");//空文件夹
+    public static Function<File, File> ffile = file -> file;//修改File的对象
     /*************************************成员变量**************************************************/
     private File file;//文件源对象
     private String name;//文件名
@@ -97,6 +100,13 @@ public class FileInfo implements Comparable<FileInfo> {
             this.path = this.name = UUID.randomUUID().toString();
             this.type = FileType.DIRECTORY;
         } else {
+            file = ffile.apply(file);
+
+
+
+
+
+
             this.path = file.getAbsolutePath();
             this.file = file;
             this.name = file.getName();

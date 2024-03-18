@@ -618,7 +618,7 @@ public class L implements Closeable {
                 json.addProperty("level", level);
                 json.addProperty("msg", msg);
                 if (error != null) json.addProperty("error", JS.writeToString(error));
-                return ApplicationCDK.app().gson.toJson(json);
+                return ApplicationCDK.gson.toJson(json);
             } catch (Exception e) {
                 L.e("L", e, "日志编码失败");
                 return "";

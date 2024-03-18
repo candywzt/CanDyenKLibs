@@ -46,6 +46,7 @@ public class DialogBottomRV extends DialogBottom {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setContent(View view) {
         L.e(TAG, "不支持的操作" + TAG + ".setContentView(View)");

@@ -53,6 +53,7 @@ public class DialogBottomItem extends DialogBottomRV {
     /**
      * @deprecated Use {@link #setContent(View...)}{@link #setContent(int...)}{@link #setContent(int, int)} instead.
      */
+    @Deprecated
     @Override
     public void setContent(AdapterRVCDK<? extends HolderCDK> adapter) {
         L.e("TAG", "不支持的操作" + TAG + ".setContent(Adapter)");

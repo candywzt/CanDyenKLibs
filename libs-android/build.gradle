@@ -1,26 +1,31 @@
 plugins {
     id 'com.android.library'
-    //id 'com.kezong.fat-aar'
 }
 android {
-    compileSdk 33
-    buildToolsVersion '33.0.1'
-
+    compileSdk 34
+    buildToolsVersion '34.0.0'
+    namespace 'candyenk.android'
     defaultConfig {
         minSdk 24
-        targetSdkVersion 33
+        targetSdkVersion 34
         consumerProguardFiles "consumer-rules.pro"
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     buildTypes {
         release {
             minifyEnabled false
+            //shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    buildFeatures {
+        viewBinding = true;
+        buildConfig = true;
+        aidl = true;
     }
 //    signingConfigs {
 //        config {
@@ -56,8 +61,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.8'//OkHttp3
     implementation 'com.sun.mail:android-mail:1.6.7'//Mail
     implementation 'com.sun.mail:android-activation:1.6.7'//Mail
-    implementation 'dev.rikka.shizuku:api:12.2.0'//Sui
-    implementation 'dev.rikka.shizuku:provider:12.2.0'//Shizuku
+    implementation 'dev.rikka.shizuku:api:13.1.5'//Sui
+    implementation 'dev.rikka.shizuku:provider:13.1.5'//Shizuku
     compileOnly 'de.robv.android.xposed:api:82'
     //compileOnly 'de.robv.android.xposed:api:82:sources'
 }

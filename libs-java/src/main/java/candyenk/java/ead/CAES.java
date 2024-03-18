@@ -1,7 +1,6 @@
 package candyenk.java.ead;
 
 import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
 
@@ -9,22 +8,13 @@ import java.security.SecureRandom;
  * CDK加解密(AES)
  * 初始化耗时2000ms
  * 1MB字符串加解密耗时100ms以内
+ * 别特么整几个G的大文件,文件多大就占多少内存,小心炸堆
  */
 public class CAES {
     private static CAES INSTANCE;
     private final Cipher cipher;
     private final SecureRandom random;
     private final int blockSize;
-    /******************************************************************************************************************/
-    /***************************************************初始化相关*******************************************************/
-    /******************************************************************************************************************/
-
-    private CAES() {
-        cipher = creteCipher();
-        blockSize = cipher.getBlockSize();//加密块大小
-        random = new SecureRandom();
-        random.nextBytes(new byte[1]);
-    }
 
     /**
      * 初始化EAD
@@ -36,44 +26,70 @@ public class CAES {
     }
 
     /**
+     * 加密数据
+     */
+    public static byte[] Encrypt(byte[] data) {
+        if (INSTANCE == null) initialization();
+        byte zeroCount = INSTANCE.countZero(data);
+        data = INSTANCE.completion(data, zeroCount);
+        byte[] key = INSTANCE.createRandom();
+        key[15] = zeroCount;
+        try {
+            INSTANCE.cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"));
+            data = INSTANCE.cipher.doFinal(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
+        return INSTANCE.merge(data, key);
+    }
+
+    /**
+     * 解密数据
+     * 只能解密Encryption的数据
+     * 解密不了反回空字符串
+     */
+    public static byte[] Decrypt(byte[] data) {
+        if (INSTANCE == null) initialization();
+        byte[] key = INSTANCE.getKey(data);
+        byte[] dData = INSTANCE.getData(data);
+        try {
+            INSTANCE.cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"));
+            dData = INSTANCE.cipher.doFinal(dData);
+            dData = INSTANCE.removeZero(dData, key[15]);
+        } catch (Exception e) {
+            //数据出错
+            e.printStackTrace();
+            return new byte[0];
+        }
+        return dData;
+    }
+
+    private CAES() {
+        cipher = createCipher();
+        blockSize = cipher.getBlockSize();//加密块大小
+        random = new SecureRandom();
+        random.nextBytes(new byte[1]);
+    }
+
+    /**
      * 创建加密器
      */
-    private Cipher creteCipher() {
+    private Cipher createCipher() {
         try {
             //"算法/模式/补码方式"NoPadding PkcsPadding
-            return Cipher.getInstance("AES/CBC/NoPadding");
+            return Cipher.getInstance("AES/ECB/NoPadding");
         } catch (Exception e) {
             //不可能,绝对不可能
             throw new NullPointerException("创建加密器失败");
         }
     }
 
-    /******************************************************************************************************************/
-    /****************************************************加密相关*******************************************************/
-    /******************************************************************************************************************/
-
-    /**
-     * 加密数据
-     */
-    public static byte[] Encryption(byte[] data) {
-        if (INSTANCE == null) initialization();
-        byte[] key = createRandom();
-        byte[] iv = createRandom();
-        byte[] eData = completion(data);
-        try {
-            INSTANCE.cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"), new IvParameterSpec(iv));
-            eData = INSTANCE.cipher.doFinal(eData);
-        } catch (Exception e) {
-            //不可能,绝对不可能
-            e.printStackTrace();
-        }
-        return merge(eData, key, iv);
-    }
 
     /**
      * 创建16位随机字节
      */
-    public static byte[] createRandom() {
+    private byte[] createRandom() {
         byte[] key = new byte[16];
         INSTANCE.random.nextBytes(key);
         return key;
@@ -82,81 +98,48 @@ public class CAES {
     /**
      * 合并数据与秘钥
      */
-    private static byte[] merge(byte[]... data) {
-        int dataL = data[0].length;
-        byte[] okData = new byte[dataL + 32];
-        System.arraycopy(data[0], 0, okData, 0, dataL / 2);
-        System.arraycopy(data[1], 0, okData, dataL / 2, 16);
-        System.arraycopy(data[2], 0, okData, dataL / 2 + 16, 16);
-        System.arraycopy(data[0], dataL / 2, okData, dataL / 2 + 32, dataL / 2);
+    private byte[] merge(byte[] data, byte[] key) {
+        byte[] okData = new byte[data.length + key.length];
+        System.arraycopy(data, 0, okData, 0, data.length / 2);
+        System.arraycopy(key, 0, okData, data.length / 2, key.length);
+        System.arraycopy(data, data.length / 2, okData, data.length / 2 + key.length, data.length / 2);
         return okData;
+    }
+
+    /**
+     * 获取需要补零的数量
+     */
+    private byte countZero(byte[] data) {
+        if (data.length % INSTANCE.blockSize == 0) return 0;
+        return (byte) (INSTANCE.blockSize - (data.length % INSTANCE.blockSize));
     }
 
     /**
      * 补全数据块
      */
-    private static byte[] completion(byte[] data) {
-        int dataLength = data.length;//数据长度
-        if (dataLength % INSTANCE.blockSize != 0) {
-            byte[] okBytes = new byte[dataLength + (INSTANCE.blockSize - (dataLength % INSTANCE.blockSize))];
-            System.arraycopy(data, 0, okBytes, 0, dataLength);
-            return okBytes;
-        } else {
-            return data;
-        }
-    }
-    /******************************************************************************************************************/
-    /****************************************************解密相关*******************************************************/
-    /******************************************************************************************************************/
-
-    /**
-     * 解密数据
-     * 只能解密Encryption的数据
-     * 不要抱有侥幸心理
-     */
-    public static byte[] Decryption(byte[] data) {
-        if (INSTANCE == null) initialization();
-        byte[] key = getKey(data);
-        byte[] iv = getIv(data);
-        byte[] dData = getData(data);
-        try {
-            INSTANCE.cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), new IvParameterSpec(iv));
-            dData = INSTANCE.cipher.doFinal(dData);
-            dData = removeZero(dData);
-        } catch (Exception e) {
-            //数据出错
-            e.printStackTrace();
-            return null;
-        }
-        return dData;
+    private byte[] completion(byte[] data, byte zeroCount) {
+        if (zeroCount == 0) return data;
+        byte[] okBytes = new byte[data.length + zeroCount];
+        System.arraycopy(data, 0, okBytes, 0, data.length);
+        return okBytes;
     }
 
     /**
      * 拆卸KEY
      */
-    private static byte[] getKey(byte[] data) {
-        int index = data.length / 2 - 16;
+    private byte[] getKey(byte[] data) {
+        int index = data.length / 2 - 8;
         byte[] key = new byte[16];
         System.arraycopy(data, index, key, 0, 16);
         return key;
     }
 
     /**
-     * 拆卸IV
-     */
-    private static byte[] getIv(byte[] data) {
-        int index = data.length / 2;
-        byte[] iv = new byte[16];
-        System.arraycopy(data, index, iv, 0, 16);
-        return iv;
-    }
-
-    /**
      * 拆卸数据
      */
-    private static byte[] getData(byte[] data) {
-        int index = data.length / 2 + 16;
-        byte[] eData = new byte[data.length - 32];
+    private byte[] getData(byte[] data) {
+        int index = data.length / 2 + 8;
+        byte[] eData = new byte[data.length - 16];
         System.arraycopy(data, 0, eData, 0, eData.length / 2);
         System.arraycopy(data, index, eData, eData.length / 2, eData.length / 2);
         return eData;
@@ -165,14 +148,10 @@ public class CAES {
     /**
      * 数据除0
      */
-    private static byte[] removeZero(byte[] data) {
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] == 0) {
-                byte[] mData = new byte[i];
-                System.arraycopy(data, 0, mData, 0, i);
-                return mData;
-            }
-        }
-        return data;
+    private byte[] removeZero(byte[] data, byte zeroCount) {
+        if (zeroCount == 0) return data;
+        byte[] mData = new byte[data.length - zeroCount];
+        System.arraycopy(data, 0, mData, 0, data.length - zeroCount);
+        return mData;
     }
 }
