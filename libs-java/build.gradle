@@ -13,7 +13,7 @@ dependencies {
     api fileTree(dir: 'libs', includes: ['*jar'])
 }
 
-task sourcesJar(type: Jar) {
+tasks.register('sourcesJar', Jar) {
     //classifier = 'sources'
     from sourceSets.main.allSource
     zip64 true

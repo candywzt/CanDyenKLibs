@@ -67,13 +67,13 @@ public class ActivityCrash extends ActivityCDK {
             intent.putExtra("REBOOT", "reboot");
             startActivity(intent);
              */
-            ApplicationCDK.restartApplication(this);
+            ApplicationCDK.restart(this);
         });
         button2.setOnClickListener(v -> {
             /*
             CDKApplication.finishAllActivity();
              */
-            ApplicationCDK.closeApplication(this);
+            ApplicationCDK.app().close(this);
         });
         button3.setOnClickListener(v -> {
             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);

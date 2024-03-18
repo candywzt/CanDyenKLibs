@@ -12,6 +12,7 @@ import candyenk.android.utils.UApp;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,38 +24,35 @@ import java.util.List;
  */
 public class ApplicationCDK extends Application {
     @SuppressLint("StaticFieldLeak")
-    private static ApplicationCDK app;
-    private static ArrayList<Activity> activityList;
-    public final Gson gson = new Gson();
-    protected String TAG = "CDKApplication";
+    protected String TAG;
+    private List<Activity> activityList = Collections.EMPTY_LIST;
+    private static ApplicationCDK explame;//
+    public static final Gson gson = new Gson();//默认GSON
 
     @Override
     public void onCreate() {
         this.TAG = this.getClass().getSimpleName();
-        ApplicationCDK.app = this;
+        explame = this;
         super.onCreate();
     }
-    /**********************************************************************************************/
-    /******************************************静态方法*********************************************/
-    /**********************************************************************************************/
+
     /**
      * 获取实例
      */
     public static <T extends ApplicationCDK> T app() {
-        return (T) ApplicationCDK.app;
+        return app(null);
     }
 
     public static <T extends ApplicationCDK> T app(Class<T> c) {
-        return app();
+        return (T) explame;
     }
 
     /**
      * 获取栈顶activity
      * 可用来获取全局Context
      */
-    public static Activity getCurrentActivity() {
-        if (activityList == null || activityList.size() == 0)
-            throw new RuntimeException("Activity管理器工作异常");
+    public Activity getCurrentActivity() {
+        if (activityList.isEmpty()) throw new RuntimeException("Activity管理器工作异常");
         return activityList.get(0);
     }
 
@@ -63,16 +61,15 @@ public class ApplicationCDK extends Application {
      *
      * @return
      */
-    public static List<Activity> getActivityList() {
-        if (activityList == null || activityList.size() == 0)
-            throw new RuntimeException("Activity管理器工作异常");
-        return new ArrayList<>(activityList);
+    public List<Activity> getActivityList() {
+        if (activityList == null || activityList.isEmpty()) throw new RuntimeException("Activity管理器工作异常");
+        return Collections.unmodifiableList(activityList);
     }
 
     /**
      * 重启应用程序
      */
-    public static void restartApplication(Activity activity) {
+    public static void restart(Activity activity) {
         Intent intent = activity.getBaseContext().getPackageManager().getLaunchIntentForPackage(activity.getBaseContext().getPackageName());
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         if (intent.getComponent() != null) {
@@ -89,7 +86,7 @@ public class ApplicationCDK extends Application {
     /**
      * 关闭应用程序
      */
-    public static void closeApplication(Activity activity) {
+    public void close(Activity activity) {
         activity.finish();
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(10);
@@ -98,7 +95,7 @@ public class ApplicationCDK extends Application {
     /**
      * 结束所有Activity并退出应用
      */
-    public static void finishAllActivity() {
+    public void finish() {
         for (int i = activityList.size() - 1; i >= 0; i--) {
             activityList.get(i).finish();
             L.e(ApplicationCDK.class.getSimpleName(), "活动(" + activityList.get(i) + ")被销毁");
@@ -109,7 +106,7 @@ public class ApplicationCDK extends Application {
     /**
      * 结束某个Activity
      */
-    public static void finishActivity(Class<?> activityClass) {
+    public void finish(Class<?> activityClass) {
         for (Activity a : activityList) {
             if (a.getClass().equals(activityClass)) {
                 a.finish();
@@ -118,7 +115,7 @@ public class ApplicationCDK extends Application {
         }
     }
 
-    public static void finishActivity(String activityName) {
+    public void finish(String activityName) {
         for (Activity a : activityList) {
             if (a.getClass().toString().equals(activityName)) {
                 a.finish();
@@ -156,7 +153,7 @@ public class ApplicationCDK extends Application {
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
                 activityList.remove(activity);
                 activityList.add(0, activity);
-                Log.e(TAG, "活动启动" + activityList.toString());
+                Log.e(TAG, "活动启动" + activityList);
             }
 
             @Override//活动开始

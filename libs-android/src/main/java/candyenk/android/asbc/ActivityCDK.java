@@ -352,4 +352,31 @@ public abstract class ActivityCDK extends AppCompatActivity {
     /**********************************************************************************************/
     /**************************************内部类***************************************************/
     /**********************************************************************************************/
+    public static class Default extends ActivityCDK {
+
+        @Override
+        protected void intentInit() {
+
+        }
+
+        @Override
+        protected void viewInit() {
+
+        }
+
+        @Override
+        protected void contentInit(Bundle save) {
+
+        }
+
+        @Override
+        protected void eventInit() {
+
+        }
+
+        @Override
+        protected Bundle saveData(Bundle bundle) {
+            return bundle;
+        }
+    }
 }
