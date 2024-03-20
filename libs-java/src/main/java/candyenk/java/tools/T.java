@@ -7,7 +7,7 @@ import java.util.List;
  * Java耗时调试工具
  */
 public class T {
-    private static List<Long> timeList = new ArrayList<>();
+    private static final List<Long> timeList = new ArrayList<>();
 
     /**
      * 标记当前时间
@@ -29,9 +29,11 @@ public class T {
         StringBuilder sb = new StringBuilder("耗时:");
         for (int i = 1; i < timeList.size(); i++) {
             if (i != 1) sb.append("-");
-            sb.append(timeList.get(i) - timeList.get(i - 1) + "ms");
+            sb.append(timeList.get(i) - timeList.get(i - 1)).append("ms");
         }
+        System.out.println("====================");
         System.out.println(sb);
+        System.out.println("====================");
         if (isClear) timeList.clear();
     }
 

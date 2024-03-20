@@ -3,7 +3,6 @@ package candyenk.android.tools;
 import android.util.Log;
 import candyenk.android.asbc.ApplicationCDK;
 import candyenk.java.io.IO;
-import candyenk.java.io.StringArrayOutputStream;
 import candyenk.java.tools.JS;
 import candyenk.java.utils.UArrays;
 import candyenk.java.utils.UFile;
@@ -13,11 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.lang.reflect.Array;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -664,12 +659,12 @@ public class L implements Closeable {
          */
         public List<String> getStackList() {
             if (error == null) return new ArrayList<>();
-            StringArrayOutputStream saos = new StringArrayOutputStream();
-            PrintStream ps = new PrintStream(saos);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            PrintStream ps = new PrintStream(out);
             error.printStackTrace(ps);
             ps.flush();
-            IO.close(ps);
-            return saos.toStringList();
+            IO.close(ps, out);
+            return Arrays.asList(out.toString().split("\n"));
         }
 
         @NotNull
