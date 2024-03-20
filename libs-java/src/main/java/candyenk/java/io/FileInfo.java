@@ -101,12 +101,6 @@ public class FileInfo implements Comparable<FileInfo> {
             this.type = FileType.DIRECTORY;
         } else {
             file = ffile.apply(file);
-
-
-
-
-
-
             this.path = file.getAbsolutePath();
             this.file = file;
             this.name = file.getName();
@@ -138,12 +132,9 @@ public class FileInfo implements Comparable<FileInfo> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof FileInfo) {
-            FileInfo info = (FileInfo) obj;
+        if (obj instanceof FileInfo info) {
             return this.path.equals(info.path);
-        } else {
-            return false;
-        }
+        } else return false;
     }
 
     @Override
@@ -237,7 +228,7 @@ public class FileInfo implements Comparable<FileInfo> {
         UArrays.forEach(paths, (s) -> {
             if (showHide || !s.startsWith(".")) list.add(FileInfo.create(new File(file, s)));
         });
-        return list.toArray(new FileInfo[list.size()]);
+        return list.toArray(new FileInfo[0]);
     }
 
     /**
@@ -266,7 +257,7 @@ public class FileInfo implements Comparable<FileInfo> {
     /*************************************私有方法**************************************************/
     /**********************************************************************************************/
     private void setCustom() {//设置自定义类型
-        infoMap.remove(this);
+        infoMap.remove(this.path);
         customMap.put(this.path, this);
     }
 
