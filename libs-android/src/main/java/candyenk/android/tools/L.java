@@ -1,7 +1,7 @@
 package candyenk.android.tools;
 
 import android.util.Log;
-import candyenk.android.asbc.ApplicationCDK;
+import candyenk.android.base.ApplicationCDK;
 import candyenk.java.io.IO;
 import candyenk.java.tools.JS;
 import candyenk.java.utils.UArrays;

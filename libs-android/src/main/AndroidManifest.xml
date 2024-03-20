@@ -4,7 +4,7 @@
 
     <application>
         <activity
-                android:name="candyenk.android.asbc.ActivityCrash"
+                android:name="candyenk.android.base.ActivityCrash"
                 android:process=":error_activity"/>
         <provider android:name="androidx.core.content.FileProvider"
                   android:authorities="${applicationId}.FileProvider"

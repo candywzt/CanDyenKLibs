@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.R;
-import candyenk.android.asbc.HolderCDK;
+import candyenk.android.base.HolderCDK;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import candyenk.android.viewgroup.NoLinearLayout;

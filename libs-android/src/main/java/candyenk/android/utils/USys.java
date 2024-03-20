@@ -25,7 +25,7 @@ import java.util.function.Consumer;
  * 在Activity和Fragment中申请单个/多个权限
  * 仅支持AndroidX的Fragment
  */
-public class USys {
+public class USys extends candyenk.java.utils.USys {
     public static final String USE_MIC = Manifest.permission.RECORD_AUDIO;//录音权限
     public static final String GET_ACCOUNTS = Manifest.permission.GET_ACCOUNTS;//读取通讯录权限
     public static final String GET_PHONESTATE = Manifest.permission.READ_PHONE_STATE;//拨打电话权限

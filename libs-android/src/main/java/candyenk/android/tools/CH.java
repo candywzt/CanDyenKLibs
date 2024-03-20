@@ -4,8 +4,8 @@ import android.app.Application;
 import android.content.Intent;
 import android.os.Looper;
 
-import candyenk.android.asbc.ApplicationCDK;
-import candyenk.android.asbc.ActivityCrash;
+import candyenk.android.base.ApplicationCDK;
+import candyenk.android.base.ActivityCrash;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 

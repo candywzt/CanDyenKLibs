@@ -1,4 +1,4 @@
-package candyenk.android.asbc;
+package candyenk.android.base;
 
 import android.app.Service;
 import android.content.Intent;

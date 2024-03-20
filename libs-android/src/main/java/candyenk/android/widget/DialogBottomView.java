@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import androidx.recyclerview.widget.RecyclerView;
-import candyenk.android.asbc.HolderCDK;
+import candyenk.android.base.HolderCDK;
 import candyenk.android.tools.L;
 
 import java.util.function.BiConsumer;
