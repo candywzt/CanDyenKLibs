@@ -19,6 +19,9 @@ import candyenk.android.viewgroup.WindowLayout2;
 
 import java.util.HashSet;
 
+/**
+ * 悬浮窗组件
+ */
 public class WindowFloating {
     private static final String TAG = WindowFloating.class.getSimpleName();
     private static final HashSet<View> mList = new HashSet<>();
@@ -215,7 +218,8 @@ public class WindowFloating {
      */
     public void showMinWindow() {
         Log.e(TAG, "展示悬浮球");
-        if (windowState == 2) wm.removeView(mainView);
+        if (windowState != 2) return;
+        wm.removeView(mainView);
         lp.width = lp.height = minWidth;
         lp.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         wm.addView(minView, lp);
@@ -227,7 +231,8 @@ public class WindowFloating {
      */
     public void showMainWindow() {
         Log.e(TAG, "展示主悬浮窗");
-        if (windowState == 1) wm.removeView(minView);
+        if (windowState != 1) return;
+        wm.removeView(minView);
         lp.width = mainWidth;
         lp.height = mainHeight;
         lp.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;

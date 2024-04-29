@@ -143,6 +143,7 @@ public class XP {
         /**
          * @deprecated 禁止使用
          */
+        @Deprecated
         @Override
         public Constructor<?> getC() {
             return null;
@@ -151,6 +152,7 @@ public class XP {
         /**
          * @deprecated 禁止使用
          */
+        @Deprecated
         @Override
         public Object newInstance(Object... a) {
             return null;
@@ -247,6 +249,7 @@ public class XP {
         /**
          * @deprecated 禁止使用
          */
+        @Deprecated
         @Override
         public Method getM() {
             return null;
@@ -255,6 +258,7 @@ public class XP {
         /**
          * @deprecated 禁止使用
          */
+        @Deprecated
         @Override
         public <T> T invoke(Object o, Object... a) {
             return null;
@@ -263,6 +267,7 @@ public class XP {
         /**
          * @deprecated 禁止使用
          */
+        @Deprecated
         @Override
         public <T> T invoke(Object o, Class<T> r, Object... a) {
             return null;

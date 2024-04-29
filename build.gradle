@@ -21,12 +21,12 @@ allprojects {
     }
 }
 //Gradle缓存库移到Maven库
-task cacheToLocalMavenRepository(type: Copy) {
+tasks.register('cacheToLocalMavenRepository', Copy) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE//去重
     from new File(gradle.gradleUserHomeDir, 'caches/modules-2/files-2.1')
     into repositories.mavenLocal().url
     eachFile {
-        List<String> parts = it.path.split('/')
+        List<String> parts = it.path.split('/' as Closure)
         it.path = (parts[0] + '/' + parts[1]).replace('.', '/') + '/' + parts[2] + '/' + parts[4]
         println("复制:" + it.path)
     }

@@ -100,6 +100,7 @@ public class DialogLoading extends AlertDialog {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setOnDismissListener(OnDismissListener listener) {
         L.e(TAG, "不支持的操作" + TAG + ".setOnDismissListener(OnDismissListener)");

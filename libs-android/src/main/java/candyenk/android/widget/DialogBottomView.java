@@ -40,6 +40,7 @@ public class DialogBottomView extends DialogBottomItem {
     /**
      * @deprecated 请使用 {@link #setContent(View)}{@link #setContent(int)}
      */
+    @Deprecated
     @Override
     public void setContent(View[] views) {
         L.e("TAG", "不支持的操作" + TAG + ".setContent(View[])");
@@ -48,6 +49,7 @@ public class DialogBottomView extends DialogBottomItem {
     /**
      * @deprecated 请使用 {@link #setContent(View)}{@link #setContent(int)}
      */
+    @Deprecated
     @Override
     public void setContent(int... resIds) {
         L.e("TAG", "不支持的操作" + TAG + ".setContent(int...)");
@@ -56,6 +58,7 @@ public class DialogBottomView extends DialogBottomItem {
     /**
      * @deprecated 请使用 {@link #setContent(View)}{@link #setContent(int)}
      */
+    @Deprecated
     @Override
     public void setContent(int resId, int count) {
         L.e("TAG", "不支持的操作" + TAG + ".setContent(int,int)");
@@ -64,6 +67,7 @@ public class DialogBottomView extends DialogBottomItem {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setLayoutManager(RecyclerView.LayoutManager lm) {
         L.e("TAG", "不支持的操作" + TAG + ".setLayoutManager(RecyclerView.LayoutManager)");
@@ -72,6 +76,7 @@ public class DialogBottomView extends DialogBottomItem {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setOnBindViewHolder(Consumer<HolderCDK> c) {
         L.e("TAG", "不支持的操作" + TAG + ".setOnBindViewHolder(Consumer)");
@@ -80,6 +85,7 @@ public class DialogBottomView extends DialogBottomItem {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setOnItemClickListener(BiConsumer<View, Integer> l) {
         L.e("TAG", "不支持的操作" + TAG + ".setOnItemClickListener(BiConsumer)");
@@ -88,6 +94,7 @@ public class DialogBottomView extends DialogBottomItem {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setOnItemLongClickListener(BiConsumer<View, Integer> l) {
         L.e("TAG", "不支持的操作" + TAG + ".setOnItemLongClickListener(BiConsumer)");

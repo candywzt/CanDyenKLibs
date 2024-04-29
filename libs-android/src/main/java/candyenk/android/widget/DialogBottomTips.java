@@ -62,6 +62,7 @@ public class DialogBottomTips extends DialogBottomView {
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence)}
      */
+    @Deprecated
     @Override
     public void setContent(int viewid) {
         L.e(TAG, "不支持的操作" + TAG + ".setContent(int)");
@@ -70,6 +71,7 @@ public class DialogBottomTips extends DialogBottomView {
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence)}
      */
+    @Deprecated
     @Override
     public void setContent(View view) {
         L.e(TAG, "不支持的操作" + TAG + ".setContent(View)");
@@ -78,6 +80,7 @@ public class DialogBottomTips extends DialogBottomView {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void bindContent(Consumer<View> binder) {
         L.e(TAG, "不支持的操作" + TAG + ".bindContent(Consumer)");
@@ -86,6 +89,7 @@ public class DialogBottomTips extends DialogBottomView {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public View getContent() {
         return L.e(TAG, "不支持的操作" + TAG + ".getContent()", null);
@@ -94,6 +98,7 @@ public class DialogBottomTips extends DialogBottomView {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setCancelable(boolean touchOff, boolean backOff) {
         L.e(TAG, "不支持的操作" + TAG + ".setCancelable(boolean,boolean)");
@@ -102,6 +107,7 @@ public class DialogBottomTips extends DialogBottomView {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setTitleCenter(boolean isCenter) {
         L.e(TAG, "不支持的操作" + TAG + ".setTitleCenter(boolean)");
@@ -110,6 +116,7 @@ public class DialogBottomTips extends DialogBottomView {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setShowClose(boolean isShow) {
         L.e(TAG, "不支持的操作" + TAG + ".setShowClose(boolean)");

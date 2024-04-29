@@ -46,6 +46,7 @@ public class DialogBottomText extends DialogBottomView {
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence)}
      */
+    @Deprecated
     @Override
     public void setContent(@LayoutRes int viewid) {
         L.e("TAG", "不支持的操作" + TAG + ".setContent(int)");
@@ -54,6 +55,7 @@ public class DialogBottomText extends DialogBottomView {
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence)}
      */
+    @Deprecated
     @Override
     public void setContent(View view) {
         L.e("TAG", "不支持的操作" + TAG + ".setContent(View)");
@@ -63,6 +65,7 @@ public class DialogBottomText extends DialogBottomView {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void bindContent(Consumer<View> binder) {
         L.e("TAG", "不支持的操作" + TAG + ".bindContent(Consumer)");
@@ -71,6 +74,7 @@ public class DialogBottomText extends DialogBottomView {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public View getContent() {
         return L.e("TAG", "不支持的操作" + TAG + ".getContent()", null);

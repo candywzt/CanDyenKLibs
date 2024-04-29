@@ -89,6 +89,7 @@ public class DialogBottomConfirm extends DialogBottomTips {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setLeftButton(CharSequence text, Consumer<? extends DialogBottom> leftClick, Consumer<? extends DialogBottom> leftLong) {
         L.e(TAG, "不支持的操作" + TAG + ".setLeftButton(CharSequence,Consumer,Consumer)");
@@ -97,6 +98,7 @@ public class DialogBottomConfirm extends DialogBottomTips {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setRightButton(CharSequence text, Consumer<? extends DialogBottom> rightClick, Consumer<? extends DialogBottom> rightLong) {
         L.e(TAG, "不支持的操作" + TAG + ".setRightButton(CharSequence,Consumer,Consumer)");
@@ -105,6 +107,7 @@ public class DialogBottomConfirm extends DialogBottomTips {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setOnCancelListener(OnCancelListener listener) {
         L.e(TAG, "不支持的操作" + TAG + ".setOnCancelListener(OnCancelListener)");
@@ -113,6 +116,7 @@ public class DialogBottomConfirm extends DialogBottomTips {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void dismiss(Consumer<? extends DialogBottom> dismissRun) {
         L.e(TAG, "不支持的操作" + TAG + ".dismiss(Consumer)");

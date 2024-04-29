@@ -57,7 +57,7 @@ public class WindowLayout2 extends FrameLayout {
     }
 
     public WindowLayout2(Context context, AttributeSet attrs) {
-        this(context, attrs, R.style.Theme_CDKActivity);
+        this(context, attrs, R.style.Theme_CDK);
     }
 
     public WindowLayout2(Context context, AttributeSet attrs, int defStyleAttr) {

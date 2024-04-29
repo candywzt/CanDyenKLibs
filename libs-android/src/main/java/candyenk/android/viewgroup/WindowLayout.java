@@ -62,7 +62,7 @@ public class WindowLayout extends MaterialCardView {
     }
 
     public WindowLayout(Context context, AttributeSet attrs) {
-        this(context, attrs, R.style.Theme_CDKActivity);
+        this(context, attrs, R.style.Theme_CDK);
     }
 
     public WindowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -103,7 +103,7 @@ public class WindowLayout extends MaterialCardView {
         lp.gravity = Gravity.BOTTOM | Gravity.RIGHT;
         horwView.setLayoutParams(lp);
         horwView.setElevation(100);
-        horwView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_window_horw));
+        horwView.setImageDrawable(context.getDrawable(R.drawable.ic_window_horw));
         addView(horwView);
 
         barView = new ImageView(context);

@@ -53,6 +53,7 @@ public class DialogBottomItemText extends DialogBottomItem {
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence...)}
      */
+    @Deprecated
     @Override
     public void setContent(View[] views) {
         L.e("TAG", "不允许使用DialogBottomView.setContent(View...)");
@@ -61,6 +62,7 @@ public class DialogBottomItemText extends DialogBottomItem {
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence...)}
      */
+    @Deprecated
     @Override
     public void setContent(int... resIds) {
         L.e("TAG", "不允许使用DialogBottomView.setContent(int...)");
@@ -69,6 +71,7 @@ public class DialogBottomItemText extends DialogBottomItem {
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence...)}
      */
+    @Deprecated
     @Override
     public void setContent(int resId, int count) {
         L.e("TAG", "不允许使用DialogBottomView.setContent(int,int)");
@@ -77,6 +80,7 @@ public class DialogBottomItemText extends DialogBottomItem {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setLayoutManager(RecyclerView.LayoutManager lm) {
         L.e("TAG", "不允许使用DialogBottomView.setLayoutManager(RecyclerView.LayoutManager)");
@@ -85,6 +89,7 @@ public class DialogBottomItemText extends DialogBottomItem {
     /**
      * @deprecated 不允许使用
      */
+    @Deprecated
     @Override
     public void setOnBindViewHolder(Consumer<HolderCDK> c) {
         L.e("TAG", "不允许使用DialogBottomView.setOnBindViewHolder(Consumer)");

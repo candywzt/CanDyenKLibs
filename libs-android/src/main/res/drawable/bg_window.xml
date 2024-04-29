@@ -6,10 +6,10 @@
                 android:width="3dp"
                 android:color="@color/main_01" />
             <corners
-                android:bottomLeftRadius="20px"
-                android:bottomRightRadius="20px"
-                android:topLeftRadius="20px"
-                android:topRightRadius="20px" />
+                android:bottomLeftRadius="40px"
+                android:bottomRightRadius="40px"
+                android:topLeftRadius="40px"
+                android:topRightRadius="40px" />
         </shape>
     </item>
 </layer-list>
