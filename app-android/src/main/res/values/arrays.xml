@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <!--Xposed作用域-->
+    <string-array name="xposedscope">
+        <!--<item>com.candyenk.gamestory</item>
+        <item>com.tencent.mobileqq</item>
+        <item>com.android.settings</item>
+        <item>com.android.systemui</item>
+        <item>com.tencent.mm</item>
+        <item>com.iflytek.inputmethod</item>-->
+        <item>com.tencent.mm</item>
+    </string-array>
+
+
+</resources>

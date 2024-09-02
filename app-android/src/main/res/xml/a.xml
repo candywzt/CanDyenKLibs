@@ -1,0 +1,25 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:key="pref_key_system">
+
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="key1"
+        android:summary="副标题"
+        android:title="标题" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="key1"
+        android:summary="副标题"
+        android:title="标题" />
+
+    <SeekBarPreference
+        android:defaultValue="0"
+        android:key="key2"
+        android:summary="f标题"
+        android:title="标题" />
+
+
+</PreferenceScreen>

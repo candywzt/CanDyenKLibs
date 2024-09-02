@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MyView">
+        <attr name="width" format="dimension">
+            <enum name="a" value="100" />
+            <enum name="b" value="200" />
+            <enum name="c" value="300" />
+        </attr>
+    </declare-styleable>
+</resources>
