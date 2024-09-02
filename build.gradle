@@ -20,6 +20,13 @@ allprojects {
         mavenCentral()
     }
 }
+task showRepos {
+    doLast {
+        repositories.each {
+            println "repository: ${it.name} ('${it.url}')"
+        }
+    }
+}
 //Gradle缓存库移到Maven库
 tasks.register('cacheToLocalMavenRepository', Copy) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE//去重

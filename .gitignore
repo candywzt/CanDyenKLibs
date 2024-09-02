@@ -5,10 +5,4 @@
 /build/
 # Android SDK本地路径
 local.properties
-# Android Demo
-/app-android/
-/app/
-/api/
-/systemPlugin/
-/testPlugin/
 /release/
