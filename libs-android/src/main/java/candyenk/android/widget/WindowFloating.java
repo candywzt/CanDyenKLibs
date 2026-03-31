@@ -22,6 +22,7 @@ import java.util.HashSet;
 /**
  * 悬浮窗组件
  */
+@Deprecated
 public class WindowFloating {
     private static final String TAG = WindowFloating.class.getSimpleName();
     private static final HashSet<View> mList = new HashSet<>();

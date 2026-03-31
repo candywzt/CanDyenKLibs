@@ -22,6 +22,7 @@ import com.google.android.material.card.MaterialCardView;
  * 需设定拖动监听
  * 需设定缩放监听
  */
+@Deprecated
 public class WindowLayout2 extends FrameLayout {
     private static final String TAG = WindowLayout2.class.getSimpleName();
     private Context context;
