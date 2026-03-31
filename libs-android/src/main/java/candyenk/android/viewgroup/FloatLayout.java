@@ -24,6 +24,7 @@ public class FloatLayout extends MaterialCardView {
     private final OnTouchListener sizeChangeL;//大小改变监听
     private final OnTouchListener positionChangeL;//位置改变监听
     private View mView;//主图标控件
+    private View contentView;//内容控件
     private int state;//大小调整按钮状态:0默认;1调整中;2调整完毕
     private Animation barAnimStart, barAnimEnd;
 
@@ -198,6 +199,17 @@ public class FloatLayout extends MaterialCardView {
         this.mView = view;
         addView(view);
         view.setOnTouchListener(positionChangeL);
+    }
+
+    /**
+     * 设置控件内容
+     *
+     * @param view
+     */
+    public void setContent(View view) {
+        removeView(contentView);
+        this.contentView = view;
+        addView(view);
     }
 
     /**

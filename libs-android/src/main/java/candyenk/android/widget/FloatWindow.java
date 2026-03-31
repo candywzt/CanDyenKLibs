@@ -27,7 +27,7 @@ public class FloatWindow {
     private final WindowManager wm;
     private final WindowManager.LayoutParams lp;
     private final View.OnTouchListener minTouchL;//小窗口触摸事件
-    private final FloatLayout mainView;//主窗口状态控件
+    private final FloatLayout mainView;//主窗口控件
     private int[] px;//屏幕尺寸
     private View minView;//小窗口状态控件
     private int state;//状态0未打开1最小化2最大化
@@ -54,7 +54,7 @@ public class FloatWindow {
         initContent();
         this.minView = defaultMinView();
         this.mainView = new FloatLayout(context);
-        this.mainView.addView(defaultMainView());
+        this.mainView.setContent(defaultMainView());
         this.mainView.setOnWindowSizeChanged(this::changeWindowSize);
         this.mainView.setOnWindowPositionChanged(this::changeWindowPosition);
     }
@@ -141,6 +141,8 @@ public class FloatWindow {
     @SuppressLint("UseCompatLoadingForDrawables")
     private View defaultMainView() {
         TextView tv = new TextView(context);
+        tv.setGravity(Gravity.CENTER);
+        tv.setLayoutParams(new ViewGroup.LayoutParams(-1,-1));
         tv.setText(candyenk.android.R.string.error);
         return tv;
     }
@@ -188,8 +190,7 @@ public class FloatWindow {
      * 设置主界面视图
      */
     public FloatWindow setContent(View view) {
-        this.mainView.removeAllViews();
-        this.mainView.addView(view);
+        this.mainView.setContent(view);
         return this;
     }
 
@@ -219,7 +220,7 @@ public class FloatWindow {
      * @return
      */
     public FloatWindow setMainBarView(View view) {
-        //mainView.s
+        mainView.setMainView(view);
         return this;
     }
 
@@ -292,7 +293,7 @@ public class FloatWindow {
     /**
      * 关闭悬浮窗和悬浮球
      */
-    public void closeWindow() {
+    public void dismiss() {
         if (state == 1) wm.removeView(minView);
         if (state == 2) wm.removeView(mainView);
         state = 0;
