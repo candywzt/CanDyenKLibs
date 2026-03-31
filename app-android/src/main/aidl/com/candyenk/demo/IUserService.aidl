@@ -1,28 +1,22 @@
 package com.candyenk.demo;
-import android.os.Bundle;
+
+import candyenk.android.aidl.BList;
+
 interface IUserService {
+    //void destroy() = 16777114; // 由 Shizuku 服务器定义的 Destroy 方法
+    //void exit() = 1; // 用户定义的退出方法
 
-    void destroy() = 16777114;
 
-    void exit() = 1;
+    //获取已安装应用列表
+    BList<PackageInfo> getPackages()=10;
+    
+    //获取指定应用所有意图过滤器
+    BList<IntentFilter> getAllIntentFilters(String packageName) = 11;
+    
+    //获取第几个IntentFilter的String
+    String toLongString(int index) = 12;
+   
+    
 
-    String readFile(String path) = 2;
-
-    boolean writeFile(String path , in byte[] bytes) = 3;
-
-    boolean isFile(String path) = 4;
-
-    boolean isDirector(String path) = 5;
-
-    long length(String path) = 6;
-
-    boolean exists(String path) = 7;
-
-    String getParent(String path) = 8;
-
-    String[] list(String path) = 9;
-
-    long lastModified(String path) = 10;
-
-    String run(String arg) = 11;
+    
 }

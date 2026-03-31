@@ -7,20 +7,20 @@ import rikka.sui.Sui;
 
 
 public class MyApp extends ApplicationCDK {
-    public static boolean isSui = Sui.init(BuildConfig.APPLICATION_ID);
+  //  public static boolean isSui = Sui.init(BuildConfig.APPLICATION_ID);
     public static boolean hasAPI;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Shizuku.addBinderReceivedListenerSticky(() -> {
-            hasAPI = true;
-            Log.e(TAG, "Shizuku Server 已就绪");
-        });
-        Shizuku.addBinderDeadListener(() -> {
-            hasAPI = false;
-            Log.e(TAG, "Shizuku Server 已就绪");
-        });
+//        Shizuku.addBinderReceivedListenerSticky(() -> {
+//            hasAPI = true;
+//            Log.e(TAG, "Shizuku Server 已就绪");
+//        });
+//        Shizuku.addBinderDeadListener(() -> {
+//            hasAPI = false;
+//            Log.e(TAG, "Shizuku Server 已就绪");
+//        });
         //LitePal.initialize(this);
         //InitApp();
         //InitActivityManager();

@@ -25,16 +25,23 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.CDK">
         <activity
-                android:name=".activity.ActivityTest"
+                android:label="悬浮窗测试"
+                android:name=".activity.WindowsTest"
+                android:exported="true">
+
+        </activity>
+
+        <activity
+                android:label="Shizuku测试"
+                android:name=".activity.ShizukuTest"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
         </activity>
 
-        <activity android:name=".activity.ActivityTest1" android:exported="true"/>
-        <activity android:name=".activity.ActivityTest2" android:exported="true"/>
         <service android:name=".service.ServiceTest"/>
 
 
@@ -46,19 +53,6 @@
                 android:exported="true"
                 android:multiprocess="false"
                 android:permission="android.permission.INTERACT_ACROSS_USERS_FULL"/>
-
-        <meta-data
-                android:name="xposedmodule"
-                android:value="true"/>
-        <meta-data
-                android:name="xposedscope"
-                android:resource="@array/xposedscope"/>
-        <meta-data
-                android:name="xposeddescription"
-                android:value="xp模块信息"/>
-        <meta-data
-                android:name="xposedminversion"
-                android:value="93"/>
     </application>
 
 </manifest>
