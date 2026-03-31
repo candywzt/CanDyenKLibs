@@ -1,4 +1,4 @@
-package com.candyenk.demo.activity;
+package candyenk.android.widget;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,21 +8,26 @@ import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.TextView;
+import candyenk.android.R;
 import candyenk.android.tools.V;
 import candyenk.android.utils.USys;
-import com.candyenk.demo.R;
+import candyenk.android.viewgroup.FloatLayout;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class WM {
-    private static final String TAG = WM.class.getSimpleName();
-    private static final Map<String, WM> map = new HashMap<>();
+/**
+ * 悬浮窗管理器组件
+ * 创建和使用悬浮窗控件
+ */
+public class FloatWindow {
+    private static final String TAG = FloatWindow.class.getSimpleName();
+    private static final Map<String, FloatWindow> map = new HashMap<>();
     private final Context context;
     private final WindowManager wm;
     private final WindowManager.LayoutParams lp;
     private final View.OnTouchListener minTouchL;//小窗口触摸事件
-    private final WV mainView;//主窗口状态控件
+    private final FloatLayout mainView;//主窗口状态控件
     private int[] px;//屏幕尺寸
     private View minView;//小窗口状态控件
     private int state;//状态0未打开1最小化2最大化
@@ -33,22 +38,22 @@ public class WM {
     /**
      * 一个 Context只能创建一个悬浮窗
      */
-    public static WM create(Context context) {
-        WM wm = map.get(context.getClass().getName());
+    public static FloatWindow create(Context context) {
+        FloatWindow wm = map.get(context.getClass().getName());
         if (wm != null) return wm.flushWindows();
-        wm = new WM(context);
+        wm = new FloatWindow(context);
         map.put(context.getClass().getName(), wm);
         return wm;
     }
 
-    private WM(Context context) {
+    private FloatWindow(Context context) {
         this.context = context;
         this.wm = USys.getSystemService(context, Context.WINDOW_SERVICE);
         this.lp = createWMLP();
         this.minTouchL = createMinTouchL();
         initContent();
         this.minView = defaultMinView();
-        this.mainView = new WV(context);
+        this.mainView = new FloatLayout(context);
         this.mainView.addView(defaultMainView());
         this.mainView.setOnWindowSizeChanged(this::changeWindowSize);
         this.mainView.setOnWindowPositionChanged(this::changeWindowPosition);
@@ -143,7 +148,7 @@ public class WM {
     @SuppressLint("ClickableViewAccessibility")
     private View defaultMinView() {
         ImageView iv = new ImageView(context);
-        V.FL(iv).sizeDP(10).drawable(R.drawable.icon).refresh();
+        V.FL(iv).sizeDP(10).drawable(R.drawable.bg_window_bar).refresh();
         iv.setOnClickListener(v -> showMainWindow());
         iv.setOnTouchListener(minTouchL);
         return iv;
@@ -169,7 +174,7 @@ public class WM {
      * 当需要视图刷新时调用
      * 例如屏幕显示比例变化时
      */
-    public WM flushWindows() {
+    public FloatWindow flushWindows() {
         float p1 = (float) lp.x / px[0];//原来的悬浮窗的轴心点的横向占比
         float p2 = (float) lp.y / px[1];//纵向占比
         this.px = getDisplayPixels(context);
@@ -182,7 +187,7 @@ public class WM {
     /**
      * 设置主界面视图
      */
-    public WM setContent(View view) {
+    public FloatWindow setContent(View view) {
         this.mainView.removeAllViews();
         this.mainView.addView(view);
         return this;
@@ -191,7 +196,7 @@ public class WM {
     /**
      * 设置主界面视图
      */
-    public WM setContent(int id) {
+    public FloatWindow setContent(int id) {
         return setContent(LayoutInflater.from(context).inflate(id, null));
     }
 
@@ -200,7 +205,7 @@ public class WM {
      * 不要设置OnTouchListener,会被顶掉替换成拖动,非要设置可在show后设置
      * 可设置OnClickListener,建议设置为展示主视图
      */
-    public WM setMinView(View view) {
+    public FloatWindow setMinView(View view) {
         this.minView = view;
         this.minView.setOnTouchListener(minTouchL);
         return this;
@@ -213,7 +218,7 @@ public class WM {
      * @param view
      * @return
      */
-    public WM setMainBarView(View view) {
+    public FloatWindow setMainBarView(View view) {
         //mainView.s
         return this;
     }
@@ -223,7 +228,7 @@ public class WM {
      *
      * @param size 不可为负
      */
-    public WM setMinViewSize(int size) {
+    public FloatWindow setMinViewSize(int size) {
         if (size > 0) this.minVSize = size;
         return this;
     }
@@ -237,7 +242,7 @@ public class WM {
      * @param width  宽度px
      * @param height 高度px
      */
-    public WM setMainViewSize(int width, int height) {
+    public FloatWindow setMainViewSize(int width, int height) {
         if (width > 0) this.mainWidth = width;
         if (height > 0) this.mainHeight = height;
         return this;
@@ -250,7 +255,7 @@ public class WM {
      * @param width  宽度px
      * @param height 高度px
      */
-    public WM setMainViewMinSize(int width, int height) {
+    public FloatWindow setMainViewMinSize(int width, int height) {
         if (width > 0) this.mainMinWidth = width;
         if (height > 0) this.mainMinHeight = height;
         return this;

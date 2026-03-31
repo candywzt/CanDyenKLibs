@@ -1,8 +1,7 @@
-package com.candyenk.demo.activity;
+package candyenk.android.viewgroup;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,8 +13,11 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.function.BiConsumer;
 
-public class WV extends MaterialCardView {
-    private static final String TAG = WV.class.getSimpleName();
+/**
+ * 悬浮窗控件
+ */
+public class FloatLayout extends MaterialCardView {
+    private static final String TAG = FloatLayout.class.getSimpleName();
     private final Context context;
     private final ImageView dxView;//大小调整按钮
     private final View bgView;//边框控件
@@ -49,15 +51,15 @@ public class WV extends MaterialCardView {
     /**********************************************************************************************/
     /*****************************************构造方法***********************************************/
     /**********************************************************************************************/
-    public WV(Context context) {
+    public FloatLayout(Context context) {
         this(context, null);
     }
 
-    public WV(Context context, AttributeSet attrs) {
+    public FloatLayout(Context context, AttributeSet attrs) {
         this(context, attrs, candyenk.android.R.style.Theme_CDK);
     }
 
-    public WV(Context context, AttributeSet attrs, int defStyleAttr) {
+    public FloatLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
         this.sizeChangeL = createSizeChangeL();
