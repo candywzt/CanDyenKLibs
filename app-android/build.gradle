@@ -1,27 +1,28 @@
-apply plugin: 'com.android.application'
-
+plugins {
+    id 'com.android.application'
+}
 android {
-    compileSdk 34
-    buildToolsVersion '34.0.0'
+    compileSdk 36
+    //buildToolsVersion '34.0.0'
     namespace 'com.candyenk.demo'
     defaultConfig {
         applicationId namespace
-        minSdk 26
-        targetSdkVersion 34
+        minSdk 30
+        targetSdk 36
         versionCode 1
         versionName "1.0"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
     buildFeatures {
         viewBinding true
@@ -43,14 +44,14 @@ dependencies {
     implementation fileTree(dir: 'lib', includes: ['*.aar'])
     implementation project(':libs-java')
     implementation project(':libs-android')
-    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:4.3'//隐藏API调用
+    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:6.1'//隐藏API调用
     implementation 'dev.rikka.shizuku:api:13.1.5' //Sui
     implementation 'dev.rikka.shizuku:provider:13.1.5' //Shizuku
     implementation 'org.litepal.guolindev:core:3.2.3'//LitePal
     implementation 'org.luaj:luaj-jse:3.0.1'//LuaJ
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.annotation:annotation:1.6.0'
-    implementation 'com.google.code.gson:gson:2.10.1'//Gson
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.annotation:annotation:1.9.1'
+    implementation 'com.google.code.gson:gson:2.13.2'//Gson
+    implementation 'com.google.android.material:material:1.10.0'
 
 }
