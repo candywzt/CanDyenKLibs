@@ -189,6 +189,13 @@ public class WM {
     }
 
     /**
+     * 设置主界面视图
+     */
+    public WM setContent(int id) {
+        return setContent(LayoutInflater.from(context).inflate(id, null));
+    }
+
+    /**
      * 设置小视图控件
      * 不要设置OnTouchListener,会被顶掉替换成拖动,非要设置可在show后设置
      * 可设置OnClickListener,建议设置为展示主视图
