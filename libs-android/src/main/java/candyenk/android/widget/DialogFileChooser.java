@@ -371,7 +371,7 @@ public class DialogFileChooser extends DialogBottomRV {
          * 更新Dialog数据
          */
         public void updateDialog(FileInfo rootInfo) {
-            if (rootInfo == null ||rootInfo.isCustom() ||  rootInfo.getFile() == null)
+            if (rootInfo == null ||rootInfo.isCustom())
                 throw new NullPointerException("File地址不能为不存在");
             this.rootInfo = rootInfo;
             infoList.clear();
