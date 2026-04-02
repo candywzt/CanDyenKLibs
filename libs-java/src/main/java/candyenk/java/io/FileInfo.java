@@ -22,13 +22,13 @@ public class FileInfo implements Comparable<FileInfo> {
     public static final FileInfo emptyInfo = custom("File No Found");//空文件夹
     public static Function<File, File> ffile = file -> file;//修改File的对象
     /*************************************成员变量**************************************************/
-    private File file;//文件源对象
-    private String name;//文件名
-    private String path;//文件路径
-    private long size;//文件大小
-    private long lmd;//文件最后修改时间
-    private boolean isHide;//是否是隐藏文件
-    private FileType type;//文件类型
+    protected File file;//文件源对象
+    protected String name;//文件名
+    protected String path;//文件路径
+    protected long size;//文件大小
+    protected long lmd;//文件最后修改时间
+    protected boolean isHide;//是否是隐藏文件
+    protected FileType type;//文件类型
     /**********************************************************************************************/
     /***********************************公共静态方法*************************************************/
     /**********************************************************************************************/
