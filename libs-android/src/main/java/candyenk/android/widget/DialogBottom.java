@@ -248,7 +248,7 @@ public class DialogBottom extends BottomSheetDialog {
     @SuppressLint("RtlHardcoded")
     private void initLayout() {
         dialogView = new MaterialCardView(viewContext);
-        V.LL(dialogView).size(-1, -2).backgroundRes(R.color.back_all).radiusDP(20).refresh();
+        V.LL(dialogView).size(-1, -2).backgroundRes(R.color.back_all).radiusDP(36).refresh();
 
         ImageView iv = new AppCompatImageView(viewContext);
         V.FL(iv).sizeDP(-1, 120).drawable(R.drawable.bg_transparent_gradual_change).scaleType(ImageView.ScaleType.FIT_XY).parent(dialogView);
