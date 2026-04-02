@@ -4,9 +4,10 @@ import candyenk.java.utils.UArrays;
 import candyenk.java.utils.UFile;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * 文件信息实体类(对File类的包装拓展)
@@ -161,13 +162,6 @@ public class FileInfo implements Comparable<FileInfo> {
         setCustom();
     }
 
-    /**
-     * 获取File对象
-     * 从null创建的自定义文件返回null
-     */
-    public File getFile() {
-        return file;
-    }
 
     /**
      * 获取文件名
@@ -205,6 +199,32 @@ public class FileInfo implements Comparable<FileInfo> {
      */
     public FileType getType() {
         return type;
+    }
+
+    /**
+     * 获取文件输入流(读)
+     */
+    public FileInputStream read() {
+        if (isDirectory()) return null;
+        try {
+            return new FileInputStream(file);
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+            return null;
+        }
+    }
+
+    /**
+     * 获取文件输入流(读)
+     */
+    public FileOutputStream write() {
+        if (isDirectory()) return null;
+        try {
+            return new FileOutputStream(file);
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+            return null;
+        }
     }
 
     /**
@@ -260,6 +280,4 @@ public class FileInfo implements Comparable<FileInfo> {
         infoMap.remove(this.path);
         customMap.put(this.path, this);
     }
-
-
 }
