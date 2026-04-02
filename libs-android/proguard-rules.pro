@@ -33,6 +33,7 @@
 # Parcelable序列化
 -keep class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;
+  *;
 }
 
 # R
@@ -48,4 +49,8 @@
 -keep public class * extends android.content.BroadcastReceiver
 -keep public class * extends android.content.ContentProvider
 
--keep class candyenk.android.** { *; }
+# CanDyenK
+-keep class candyenk.android.aidl.* { *; }
+-keep class candyenk.android.tools.* { *; }
+-keep class candyenk.android.utils.* { *; }
+-keep class candyenk.android.xposed.* { *; }
