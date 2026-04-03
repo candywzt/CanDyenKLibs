@@ -13,6 +13,18 @@ import java.io.File;
  */
 public class SuiFile extends ISuiFile.Stub {
     public static ISuiFile sui;
+    //只读模式
+    public static final int MODE_READ_ONLY = 0x10000000;
+    //只写模式
+    public static final int MODE_WRITE_ONLY = 0x20000000;
+    //读写模式
+    public static final int MODE_READ_WRITE = 0x30000000;
+    //只创建模式
+    public static final int MODE_CREATE = 0x08000000;
+    //清空模式
+    public static final int MODE_TRUNCATE = 0x4000000;
+    //追加模式
+    public static final int MODE_APPEND = 0x02000000;
 
     /**
      * 绑定Shizuku服务
@@ -44,12 +56,12 @@ public class SuiFile extends ISuiFile.Stub {
     }
 
     @Override
-    public ParcelFileDescriptor getFD(String path) throws RemoteException {
+    public ParcelFileDescriptor getFD(String path, int mode) throws RemoteException {
         if (path == null || path.isBlank()) return null;
         File file = new File(path);
         if (!file.exists()) return null;
         try {
-            return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_WRITE);
+            return ParcelFileDescriptor.open(file, mode);
         } catch (Exception e) {
             throw new RemoteException(e);
         }
@@ -64,15 +76,22 @@ public class SuiFile extends ISuiFile.Stub {
 
     @Override
     public boolean isDirectory(String path) throws RemoteException {
-        if (path == null || path.isBlank()) return false;//TODO:这里不合适
+        if (path == null || path.isBlank()) return false;
         File file = new File(path);
         return file.isDirectory();
     }
 
     @Override
     public long getLastModified(String path) throws RemoteException {
-        if (path == null || path.isBlank()) return 0;//TODO:这里不合适
+        if (path == null || path.isBlank()) return 0;
         File file = new File(path);
         return file.lastModified();
+    }
+
+    @Override
+    public long getSize(String path) throws RemoteException {
+        if (path == null || path.isBlank()) return 0;
+        File file = new File(path);
+        return file.length();
     }
 }

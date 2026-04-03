@@ -76,7 +76,7 @@ public class SuiFileInfo extends FileInfo {
         try {
             info.type = SuiFile.sui.isDirectory(path) ? FileType.DIRECTORY : FileType.type(info.name);
             if (!info.isDirectory()) {
-                info.fd = SuiFile.sui.getFD(path);
+                info.fd = SuiFile.sui.getFD(path, SuiFile.MODE_READ_ONLY);
                 //空指向文件
                 if (info.fd == null) return info;
                 info.size = info.fd.getStatSize();
