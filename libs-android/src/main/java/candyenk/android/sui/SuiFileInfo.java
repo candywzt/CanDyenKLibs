@@ -51,7 +51,6 @@ public class SuiFileInfo extends FileInfo {
                 if (info == null || (!showHide && info.isHide)) continue;
                 list.add(info);
             }
-            list.sort(null);
             return list.toArray(new FileInfo[0]);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -107,8 +106,6 @@ public class SuiFileInfo extends FileInfo {
         info.isHide = info.name.startsWith(".");
         try {
             info.type = sui.isDirectory(path) ? FileType.DIRECTORY : FileType.type(info.name);
-            Log.e("AAAAA", "读取:" + info);
-            Log.e("AAAAA", "读取类型:" + sui.isDirectory(path));
             if (!info.isDirectory()) {
                 info.fd = sui.getFD(path);
                 //空指向文件

@@ -215,7 +215,6 @@ public class FileInfo implements Comparable<FileInfo> {
             list.add(info);
 
         }
-        list.sort(null);
         return list.toArray(new FileInfo[0]);
     }
 
