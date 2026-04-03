@@ -25,12 +25,17 @@ public class TSui {
     }
 
     /**
-     * 检查是否有权限
-     *
-     * @return
+     * 检查是否有Shizuku权限
      */
-    public boolean hasPermission() {
+    public static boolean hasPermission() {
         return Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * 检查Shizuku权限是否为Root
+     */
+    public static boolean hasRoot() {
+        return Shizuku.getUid() == 0;
     }
 
     /**
