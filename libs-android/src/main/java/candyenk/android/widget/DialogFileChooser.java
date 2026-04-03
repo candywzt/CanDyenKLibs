@@ -69,13 +69,15 @@ public class DialogFileChooser extends DialogBottomRV {
 
     /**
      * 展示指定的自定义FileInfo对象组
+     * 如果只有一个FileInfo,则展示其子文件夹内容
      */
     public DialogFileChooser(Context context, FileInfo... infos) {
         super(context);
         this.adapter = new FileAdapter(listView);
         super.ok = checkSign();
         if (!ok) return;
-        updateDialog(infos);
+        if (infos.length == 1) updateDialog(infos[0]);
+        else updateDialog(infos);
         initAdapter();
     }
     /**********************************************************************************************/
@@ -264,20 +266,28 @@ public class DialogFileChooser extends DialogBottomRV {
                 FileInfo f = infoList.get(fh.getAdapterPosition());
                 View v = fh.itemView;
                 switch (fh.type) {
-                    case 0: emptyClick.accept(f, v); break;
-                    case 1: superClick.accept(f, v); break;
-                    case 2: folderClick.accept(f, v); break;
-                    case 3: fileClick.accept(f, v); break;
+                    case 0:
+                        emptyClick.accept(f, v); break;
+                    case 1:
+                        superClick.accept(f, v); break;
+                    case 2:
+                        folderClick.accept(f, v); break;
+                    case 3:
+                        fileClick.accept(f, v); break;
                 }
             });
             setOnLongClickListener(listView, (Consumer<FileHolder>) fh -> {
                 FileInfo f = infoList.get(fh.getAdapterPosition());
                 View v = fh.itemView;
                 switch (fh.type) {
-                    case 0: emptyLong.accept(f, v); break;
-                    case 1: superLong.accept(f, v); break;
-                    case 2: folderLong.accept(f, v); break;
-                    case 3: fileLong.accept(f, v); break;
+                    case 0:
+                        emptyLong.accept(f, v); break;
+                    case 1:
+                        superLong.accept(f, v); break;
+                    case 2:
+                        folderLong.accept(f, v); break;
+                    case 3:
+                        fileLong.accept(f, v); break;
                 }
             });
             return h;
@@ -371,7 +381,7 @@ public class DialogFileChooser extends DialogBottomRV {
          * 更新Dialog数据
          */
         public void updateDialog(FileInfo rootInfo) {
-            if (rootInfo == null ||rootInfo.isCustom())
+            if (rootInfo == null || rootInfo.isCustom())
                 throw new NullPointerException("File地址不能为不存在");
             this.rootInfo = rootInfo;
             infoList.clear();
@@ -431,13 +441,20 @@ public class DialogFileChooser extends DialogBottomRV {
          */
         private int iconType(FileInfo info) {
             switch (info.getType()) {
-                case DIRECTORY: return R.drawable.ic_file_folder;
-                case TEXT: return R.drawable.ic_file_document;
-                case IMAGE: return R.drawable.ic_file_picture;
-                case VIDEO: return R.drawable.ic_file_video;
-                case COMPRESS: return R.drawable.ic_file_zip;
-                case AUDIO: return R.drawable.ic_file_audio;
-                default: return R.drawable.ic_file_unknown;
+                case DIRECTORY:
+                    return R.drawable.ic_file_folder;
+                case TEXT:
+                    return R.drawable.ic_file_document;
+                case IMAGE:
+                    return R.drawable.ic_file_picture;
+                case VIDEO:
+                    return R.drawable.ic_file_video;
+                case COMPRESS:
+                    return R.drawable.ic_file_zip;
+                case AUDIO:
+                    return R.drawable.ic_file_audio;
+                default:
+                    return R.drawable.ic_file_unknown;
             }
         }
 
