@@ -9,8 +9,9 @@ import java.util.List;
 
 /**
  *
- * 通过IPC传输超长列表佣
+ * 通过IPC传输超长列表用
  * 因为系统自带的 ParceledListSlice 不可用
+ * 自带AIDL文件
  */
 public class BList<T extends Parcelable> implements Parcelable {
     private static final String TAG = "BList";
