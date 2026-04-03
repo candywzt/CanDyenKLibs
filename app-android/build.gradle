@@ -16,7 +16,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources false
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -28,6 +28,14 @@ android {
         viewBinding true
         buildConfig = true;
         aidl = true;
+    }
+    signingConfigs {
+        config {
+            v1SigningEnabled true
+            v2SigningEnabled true
+            enableV3Signing true
+            enableV4Signing true
+        }
     }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'

@@ -1,4 +1,4 @@
-package com.candyenk.demo;
+package com.candyenk.demo.service;
 
 import candyenk.android.aidl.BList;
 

@@ -4,7 +4,6 @@ import android.content.IntentFilter;
 import android.content.pm.IPackageManager;
 import android.content.pm.PackageInfo;
 import android.os.RemoteException;
-import com.candyenk.demo.IUserService;
 import rikka.shizuku.SystemServiceHelper;
 
 import java.util.List;

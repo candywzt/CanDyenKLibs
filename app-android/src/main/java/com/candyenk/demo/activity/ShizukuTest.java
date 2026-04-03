@@ -4,9 +4,12 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import candyenk.android.base.ActivityCDK;
+import candyenk.android.sui.SuiFileInfo;
 import candyenk.android.widget.DialogBottomText;
+import candyenk.android.widget.DialogFileChooser;
+import candyenk.java.io.IO;
 import com.candyenk.demo.BuildConfig;
-import com.candyenk.demo.IUserService;
+import com.candyenk.demo.service.IUserService;
 import candyenk.android.tools.TSui;
 import com.candyenk.demo.databinding.ShizukuTestBinding;
 import com.candyenk.demo.service.IUS;
@@ -17,7 +20,7 @@ public class ShizukuTest extends ActivityCDK.Default {
     private ShizukuTestBinding bd;
     private TSui sui;
     private IUserService ius;
-
+    private boolean fileBind;
 
     @Override
     protected void viewInit() {
@@ -47,17 +50,35 @@ public class ShizukuTest extends ActivityCDK.Default {
                     sb.append("\n:::::::::::::::::::::\n").append(longString);
                 }
                 DialogBottomText dbt = new DialogBottomText(this);
-               dbt.setTitle("执行结果:");
+                dbt.setTitle("执行结果:");
                 dbt.setContent(sb);
                 dbt.show();
-                //bd.tv.setText(sb);
             } catch (Exception e) {
-                Log.e("AAAAA", "异常:" + e.getMessage());
+                bd.tv.setText(bd.tv.getText() + "\n异常:" + e.getMessage());
+                Log.e("AAAAA", "异常", e);
             }
+        });
+        bd.b4.setOnClickListener(v -> {
+            if (!fileBind) {
+                SuiFileInfo.bindSui(BuildConfig.APPLICATION_ID, () -> {
+                    fileBind = true;
+                    openFileChoose();
+                }, () -> fileBind = false);
+            } else openFileChoose();
         });
 
     }
-
+    private void openFileChoose() {
+        DialogFileChooser dfc = new DialogFileChooser(this, SuiFileInfo.create("/sdcard"));
+        dfc.show();
+        dfc.setShowHideFile(true);
+        dfc.setOnFileClickListener((fileInfo, view) -> {
+            DialogBottomText dbt = new DialogBottomText(this);
+            dbt.setTitle("文件信息");
+            dbt.setContent(IO.readString(fileInfo.read()));
+            dbt.show();
+        });
+    }
     @Override
     protected void contentInit(Bundle save) {
         this.sui = TSui.create(BuildConfig.APPLICATION_ID, IUS.class)
@@ -68,6 +89,7 @@ public class ShizukuTest extends ActivityCDK.Default {
                         .version(BuildConfig.VERSION_CODE))
                 .connectListener((c, i) -> {
                     bd.b2.setText("已绑定");
+                    bd.tv.setText(bd.tv.getText() + "\n已绑定");
                     ius = IUserService.Stub.asInterface(i);
                 })
                 .disConnectListener(c -> {
@@ -79,6 +101,7 @@ public class ShizukuTest extends ActivityCDK.Default {
                 .build();
         if (sui.hasPermission()) {
             bd.b1.setText("已授权");
+            bd.tv.setText(bd.tv.getText() + "\n开始绑定");
             sui.bind();
         }
     }
