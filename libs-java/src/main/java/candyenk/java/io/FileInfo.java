@@ -7,10 +7,7 @@ import candyenk.java.utils.UString;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 文件信息实体类(对File类的包装拓展)
@@ -112,7 +109,7 @@ public class FileInfo implements Comparable<FileInfo> {
 
     @Override
     public String toString() {
-        return getPath();
+        return "FileInfo[" + path + ":" + type + "]";
     }
 /**********************************************************************************************/
 /*************************************公共方法**************************************************/
@@ -213,11 +210,12 @@ public class FileInfo implements Comparable<FileInfo> {
         if (showMove && file.getParent() != null) list.add(superInfo);
         if (UArrays.isEmpty(paths)) list.add(emptyInfo);
         else for (String s : paths) {
-            FileInfo info = FileInfo.create(new File(s));
+            FileInfo info = FileInfo.create(new File(file, s));
             if (info == null || (!showHide && info.isHide)) continue;
             list.add(info);
 
         }
+        list.sort(null);
         return list.toArray(new FileInfo[0]);
     }
 

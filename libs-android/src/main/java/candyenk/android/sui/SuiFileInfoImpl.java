@@ -4,7 +4,9 @@ import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import candyenk.android.aidl.ISuiFileInfo;
 
-import java.io.File; /**
+import java.io.File;
+
+/**
  * 具体实现类
  */
 public class SuiFileInfoImpl extends ISuiFileInfo.Stub {

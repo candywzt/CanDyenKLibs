@@ -1,6 +1,8 @@
 package candyenk.android.sui;
 
 import android.os.ParcelFileDescriptor;
+import android.os.RemoteException;
+import android.util.Log;
 import candyenk.android.aidl.ISuiFileInfo;
 import candyenk.android.tools.TSui;
 import candyenk.java.io.FileInfo;
@@ -10,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,13 +24,13 @@ public class SuiFileInfo extends FileInfo {
 
     @Override
     public FileInputStream read() {
-        if (this.isDirectory()) return null;
+        if (this.isDirectory() || fd == null) return null;
         return new FileInputStream(this.fd.getFileDescriptor());
     }
 
     @Override
     public FileOutputStream write() {
-        if (this.isDirectory()) return null;
+        if (this.isDirectory() || fd == null) return null;
         return new FileOutputStream(this.fd.getFileDescriptor());
     }
 
@@ -44,12 +47,12 @@ public class SuiFileInfo extends FileInfo {
             if (showMove && file.getParent() != null) list.add(superInfo);
             if (childs.length == 0) list.add(emptyInfo);
             else for (String child : childs) {
-                SuiFileInfo info = SuiFileInfo.create(child);
+                SuiFileInfo info = SuiFileInfo.create(new File(file, child).getAbsolutePath());
                 if (info == null || (!showHide && info.isHide)) continue;
                 list.add(info);
             }
+            list.sort(null);
             return list.toArray(new FileInfo[0]);
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -100,16 +103,23 @@ public class SuiFileInfo extends FileInfo {
         SuiFileInfo info = new SuiFileInfo();
         info.file = new File(path);
         info.name = info.file.getName();
-
-        info.path = path;
+        info.path = info.file.getAbsolutePath();
         info.isHide = info.name.startsWith(".");
         try {
-            info.fd = sui.getFD(path);
-            info.size = info.fd.getStatSize();
-            info.lmd = sui.getLastModified(path);
             info.type = sui.isDirectory(path) ? FileType.DIRECTORY : FileType.type(info.name);
-        } catch (Exception e) {
+            Log.e("AAAAA", "读取:" + info);
+            Log.e("AAAAA", "读取类型:" + sui.isDirectory(path));
+            if (!info.isDirectory()) {
+                info.fd = sui.getFD(path);
+                //空指向文件
+                if (info.fd == null) return info;
+                info.size = info.fd.getStatSize();
+                info.lmd = sui.getLastModified(path);
+            }
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
+        } catch (Exception e) {
+            return info;
         }
         return info;
     }
