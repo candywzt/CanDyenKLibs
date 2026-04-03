@@ -1,6 +1,6 @@
 package candyenk.android.aidl;
 
-interface ISuiFileInfo {
+interface ISuiFile {
     //void destroy() = 16777114; // 由 Shizuku 服务器定义的 Destroy 方法
     //void exit() = 1; // 用户定义的退出方法
     

@@ -2,9 +2,6 @@ package candyenk.android.sui;
 
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
-import android.util.Log;
-import candyenk.android.aidl.ISuiFileInfo;
-import candyenk.android.tools.TSui;
 import candyenk.java.io.FileInfo;
 import candyenk.java.io.FileType;
 
@@ -12,14 +9,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
 
 /**
  * Shizuku专用文件信息类
  */
 public class SuiFileInfo extends FileInfo {
-    private static ISuiFileInfo sui;
     private ParcelFileDescriptor fd;
 
     @Override
@@ -43,7 +39,7 @@ public class SuiFileInfo extends FileInfo {
     public FileInfo[] listInfos(boolean showHide, boolean showMove) {
         try {
             List<FileInfo> list = new ArrayList<>();
-            String[] childs = sui.getChilds(path);
+            String[] childs = SuiFile.sui.getChilds(path);
             if (showMove && file.getParent() != null) list.add(superInfo);
             if (childs.length == 0) list.add(emptyInfo);
             else for (String child : childs) {
@@ -64,40 +60,13 @@ public class SuiFileInfo extends FileInfo {
 
 
     /**
-     * 绑定Shizuku服务
-     * 记得申请权限
-     *
-     * @param applicationID   应用包名
-     * @param bindListener    绑定成功监听
-     * @param disBindListener 解除绑定监听
-     */
-    public static void bindSui(String applicationID, Runnable bindListener, Runnable disBindListener) {
-        TSui.create(applicationID, SuiFileInfoImpl.class)
-                .argsHandler(usa -> usa
-                        .daemon(false)
-                        .debuggable(false)
-                        .processNameSuffix("service")
-                        .version(1))
-                .connectListener((c, i) -> {
-                    SuiFileInfo.sui = SuiFileInfoImpl.asInterface(i);
-                    if (bindListener != null) bindListener.run();
-                })
-                .disConnectListener(c -> {
-                    SuiFileInfo.sui = null;
-                    if (disBindListener != null) disBindListener.run();
-                })
-                .build().bind();
-
-    }
-
-    /**
      * 创建SuiFileInfo对象
      * 可用来获取文件基本信息,和获取文件IO流
      *
      * @param path 文件路径
      */
     public static SuiFileInfo create(String path) {
-        if (sui == null) throw new RuntimeException("请先调用bindSui方法绑定Shizuku服务");
+        if (SuiFile.sui == null) throw new RuntimeException("请先调用SuiFIle.bindSui方法绑定Shizuku服务");
         if (path == null || path.isEmpty()) return null;
         SuiFileInfo info = new SuiFileInfo();
         info.file = new File(path);
@@ -105,13 +74,13 @@ public class SuiFileInfo extends FileInfo {
         info.path = info.file.getAbsolutePath();
         info.isHide = info.name.startsWith(".");
         try {
-            info.type = sui.isDirectory(path) ? FileType.DIRECTORY : FileType.type(info.name);
+            info.type = SuiFile.sui.isDirectory(path) ? FileType.DIRECTORY : FileType.type(info.name);
             if (!info.isDirectory()) {
-                info.fd = sui.getFD(path);
+                info.fd = SuiFile.sui.getFD(path);
                 //空指向文件
                 if (info.fd == null) return info;
                 info.size = info.fd.getStatSize();
-                info.lmd = sui.getLastModified(path);
+                info.lmd = SuiFile.sui.getLastModified(path);
             }
         } catch (RemoteException e) {
             throw new RuntimeException(e);
@@ -119,45 +88,6 @@ public class SuiFileInfo extends FileInfo {
             return info;
         }
         return info;
-    }
-
-    /**
-     * 具体实现类
-     */
-    public static class SuiFileInfoImpl extends ISuiFileInfo.Stub {
-
-        @Override
-        public ParcelFileDescriptor getFD(String path) throws RemoteException {
-            if (path == null || path.isBlank()) return null;
-            File file = new File(path);
-            if (!file.exists()) return null;
-            try {
-                return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_WRITE);
-            } catch (Exception e) {
-                throw new RemoteException(e);
-            }
-        }
-
-        @Override
-        public String[] getChilds(String path) throws RemoteException {
-            if (path == null || path.isBlank()) return new String[0];
-            File file = new File(path);
-            return file.list();
-        }
-
-        @Override
-        public boolean isDirectory(String path) throws RemoteException {
-            if (path == null || path.isBlank()) return false;//TODO:这里不合适
-            File file = new File(path);
-            return file.isDirectory();
-        }
-
-        @Override
-        public long getLastModified(String path) throws RemoteException {
-            if (path == null || path.isBlank()) return 0;//TODO:这里不合适
-            File file = new File(path);
-            return file.lastModified();
-        }
     }
 }
 
