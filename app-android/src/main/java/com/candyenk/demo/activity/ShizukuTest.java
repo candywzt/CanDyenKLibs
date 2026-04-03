@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import candyenk.android.base.ActivityCDK;
+import candyenk.android.sui.SuiFile;
 import candyenk.android.sui.SuiFileInfo;
 import candyenk.android.widget.DialogBottomText;
 import candyenk.android.widget.DialogFileChooser;
@@ -13,6 +14,7 @@ import com.candyenk.demo.service.IUserService;
 import candyenk.android.tools.TSui;
 import com.candyenk.demo.databinding.ShizukuTestBinding;
 import com.candyenk.demo.service.IUS;
+import rikka.shizuku.Shizuku;
 
 
 @SuppressLint("SetTextI18n")
@@ -20,22 +22,21 @@ public class ShizukuTest extends ActivityCDK.Default {
     private ShizukuTestBinding bd;
     private TSui sui;
     private IUserService ius;
-    private boolean fileBind;
 
     @Override
     protected void viewInit() {
-
+        Log.e("AAAAA", "UID:" + Shizuku.getUid());
         bd = ShizukuTestBinding.inflate(getLayoutInflater());
         setContentView(bd.getRoot());
 
         bd.b1.setOnClickListener(v -> {
-            if (sui.hasPermission()) return;
+            if (TSui.hasPermission()) return;
             TSui.ERR err = sui.request();
             if (err != null) bd.b1.setText(err.msg());
         });
         bd.b2.setOnClickListener(v -> {
             if (ius != null) return;
-            if (sui.hasPermission()) sui.bind();
+            if (TSui.hasPermission()) sui.bind();
         });
         bd.b3.setOnClickListener(v -> {
             try {
@@ -59,15 +60,11 @@ public class ShizukuTest extends ActivityCDK.Default {
             }
         });
         bd.b4.setOnClickListener(v -> {
-            if (!fileBind) {
-                SuiFileInfo.bindSui(BuildConfig.APPLICATION_ID, () -> {
-                    fileBind = true;
-                    openFileChoose();
-                }, () -> fileBind = false);
-            } else openFileChoose();
+            SuiFile.bindSui(BuildConfig.APPLICATION_ID, this::openFileChoose, null);
         });
 
     }
+
     private void openFileChoose() {
         DialogFileChooser dfc = new DialogFileChooser(this, SuiFileInfo.create("/sdcard"));
         dfc.show();
@@ -79,6 +76,7 @@ public class ShizukuTest extends ActivityCDK.Default {
             dbt.show();
         });
     }
+
     @Override
     protected void contentInit(Bundle save) {
         this.sui = TSui.create(BuildConfig.APPLICATION_ID, IUS.class)
@@ -99,7 +97,7 @@ public class ShizukuTest extends ActivityCDK.Default {
                 .successRequest(() -> bd.b1.setText("已授权"))
                 .failRequest(() -> bd.b1.setText("已拒绝"))
                 .build();
-        if (sui.hasPermission()) {
+        if (TSui.hasPermission()) {
             bd.b1.setText("已授权");
             bd.tv.setText(bd.tv.getText() + "\n开始绑定");
             sui.bind();

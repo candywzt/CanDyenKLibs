@@ -1,6 +1,11 @@
 package com.candyenk.demo.activity;
 
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.util.Log;
+import candyenk.android.aidl.ISuiPM;
 import candyenk.android.base.ActivityCDK;
+import candyenk.android.utils.USys;
 import candyenk.android.widget.FloatWindow;
 import com.candyenk.demo.R;
 import com.candyenk.demo.databinding.WindowsTestBinding;
@@ -8,6 +13,7 @@ import com.candyenk.demo.databinding.WindowsTestBinding;
 
 public class WindowsTest extends ActivityCDK.Default {
     private WindowsTestBinding bd;
+    private ISuiPM pm;
 
     @Override
     protected void viewInit() {
@@ -24,5 +30,37 @@ public class WindowsTest extends ActivityCDK.Default {
         bd.b3.setOnClickListener(v -> {
             fw.dismiss();
         });
+        bd.b4.setOnClickListener(v -> {
+            try {
+                if (pm == null) return;
+                PackageManager pm;
+                //pm.install
+                Log.e("AAAAA", "已授权");
+                Log.e("AAAAA", "监察权限:" + USys.checkPermission(this, "android.permission.SYSTEM_ALERT_WINDOW"));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+           
+        });
     }
+
+    @Override
+    protected void contentInit(Bundle save) {
+//        TSui.create(BuildConfig.APPLICATION_ID, ISuiPMImpl.class)
+//                .argsHandler(usa -> usa
+//                        .daemon(false)
+//                        .debuggable(BuildConfig.DEBUG)
+//                        .processNameSuffix("service")
+//                        .version(BuildConfig.VERSION_CODE))
+//                .connectListener((c, i) -> {
+//                    Log.e("AAAAA", "已绑定");
+//                    pm = ISuiPM.Stub.asInterface(i);
+//                })
+//                .disConnectListener(c -> {
+//                    pm = null;
+//                })
+//                .build().bind();
+    }
+
+    
 }
