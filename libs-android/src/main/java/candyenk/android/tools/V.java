@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.utils.ULay;
 import candyenk.java.utils.UArrays;
 import candyenk.java.utils.UReflex;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.ShapeAppearanceModel;
@@ -81,7 +82,7 @@ public class V<T extends View> {
      * 按ID获取
      */
     public static <T extends View> T findId(View v, @IdRes int id) {
-        return (T) v.findViewById(id);
+        return v.findViewById(id);
     }
 
     public static <T extends View> T findId(View v, @IdRes int id, Class<T> c) {
@@ -157,8 +158,7 @@ public class V<T extends View> {
      * 获取所有子控件
      */
     public static View[] getChilds(View v) {
-        if (v instanceof ViewGroup) {
-            ViewGroup vg = (ViewGroup) v;
+        if (v instanceof ViewGroup vg) {
             View[] vs = new View[vg.getChildCount()];
             for (int i = 0; i < vs.length; i++) {
                 vs[i] = vg.getChildAt(i);
@@ -216,7 +216,7 @@ public class V<T extends View> {
      * 添加控件
      */
     public static void addView(View v, View... c) {
-        if (v instanceof ViewGroup) for (View view : c) ((ViewGroup) v).addView(view);
+        if (v instanceof ViewGroup vg) for (View view : c) vg.addView(view);
     }
 
     /**
@@ -286,7 +286,7 @@ public class V<T extends View> {
      * 设置控件开关状态
      */
     public static void check(boolean c, View... v) {
-        for (View view : v) if (view instanceof Checkable) ((Checkable) view).setChecked(c);
+        for (View view : v) if (view instanceof Checkable ca) ca.setChecked(c);
     }
 
     /**
@@ -504,8 +504,7 @@ public class V<T extends View> {
      */
     public V<T> margin(int s, int t, int e, int b) {
         if (lp == null) throw new NullPointerException("控件没有LayoutParams,请先创建");
-        if (lp instanceof ViewGroup.MarginLayoutParams) {
-            ViewGroup.MarginLayoutParams lp1 = (ViewGroup.MarginLayoutParams) lp;
+        if (lp instanceof ViewGroup.MarginLayoutParams lp1) {
             s = s == UN ? lp1.getMarginStart() : s;
             t = t == UN ? lp1.topMargin : t;
             e = e == UN ? lp1.rightMargin : e;
@@ -535,7 +534,7 @@ public class V<T extends View> {
      */
     public V<T> weight(int w) {
         if (lp == null) throw new NullPointerException("控件没有LayoutParams,请先创建");
-        if (lp instanceof LinearLayout.LayoutParams) ((LinearLayout.LayoutParams) lp).weight = (float) w;
+        if (lp instanceof LinearLayout.LayoutParams lp1) lp1.weight = (float) w;
         return this;
     }
 
@@ -544,8 +543,8 @@ public class V<T extends View> {
      */
     public V<T> lGravity(int g) {
         if (lp == null) throw new NullPointerException("控件没有LayoutParams,请先创建");
-        if (lp instanceof LinearLayout.LayoutParams) ((LinearLayout.LayoutParams) lp).gravity = g;
-        else if (lp instanceof FrameLayout.LayoutParams) ((FrameLayout.LayoutParams) lp).gravity = g;
+        if (lp instanceof LinearLayout.LayoutParams lp1) lp1.gravity = g;
+        else if (lp instanceof FrameLayout.LayoutParams lp1) lp1.gravity = g;
         return this;
     }
 
@@ -575,8 +574,8 @@ public class V<T extends View> {
         t = t == UN ? view.getPaddingTop() : t;
         e = e == UN ? view.getPaddingRight() : e;
         b = b == UN ? view.getPaddingBottom() : b;
-        if (view instanceof CardView) {
-            ((CardView) view).setContentPadding(s, t, e, b);
+        if (view instanceof CardView cv) {
+            cv.setContentPadding(s, t, e, b);
         } else view.setPaddingRelative(s, t, e, b);
         return this;
     }
@@ -601,15 +600,15 @@ public class V<T extends View> {
      * 无需刷新
      */
     public V<T> ele(float e) {
-        if (view instanceof CardView) {
-            ((CardView) view).setCardElevation(e);
-            ((CardView) view).setMaxCardElevation(e);
+        if (view instanceof CardView cv) {
+           cv.setCardElevation(e);
+           cv.setMaxCardElevation(e);
         } else view.setElevation(e);
         return this;
     }
 
     public V<T> eleDP(int e) {
-        return ele((float) DP(e));
+        return ele(DP(e));
     }
 
     /**
@@ -618,23 +617,44 @@ public class V<T extends View> {
      * 无需刷新
      */
     public V<T> radius(float r) {
-        if (view instanceof CardView) ((CardView) view).setRadius(r);
+        if (view instanceof CardView v) v.setRadius(r);
         else if (view instanceof ShapeableImageView) {
-            ((ShapeableImageView) view).setShapeAppearanceModel(ShapeAppearanceModel
-                    .builder()
-                    .setTopLeftCorner(CornerFamily.ROUNDED, r)
-                    .setTopRightCorner(CornerFamily.ROUNDED, r)
-                    .setBottomLeftCorner(CornerFamily.ROUNDED, r)
-                    .setBottomRightCorner(CornerFamily.ROUNDED, r)
-                    .build());
+            return radius(r,r,r,r);
         } else L.e(TAG, "控件:" + view + "无法设置Radius");
+        return this;
+    }
+    /**
+     * 设置控件圆角Radius
+     * 仅支持ShapeableImageView
+     * 无需刷新
+     */
+    public V<T> radius(float tl,float tr,float bl,float br) {
+        if (view instanceof MaterialCardView v) 
+            v.setShapeAppearanceModel(ShapeAppearanceModel
+                .builder()
+                .setTopLeftCorner(CornerFamily.ROUNDED, tl)
+                .setTopRightCorner(CornerFamily.ROUNDED, tr)
+                .setBottomLeftCorner(CornerFamily.ROUNDED, bl)
+                .setBottomRightCorner(CornerFamily.ROUNDED, br)
+                .build());
+        else if (view instanceof ShapeableImageView v) 
+           v.setShapeAppearanceModel(ShapeAppearanceModel
+                    .builder()
+                    .setTopLeftCorner(CornerFamily.ROUNDED, tl)
+                    .setTopRightCorner(CornerFamily.ROUNDED, tr)
+                    .setBottomLeftCorner(CornerFamily.ROUNDED, bl)
+                    .setBottomRightCorner(CornerFamily.ROUNDED, br)
+                    .build());
+        else L.e(TAG, "控件:" + view + "无法设置独立Radius");
         return this;
     }
 
     public V<T> radiusDP(int r) {
-        return radius((float) DP(r));
+        return radius(DP(r));
     }
-
+    public V<T> radiusDP(int tl,int tr,int bl,int br) {
+        return radius(DP(tl),DP(tr),DP(bl),DP(br));
+    }
     /**
      * 设置控件显隐
      * 无需刷新
@@ -669,7 +689,7 @@ public class V<T extends View> {
     }
 
     public V<T> check(boolean checked) {
-        if (view instanceof Checkable) ((Checkable) view).setChecked(checked);
+        if (view instanceof Checkable c) c.setChecked(checked);
         else L.e(TAG, "控件:" + view + "不允许使用setChecked(boolean)");
         return this;
     }
@@ -690,7 +710,7 @@ public class V<T extends View> {
      * 设置控件背景色
      */
     public V<T> background(@ColorInt int color) {
-        if (view instanceof CardView) ((CardView) view).setCardBackgroundColor(color);
+        if (view instanceof CardView c) c.setCardBackgroundColor(color);
         else view.setBackgroundColor(color);
         return this;
     }
