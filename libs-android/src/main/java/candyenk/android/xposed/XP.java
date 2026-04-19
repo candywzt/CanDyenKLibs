@@ -263,16 +263,7 @@ public class XP {
         public <T> T invoke(Object o, Object... a) {
             return null;
         }
-
-        /**
-         * @deprecated 禁止使用
-         */
-        @Deprecated
-        @Override
-        public <T> T invoke(Object o, Class<T> r, Object... a) {
-            return null;
-        }
-
+        
 
         /**
          * 获取方法集合

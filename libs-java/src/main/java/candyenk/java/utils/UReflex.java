@@ -1,13 +1,10 @@
 package candyenk.java.utils;
 
 
-import candyenk.java.tools.T;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -16,40 +13,28 @@ import java.util.function.Predicate;
 public class UReflex {
     /**
      * 查找方法
-     * 不会报错
-     * 没找到就是null
+     * 报错则返回null
      */
-    public static Class<?> fc(String n) {
+    public static Class<?> fc(String className) {
         try {
-            return Class.forName(n);
+            return Class.forName(className);
         } catch (Throwable e) {
-            return null;
+            throw null;
         }
     }
-
+    
     /**
      * 查找方法
-     * 不会报错
-     * 没找到就是null
+     * 报错返回null
      */
-    public static Class<?> fc(ClassLoader cl, String n) {
+    public static Class<?> fc(ClassLoader cl, String className) {
         try {
-            return Class.forName(n, true, cl);
+            return Class.forName(className, true, cl);
         } catch (Throwable e) {
             return null;
         }
     }
-
-    /**
-     * 查找构造方法
-     *
-     * @param o 构造方法所在的对象
-     * @param c 构造方法参数
-     */
-    public static <T> UC<T> findC(Object o, Class<?>... c) {
-        return findC((T) o.getClass(), c);
-    }
-
+    
     /**
      * 查找构造方法
      *
@@ -57,31 +42,17 @@ public class UReflex {
      * @param c  构造方法参数
      */
     public static <T> UC<T> findC(Class<T> oc, Class<?>... c) {
-        Constructor<T> cc = null;
-        Throwable e = null;
         try {
-            cc = oc.getConstructor(c);
-        } catch (Throwable e1) {
+            return new UC<>(oc.getConstructor(c));
+        } catch (Throwable e) {
             try {
-                cc = oc.getDeclaredConstructor(c);
-            } catch (Throwable e2) {
-                e = e2;
+                return new UC<>(oc.getDeclaredConstructor(c));
+            } catch (Throwable e1) {
+                return new UC<>(e1);
             }
         }
-        return new UC<>(e == null ? cc : null).setE(e);
     }
-
-    /**
-     * 查找本类方法
-     *
-     * @param o    方法所在的对象
-     * @param name 方法名
-     * @param c    方法参数类型集合
-     */
-    public static UM findM(Object o, String name, Class<?>... c) {
-        return findM(o.getClass(), name, c);
-    }
-
+    
     /**
      * 查找本类方法
      *
@@ -90,31 +61,18 @@ public class UReflex {
      * @param c    方法参数类型集合
      */
     public static UM findM(Class<?> oc, String name, Class<?>... c) {
-        if (UString.isEmpty(name)) return new UM(null).setE(new NullPointerException("findM(方法名为空)"));
-        Method m = null;
-        Throwable e = null;
+        if (UString.isEmpty(name)) return new UM(new NullPointerException("findM(方法名为空)"));
         try {
-            m = oc.getDeclaredMethod(name, c);
-        } catch (Throwable e1) {
+            return new UM(oc.getDeclaredMethod(name, c));
+        } catch (Throwable e) {
             try {
-                m = oc.getMethod(name, c);
-            } catch (Throwable e2) {
-                e = e2;
+                return new UM(oc.getMethod(name, c));
+            } catch (Throwable e1) {
+                return new UM(e1);
             }
         }
-        return new UM(e == null ? m : null).setE(e);
     }
-
-    /**
-     * 查找字段
-     *
-     * @param o    字段所在的对象
-     * @param name 字段名
-     */
-    public static UF findF(Object o, String name) {
-        return findF(o.getClass(), name);
-    }
-
+    
     /**
      * 查找字段
      *
@@ -122,33 +80,18 @@ public class UReflex {
      * @param name 字段名
      */
     public static UF findF(Class<?> oc, String name) {
-        if (UString.isEmpty(name)) return new UF(null).setE(new NullPointerException("findM(方法名为空)"));
-        Field f = null;
-        Throwable e = null;
+        if (UString.isEmpty(name)) return new UF(new NullPointerException("findM(方法名为空)"));
         try {
-            f = oc.getDeclaredField(name);
-        } catch (Throwable e1) {
+            return new UF(oc.getDeclaredField(name));
+        } catch (Throwable e) {
             try {
-                f = oc.getField(name);
-            } catch (Throwable e2) {
-                e = e2;
+                return new UF(oc.getField(name));
+            } catch (Throwable e1) {
+                return new UF(e1);
             }
         }
-        return new UF(e == null ? f : null).setE(e);
     }
-
-    /**
-     * 筛选构造方法
-     * 返回不可变Set
-     *
-     * @param o    构造方法所在的对象
-     * @param p    是否包括未声明的构造方法
-     * @param pred 筛选条件,返回true加入清单
-     */
-    public static <T> Set<UC<T>> findCS(T o, boolean p, Predicate<Constructor<?>> pred) {
-        return findCS((Class<T>) o.getClass(), p, pred);
-    }
-
+    
     /**
      * 筛选构造方法
      * 返回不可变Set
@@ -159,23 +102,12 @@ public class UReflex {
      */
     public static <T> Set<UC<T>> findCS(Class<T> oc, boolean p, Predicate<Constructor<?>> pred) {
         Set<UC<T>> ul = new HashSet<>();
-        Constructor<T>[] cs = UArrays.merge((Constructor<T>[]) oc.getDeclaredConstructors(), p ? (Constructor<T>[]) oc.getConstructors() : null);
+        Constructor<T>[] cs = UArrays.merge((Constructor<T>[]) oc.getDeclaredConstructors(), p ?
+                (Constructor<T>[]) oc.getConstructors() : null);
         if (cs != null) for (Constructor<T> c : cs) if (pred == null || pred.test(c)) ul.add(new UC<>(c));
         return Collections.unmodifiableSet(ul);
     }
-
-    /**
-     * 筛选方法
-     * 返回不可变Set
-     *
-     * @param o    方法所在的对象
-     * @param p    是否包括父类public方法
-     * @param pred 筛选条件,返回true加入清单
-     */
-    public static Set<UM> findMS(Object o, boolean p, Predicate<Method> pred) {
-        return findMS(o.getClass(), p, pred);
-    }
-
+    
     /**
      * 筛选方法
      * 返回不可变Set
@@ -190,19 +122,7 @@ public class UReflex {
         for (Method m : ms) if (pred == null || pred.test(m)) ul.add(new UM(m));
         return Collections.unmodifiableSet(ul);
     }
-
-    /**
-     * 筛选字段
-     * 返回不可变Set
-     *
-     * @param o    字段所在的对象
-     * @param p    是否包括父类public方法
-     * @param pred 筛选条件,返回true加入清单
-     */
-    public static Set<UF> findFS(Object o, boolean p, Predicate<Field> pred) {
-        return findFS(o.getClass(), p, pred);
-    }
-
+    
     /**
      * 筛选字段
      * 返回不可变Set
@@ -214,19 +134,11 @@ public class UReflex {
     public static Set<UF> findFS(Class<?> oc, boolean p, Predicate<Field> pred) {
         Set<UF> ul = new HashSet<>();
         Field[] fs = UArrays.merge(oc.getDeclaredFields(), p ? oc.getFields() : null);
+        if (fs == null) return Collections.emptySet();
         for (Field f : fs) if (pred == null || pred.test(f)) ul.add(new UF(f));
         return Collections.unmodifiableSet(ul);
     }
-
-    /**
-     * 获取对象继承链
-     * 返回不可变List
-     * 包括自身和Object
-     */
-    public static List<Class<?>> inheritChain(Object o) {
-        return inheritChain(o.getClass());
-    }
-
+    
     /**
      * 获取类继承链
      * 返回不可变List
@@ -241,56 +153,57 @@ public class UReflex {
         while ((c = c.getSuperclass()) != null) list.add(c);
         return Collections.unmodifiableList(list);
     }
-
+    
     /**
-     * 一个小小的带实例Method包装类
+     * 构造方法包装
      * 用来连调使用
      */
     public static class UC<T> {
-        private final Constructor<T> c;//Find到的方法
-        private Throwable e;//c为空时=Find期间的异常,c不为空时=newInstance期间的异常(没有发生异常那就是空)
-
+        private Constructor<T> c;
+        private Throwable e;
+        
         public UC(Constructor<T> c) {
             this.c = c;
         }
-
+        
+        public UC(Throwable e) {
+            this.e = e;
+        }
+        
         /*** 设置当前异常 ***/
         protected UC<T> setE(Throwable e) {
             this.e = e;
             return this;
         }
-
+        
         /**
          * 获取当前位置的异常
          */
         public Throwable getE() {
-            if (e == null) return null;
-            else if (e.getCause() == null) return e;
-            else return e.getCause();
+            return e;
         }
-
+        
         /**
          * 获取当前构造方法
          */
         public Constructor<T> getC() {
             return c;
         }
-
+        
         /**
          * 构建新的实例
-         * 异常存在时方法无效且返回null
+         * 链条中有异常则抛出
          */
         public T newInstance(Object... a) {
-            if (c == null || e != null) return null;
+            if (e != null) throw new RuntimeException(e);
             try {
                 c.setAccessible(true);
                 return c.newInstance(a);
             } catch (Throwable e) {
-                this.e = e;
-                return null;
+                throw new RuntimeException(e);
             }
         }
-
+        
         /**
          * 是不是空方法
          */
@@ -298,26 +211,30 @@ public class UReflex {
             return c == null;
         }
     }
-
+    
     /**
-     * 一个小小的带实例Method包装类
+     * 方法包装
      * 用来连调使用
      */
     public static class UM {
-        private final Method m;//Find到的方法
-        private Throwable e;//m为空时=Find期间的异常,m不为空时=invoke期间的异常(没有发生异常那就是空)
-
+        private Method m;
+        private Throwable e;
+        
         protected UM(Method m) {
             this.m = m;
         }
-
-
+        
+        protected UM(Throwable e) {
+            this.e = e;
+        }
+        
+        
         /*** 设置当前异常 ***/
         protected UM setE(Throwable e) {
             this.e = e;
             return this;
         }
-
+        
         /**
          * 获取当前为止的异常
          */
@@ -326,46 +243,28 @@ public class UReflex {
             else if (e.getCause() == null) return e;
             else return e.getCause();
         }
-
+        
         /**
          * 获取当前方法
          */
         public Method getM() {
             return m;
         }
-
+        
         /**
          * 执行无返回值方法
          * 异常存在时方法无效且返回null
          */
         public <T> T invoke(Object o, Object... a) {
-            if (m == null || o == null || e != null) return null;
+            if (e != null) throw new RuntimeException(e);
             try {
                 m.setAccessible(true);
                 return (T) m.invoke(o, a);
             } catch (Throwable e) {
-                e.printStackTrace(System.err);
-                this.e = e;
-                return null;
+                throw new RuntimeException(e);
             }
         }
-
-        /**
-         * 执行有返回值方法
-         * 异常存在时方法无效且返回null
-         */
-        public <T> T invoke(Object o, Class<T> r, Object... a) {
-            if (m == null || o == null || e != null) return null;
-            try {
-                m.setAccessible(true);
-                return (T) m.invoke(o, a);
-            } catch (Throwable e) {
-                e.printStackTrace(System.err);
-                this.e = e;
-                return null;
-            }
-        }
-
+        
         /**
          * 是不是空方法
          */
@@ -373,25 +272,29 @@ public class UReflex {
             return m == null;
         }
     }
-
+    
     /**
-     * 一个小小的带实例Field包装类
+     * 字符按包装
      * 用来连调使用
      */
     public static class UF {
-        private final Field f;//Find到的字段
-        private Throwable e;//f为空时=Find期间的异常,f不为空时=getset期间的异常(没有发生异常那就是空)
-
+        private Field f;
+        private Throwable e;
+        
         protected UF(Field f) {
             this.f = f;
         }
-
+        
+        protected UF(Throwable e) {
+            this.e = e;
+        }
+        
         /*** 设置当前异常 ***/
         protected UF setE(Throwable e) {
             this.e = e;
             return this;
         }
-
+        
         /**
          * 获取当前为止的异常
          */
@@ -400,59 +303,65 @@ public class UReflex {
             else if (e.getCause() == null) return e;
             else return e.getCause();
         }
-
+        
         /**
          * 获取当前字段
          */
         public Field getF() {
             return f;
         }
-
+        
         /**
          * 修改字段值
          * 异常存在时方法无效
          */
         public void set(Object o, Object a) {
-            if (f == null || o == null || e != null) return;
+            if (e != null) throw new RuntimeException(e);
             try {
                 f.setAccessible(true);
                 f.set(o, a);
             } catch (Throwable e) {
-                e.printStackTrace(System.err);
-                this.e = e;
+                throw new RuntimeException(e);
             }
         }
-
+        
         /**
          * 获取字段值
          * 异常存在时返回null
          */
         public <T> T get(Object o) {
-            if (f == null || o == null || e != null) return null;
+            if (e != null) throw new RuntimeException(e);
             try {
                 f.setAccessible(true);
                 return (T) f.get(o);
             } catch (Throwable e) {
-                e.printStackTrace(System.err);
-                this.e = e;
-                return null;
+                throw new RuntimeException(e);
             }
         }
-
+        
+        /**
+         * 获取字段值(具体类型)
+         */
+        public <T> T get(Object o, Class<T> c) {
+            return get(o);
+        }
+        
         /**
          * 获取字段名称
          */
         public String getName() {
-            return f == null ? "" : f.getName();
+            if (e != null) throw new RuntimeException(e);
+            return f == null ? null : f.getName();
         }
-
+        
         /**
          * 获取字段类型
          */
         public Class<?> getType() {
-            return f == null ? Object.class : f.getType();
+            if (e != null) throw new RuntimeException(e);
+            return f == null ? null : f.getType();
         }
-
+        
         /**
          * 判断该字段是不是指定类或指定类的子类
          *
@@ -462,20 +371,11 @@ public class UReflex {
             if (f == null) return false;
             return c.isAssignableFrom(f.getType());
         }
-
-        /**
-         * 获取字段值(具体类型)
-         */
-        public <T> T get(Object o, Class<T> c) {
-            return (T) get(o);
-        }
-
+        
+        
         @Override
         public String toString() {
-            return "UF{" +
-                    "f=" + f +
-                    ", e=" + e +
-                    '}';
+            return "UF{" + "f=" + f + ", e=" + e + '}';
         }
     }
 }
