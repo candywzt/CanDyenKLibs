@@ -144,7 +144,7 @@ public class ProgressBarCDK extends ProgressBar {
         if (bg instanceof ColorDrawable) {
             int color = ((ColorDrawable) bg).getColor();
             this.bgGD.setColor(color);
-        } else if (USDK.Q() && bg instanceof ColorStateListDrawable) {
+        } else if (bg instanceof ColorStateListDrawable) {
             ColorStateList color = ((ColorStateListDrawable) bg).getColorStateList();
             this.bgGD.setColor(color);
         } else return;

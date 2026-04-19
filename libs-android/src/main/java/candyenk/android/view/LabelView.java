@@ -93,7 +93,7 @@ public class LabelView extends MaterialTextView {
             if (bg instanceof ColorDrawable) {
                 int color = ((ColorDrawable) bg).getColor();
                 this.drawable.setColor(color);
-            } else if (USDK.Q() && bg instanceof ColorStateListDrawable) {
+            } else if ( bg instanceof ColorStateListDrawable) {
                 ColorStateList csl = ((ColorStateListDrawable) bg).getColorStateList();
                 this.drawable.setColor(csl);
             }
@@ -126,7 +126,7 @@ public class LabelView extends MaterialTextView {
             int index = ta.getInt(R.styleable.CDKLabelView_colorIndex, -1);
             ta.recycle();
             setBackground(bg);
-            if (USDK.Q() && tc instanceof ColorStateListDrawable)
+            if (tc instanceof ColorStateListDrawable)
                 setTextColor(((ColorStateListDrawable) tc).getColorStateList());
             if (rc) randomColor();
             setColorIndex(index);

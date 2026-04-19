@@ -79,9 +79,7 @@ public class DialogBottom extends BottomSheetDialog {
         this.ok = checkSign();
         if (!ok) L.e(TAG, "弹窗创建重复");
         if (ok) initLayout();
-        if (USDK.O() && context instanceof Service) {//悬浮窗模式(API26)
-            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
-        }
+        getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
     }
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
