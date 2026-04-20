@@ -14,8 +14,8 @@
     <uses-permission
             android:name="android.permission.QUERY_ALL_PACKAGES"
             tools:ignore="QueryAllPackagesPermission"/>
-
-
+    
+    
     <application
             android:name=".MyApp"
             android:allowBackup="true"
@@ -32,13 +32,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
+        
         <activity
                 android:label="悬浮窗测试"
                 android:name=".activity.WindowsTest"
                 android:exported="true">
         </activity>
-
+        
         <activity
                 android:label="Shizuku测试"
                 android:name=".activity.ShizukuTest"
@@ -49,8 +49,10 @@
                 android:name=".activity.NVTest"
                 android:exported="true">
         </activity>
-
-
+        
+        <provider
+                android:authorities="com.candyenk.demo"
+                android:name="com.candyenk.demo.service.CCPP"/>
         <!--Shizuku服务-->
         <provider
                 android:name="rikka.shizuku.ShizukuProvider"
