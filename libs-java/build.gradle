@@ -3,10 +3,10 @@ plugins {
     id 'java-library'
 }
 java {
-    sourceCompatibility JavaVersion.VERSION_21
-    targetCompatibility JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
-version('0.1')
+version = '0.1'
 
 dependencies {
     implementation 'com.google.code.gson:gson:2.13.2'
@@ -14,7 +14,7 @@ dependencies {
 }
 //打包源码Jar
 tasks.register('sourcesJar', Jar) {
-    zip64(true)
+    zip64 = true
     //添加Java源码
     from(sourceSets.main.allSource)
     //插入依赖包源码
@@ -47,17 +47,17 @@ tasks.register('sourcesJar', Jar) {
         attributes('Manifest-Version': version)
     }
     //文件名-头
-    archiveBaseName.set "CDKLib_Java_Sources"
+    archiveBaseName = "CDKLibJava"
     //文件名-版本
-    archiveAppendix.set "Sources"
+    archiveAppendix = "sources"
 }
 
 //打包Jar
 jar {
     //支持大型压缩包
-    zip64 true
+    zip64 = true
     //文件冲突策略
-    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     //插入依赖包Class
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     //清单文件写入
@@ -67,5 +67,5 @@ jar {
         attributes('Main-Class': 'candyenk.java.Test')
     }
     //文件名-头
-    archiveBaseName.set "CDKLib_Java"
+    archiveBaseName = "CDKLib_Java"
 }
