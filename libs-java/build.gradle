@@ -3,8 +3,8 @@ plugins {
     id 'java-library'
 }
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility JavaVersion.VERSION_21
+    targetCompatibility JavaVersion.VERSION_21
 }
 version('0.1')
 
@@ -12,26 +12,60 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.13.2'
     api fileTree(dir: 'libs', includes: ['*jar'])
 }
-
+//打包源码Jar
 tasks.register('sourcesJar', Jar) {
-    //classifier = 'sources'
-    from sourceSets.main.allSource
-    zip64 true
-    archiveClassifier.set('')//分类?
-    archiveBaseName.set('sources')//指定jar名字
-    archiveVersion.set('')//版本
+    zip64(true)
+    //添加Java源码
+    from(sourceSets.main.allSource)
+    //插入依赖包源码
+    configurations.runtimeClasspath.each { f ->
+        def parentDir = f.parentFile.parentFile
+        def sourceJarFound = false
+        parentDir.eachFileRecurse {
+            if (it.isDirectory()) {
+                def sourceJar = new File(it, f.name.replace('.jar', '-sources.jar'))
+                if (sourceJar.exists()) {
+                    from(zipTree(sourceJar)) {
+                        exclude('module-info.java')
+                    }
+                    sourceJarFound = true
+                }
+            }
+
+        }
+        if (!sourceJarFound) {
+            if (f.isDirectory()) {
+                from f
+            } else {
+                from zipTree(f)
+            }
+        }
+    }
+    //清单文件写入
+    manifest {
+        attributes('Implementation-Title': 'CDKLibs-Java')
+        attributes('Manifest-Version': version)
+    }
+    //文件名-头
+    archiveBaseName.set "CDKLib_Java_Sources"
+    //文件名-版本
+    archiveAppendix.set "Sources"
 }
 
+//打包Jar
 jar {
+    //支持大型压缩包
+    zip64 true
+    //文件冲突策略
     duplicatesStrategy DuplicatesStrategy.EXCLUDE
-    //from {configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }}
+    //插入依赖包Class
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    //清单文件写入
     manifest {
         attributes('Implementation-Title': 'CDKLibs-Java')
         attributes('Manifest-Version': '1.0')
         attributes('Main-Class': 'candyenk.java.Test')
     }
-    zip64 true
-    archiveClassifier.set('')//分类?
-    archiveBaseName.set('CDKLibs-java')//指定jar名字
-    archiveVersion.set('')//版本
+    //文件名-头
+    archiveBaseName.set "CDKLib_Java"
 }
