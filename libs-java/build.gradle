@@ -9,7 +9,7 @@ java {
 version = '0.1'
 
 dependencies {
-    implementation 'com.google.code.gson:gson:2.13.2'
+    api 'com.google.code.gson:gson:2.13.2'
     api fileTree(dir: 'libs', includes: ['*jar'])
 }
 //打包源码Jar
@@ -56,7 +56,7 @@ tasks.register('sourcesJar', Jar) {
 jar {
     //支持大型压缩包
     zip64 = true
-    //文件冲突策略
+    //文件冲突策略，保留首个
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     //插入依赖包Class
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }

@@ -7,8 +7,10 @@ import android.content.Context;
 import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.ArrayMap;
+import androidx.annotation.RequiresApi;
 
 import java.util.Map;
 
@@ -132,10 +134,13 @@ public abstract class CP extends ContentProvider {
         
         /**
          * 获取数据集
+         * TODO：仅支持API33？？？
          *
          * @param key 标识符
          * @return 数据集
          */
+        
+        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
         public ContentValues get(String key) {
             try (Cursor c = cr.query(uri, null, key, null, null)) {
                 if (c != null && c.moveToFirst()) return c.getExtras().getParcelable("data", ContentValues.class);

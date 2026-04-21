@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.library'
 }
-
 version = 0.1
 
 android {
@@ -17,7 +16,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
-        viewBinding = true
+        viewBinding = false
         buildConfig = true
         aidl = true
     }
@@ -27,82 +26,56 @@ android {
         }
     }
 
-    lint {
-        abortOnError = false
-        checkReleaseBuilds = false
-        targetSdk = 36
-    }
-//    testOptions {
-//        targetSdk 36
-//    }
-    
 }
 dependencies {
-    implementation fileTree(dir: 'libs', includes: ['*.aar'])
+    api fileTree(dir: 'libs', includes: ['*.aar'])
+    api fileTree(dir: 'libs', includes: ['*.jar'])
     api project(':libs-java')
-    implementation 'androidx.appcompat:appcompat:1.6.1'//AndroidX
-    implementation 'androidx.annotation:annotation:1.9.1'//AndroidX
-    implementation 'androidx.activity:activity:1.8.1'//AndroidX
-    implementation 'androidx.fragment:fragment:1.8.9'//AndroidX
-    implementation 'com.google.android.material:material:1.10.0'//Google MD
-    implementation 'com.google.code.gson:gson:2.13.2'//Gson
-    implementation 'com.squareup.okio:okio:3.17.0'//OkHttp3
-    implementation 'com.squareup.okhttp3:okhttp:5.3.2'//OkHttp3
-    implementation 'com.sun.mail:android-mail:1.6.8'//Mail
-    implementation 'com.sun.mail:android-activation:1.6.8'//Mail
-    implementation 'dev.rikka.shizuku:api:13.1.5'//Sui
-    implementation 'dev.rikka.shizuku:provider:13.1.5'//Shizuku
-    compileOnly 'de.robv.android.xposed:api:82'
-    //compileOnly 'de.robv.android.xposed:api:82:sources'
+    api 'androidx.appcompat:appcompat:1.6.1'//AndroidX
+    api 'androidx.annotation:annotation:1.9.1'//AndroidX
+    api 'androidx.activity:activity:1.8.1'//AndroidX
+    api 'androidx.fragment:fragment:1.8.9'//AndroidX
+    api 'com.google.android.material:material:1.10.0'//Google MD
+    api 'com.google.code.gson:gson:2.13.2'//Gson
+    api 'com.squareup.okio:okio:3.17.0'//OkHttp3
+    api 'com.squareup.okhttp3:okhttp:5.3.2'//OkHttp3
+    api 'com.sun.mail:android-mail:1.6.8'//Mail
+    api 'com.sun.mail:android-activation:1.6.8'//Mail
+    api 'dev.rikka.shizuku:api:13.1.5'//Sui
+    api 'dev.rikka.shizuku:provider:13.1.5'//Shizuku
+    api 'de.robv.android.xposed:api:82'
 }
 
-configurations {
-   // runtimeClasspath.extendsFrom runtimeOnly
-    runtimeClasspath.canBeResolved = true
-}
 
-/** 打包源码jar**/
-tasks.register('SourcesJar', Jar) {
-    //插入Java源码
-    from android.sourceSets.main.java.srcDirs
-    //插入依赖包源码
-    configurations.runtimeClasspath.each { dep ->
-        print("\n遍历依赖：" + dep.name)
-        def parentDir = dep.parentFile?.parentFile
-        if (parentDir) {
-            def sourceJarFound = false
-            parentDir.eachFileRecurse { file ->
-                if (file.isDirectory()) {
-                    def sourceJar = new File(file, dep.name.replace('.jar', '-sources.jar'))
-                    if (sourceJar.exists()) {
-                        from(zipTree(sourceJar)) {
-                            exclude('module-info.java')
-                        }
-                        sourceJarFound = true
-                    }
-                }
-            }
-            if (!sourceJarFound) {
-                if (dep.isDirectory()) {
-                    from(dep) {
-                        exclude('module-info.java')
-                    }
-                } else {
-                    from(zipTree(dep)) {
-                        exclude('module-info.java')
-                    }
-                }
-            }
-        }
-    }
-    //清单文件写入
-    manifest {
-        attributes('Implementation-Title': 'CDKLibsAndroid')
-        attributes('Manifest-Version': version)
-    }
-    //文件名-头
-    archiveBaseName.set "CDKLibAndroid"
-    //文件名-版本
-    archiveAppendix.set "sources"
-}
+////添加自定义配置，用来打包源码
+//configurations {
+//    myDepScope.extendsFrom implementation
+//    myDepScope.canBeResolved = true
+//}
+
+///** 打包源码jar(不能用)**/
+//tasks.register('SourcesJar', Jar) {
+//    //支持大型压缩包
+//    zip64 = true
+//    //文件冲突策略,保留首个
+//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//    //插入Java源码
+//    from sourceSets.main.java.srcDirs
+//    //插入依赖包源码(不好使，)
+//    configurations.myDepScope.getFiles().forEach {
+//        //    print("\n依赖：" + it)
+//    }
+//    //这是插入依赖包Class
+//    from { configurations.myDepScope.collect { it.isDirectory() ? it : zipTree(it) } }
+//    //清单文件写入
+//    manifest {
+//        attributes('Implementation-Title': 'CDKLibsAndroid')
+//        attributes('Manifest-Version': version)
+//    }
+//    //文件名-头
+//    archiveBaseName.set "CDKLibAndroid"
+//    //文件名-版本
+//    archiveAppendix.set "sources"
+//}
+
 
