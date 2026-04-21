@@ -1,5 +1,6 @@
 package candyenk.android.tools;
 
+import android.annotation.NonNull;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.ArrayMap;
 import androidx.annotation.RequiresApi;
+import candyenk.android.utils.USDK;
 
 import java.util.Map;
 
@@ -20,7 +22,9 @@ import java.util.Map;
  *
  */
 public abstract class CP extends ContentProvider {
-    
+    public static final int STATE_OK = 1;
+    public static final int STATE_FILE = 0;
+    public static final int STATE_ERR = ~0;
     
     /**
      * 创建消息发送机
@@ -80,16 +84,16 @@ public abstract class CP extends ContentProvider {
         });
         return cv;
     }
-    /***************************************************************************************/
-    /***************************************************************************************/
+    
     /***************************************************************************************/
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs,
+                        String sortOrder) {
         return new DataCursor(get(selection));
     }
     
     @Override
-    public final String getType(Uri uri) {
+    public final String getType(@NonNull Uri uri) {
         return "";
     }
     
@@ -100,12 +104,12 @@ public abstract class CP extends ContentProvider {
     }
     
     @Override
-    public final int delete(Uri uri, String selection, String[] selectionArgs) {
+    public final int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         return 0;
     }
     
     @Override
-    public final int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public final int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         return 0;
     }
     
@@ -128,13 +132,14 @@ public abstract class CP extends ContentProvider {
          * @return 返回状态
          */
         public int set(ContentValues data) {
-            return Integer.parseInt(Uri.decode(cr.insert(uri, data).getLastPathSegment()));
+            Uri insert = cr.insert(uri, data);
+            if (insert == null) return STATE_ERR;
+            return Integer.parseInt(Uri.decode(insert.getLastPathSegment()));
         }
         
         
         /**
          * 获取数据集
-         * TODO：仅支持API33？？？
          *
          * @param key 标识符
          * @return 数据集
@@ -143,9 +148,10 @@ public abstract class CP extends ContentProvider {
         @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
         public ContentValues get(String key) {
             try (Cursor c = cr.query(uri, null, key, null, null)) {
-                if (c != null && c.moveToFirst()) return c.getExtras().getParcelable("data", ContentValues.class);
+                if (c == null || !c.moveToFirst()) return null;
+                else if (USDK.T()) return c.getExtras().getParcelable("data", ContentValues.class);
+                return (ContentValues) c.getExtras().get("data");
             }
-            return null;
         }
     }
     

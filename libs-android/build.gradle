@@ -47,35 +47,3 @@ dependencies {
 }
 
 
-////添加自定义配置，用来打包源码
-//configurations {
-//    myDepScope.extendsFrom implementation
-//    myDepScope.canBeResolved = true
-//}
-
-///** 打包源码jar(不能用)**/
-//tasks.register('SourcesJar', Jar) {
-//    //支持大型压缩包
-//    zip64 = true
-//    //文件冲突策略,保留首个
-//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-//    //插入Java源码
-//    from sourceSets.main.java.srcDirs
-//    //插入依赖包源码(不好使，)
-//    configurations.myDepScope.getFiles().forEach {
-//        //    print("\n依赖：" + it)
-//    }
-//    //这是插入依赖包Class
-//    from { configurations.myDepScope.collect { it.isDirectory() ? it : zipTree(it) } }
-//    //清单文件写入
-//    manifest {
-//        attributes('Implementation-Title': 'CDKLibsAndroid')
-//        attributes('Manifest-Version': version)
-//    }
-//    //文件名-头
-//    archiveBaseName.set "CDKLibAndroid"
-//    //文件名-版本
-//    archiveAppendix.set "sources"
-//}
-
-
