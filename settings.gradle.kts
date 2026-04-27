@@ -7,9 +7,7 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
-        mavenLocal()
-        maven { url=uri('https://maven.aliyun.com/repository/public')  }
-        google()
+        maven("https://maven.aliyun.com/repository/public")
         mavenCentral()
         gradlePluginPortal()
     }
@@ -17,17 +15,17 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        maven { url=uri('https://maven.aliyun.com/repository/public')  }
+        maven("https://maven.aliyun.com/repository/public")
         mavenLocal()
         google()
         mavenCentral()
     }
 }
 
-rootProject.name = 'CanDyenKLib'
-include 'libs-java'
-include 'libs-android'
-include 'app-android'
+rootProject.name = "CanDyenKLib"
+include("libs-java")
+include("libs-android")
+include("app-android")
 
 
 
