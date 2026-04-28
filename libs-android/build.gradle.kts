@@ -1,3 +1,5 @@
+import org.gradle.language.nativeplatform.internal.Dimensions.libraryVariants
+
 plugins {
     id("com.android.library")
 }
@@ -44,11 +46,22 @@ dependencies {
     api("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")//隐藏API调用
 }
 /**
- * 生成源码Jar
+ * 打包Release Aar和源码Jar
  */
-tasks.register<Jar>("sourcesJar") {
+tasks.register<Jar>("PKG") {
+    isZip64 = true
+    group = "build"
+    description = "打包主工程源码及依赖源码"
+    archiveBaseName.set("CDKLibAndroid")
     archiveClassifier.set("sources")
     from(android.sourceSets["main"].java.srcDirs)
-    //from(android.sourceSets["main"].kotlin.srcDirs)
-    destinationDirectory.set(file("$projectDir/release"))
+    destinationDirectory.set(layout.projectDirectory.dir("release"))
+    dependsOn("assembleRelease")
+    doLast {
+        copy {
+            from(layout.buildDirectory.file("outputs/aar/${project.name}-release.aar").get().asFile)
+            into(destinationDirectory)
+            rename { "${archiveBaseName.get()}-${archiveVersion.get()}.aar" }
+        }
+    }
 }
