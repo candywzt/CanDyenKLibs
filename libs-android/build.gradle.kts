@@ -5,7 +5,7 @@ version = 0.1
 
 android {
     namespace = "candyenk.android"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 30
@@ -24,7 +24,6 @@ android {
             excludes += "/META-INF/**"
         }
     }
-
 }
 dependencies {
     api(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
@@ -44,5 +43,12 @@ dependencies {
     api("de.robv.android.xposed:api:82")//Xposed
     api("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")//隐藏API调用
 }
-
-
+/**
+ * 生成源码Jar
+ */
+tasks.register<Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(android.sourceSets["main"].java.srcDirs)
+    //from(android.sourceSets["main"].kotlin.srcDirs)
+    destinationDirectory.set(file("$projectDir/release"))
+}
