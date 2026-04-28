@@ -1,6 +1,5 @@
 package candyenk.android.aidl;
 
-import android.content.pm.ParceledListSlice;
 import android.os.*;
 import android.util.Log;
 
@@ -14,23 +13,35 @@ import java.util.List;
  * 自带AIDL文件
  */
 public class BList<T extends Parcelable> implements Parcelable {
+    @SuppressWarnings("unchecked")
+    public static final ClassLoaderCreator<BList> CREATOR
+            = new ClassLoaderCreator<>() {
+        @Override
+        public BList createFromParcel(Parcel in) {
+            return new BList(in, getClass().getClassLoader());
+        }
+        
+        @Override
+        public BList createFromParcel(Parcel in, ClassLoader loader) {
+            return new BList(in, loader);
+        }
+        
+        @Override
+        public BList[] newArray(int size) {
+            return new BList[size];
+        }
+    };
     private static final String TAG = "BList";
     private static final boolean DEBUG = false;
-
     private static final int MAX_IPC_SIZE = IBinder.getSuggestedMaxIpcSizeBytes();
-
     private final List<T> mList;
-
     private int mInlineCountLimit = Integer.MAX_VALUE;
-
+    
+    
     public BList(List<T> list) {
         mList = list;
     }
-
-    public BList(ParceledListSlice<T> list) {
-        mList = list.getList();
-    }
-
+    
     private BList(Parcel p, ClassLoader loader) {
         final int N = p.readInt();
         mList = new ArrayList<T>(N);
@@ -38,10 +49,10 @@ public class BList<T extends Parcelable> implements Parcelable {
         if (N <= 0) {
             return;
         }
-
+        
         Creator<?> creator = readParcelableCreator(p, loader);
         Class<?> listElementClass = null;
-
+        
         int i = 0;
         while (i < N) {
             if (p.readInt() == 0) {
@@ -76,7 +87,15 @@ public class BList<T extends Parcelable> implements Parcelable {
             data.recycle();
         }
     }
-
+    
+    private static void verifySameType(final Class<?> expected, final Class<?> actual) {
+        if (!actual.equals(expected)) {
+            throw new IllegalArgumentException("Can't unparcel type "
+                    + actual.getName() + " in list of type "
+                    + (expected == null ? null : expected.getName()));
+        }
+    }
+    
     private Class<?> readVerifyAndAddElement(Creator<?> creator, Parcel p,
                                              ClassLoader loader, Class<?> listElementClass) {
         final T parcelable = readCreator(creator, p, loader);
@@ -88,7 +107,7 @@ public class BList<T extends Parcelable> implements Parcelable {
         mList.add(parcelable);
         return listElementClass;
     }
-
+    
     @SuppressWarnings("unchecked")
     private T readCreator(Creator<?> creator, Parcel p, ClassLoader loader) {
         if (creator instanceof ClassLoaderCreator<?>) {
@@ -98,19 +117,11 @@ public class BList<T extends Parcelable> implements Parcelable {
         }
         return (T) creator.createFromParcel(p);
     }
-
-    private static void verifySameType(final Class<?> expected, final Class<?> actual) {
-        if (!actual.equals(expected)) {
-            throw new IllegalArgumentException("Can't unparcel type "
-                    + actual.getName() + " in list of type "
-                    + (expected == null ? null : expected.getName()));
-        }
-    }
-
+    
     public List<T> getList() {
         return mList;
     }
-
+    
     /**
      * 设定数组中将包含的最大条目数量限制
      * 在该对象的初始分组中内嵌。
@@ -118,7 +129,7 @@ public class BList<T extends Parcelable> implements Parcelable {
     public void setInlineCountLimit(int maxCount) {
         mInlineCountLimit = maxCount;
     }
-
+    
     @Override
     public int describeContents() {
         int contents = 0;
@@ -128,7 +139,7 @@ public class BList<T extends Parcelable> implements Parcelable {
         }
         return contents;
     }
-
+    
     /**
      * 打包
      */
@@ -144,11 +155,11 @@ public class BList<T extends Parcelable> implements Parcelable {
             int i = 0;
             while (i < N && i < mInlineCountLimit && dest.dataSize() < MAX_IPC_SIZE) {
                 dest.writeInt(1);
-
+                
                 final T parcelable = mList.get(i);
                 verifySameType(listElementClass, parcelable.getClass());
                 writeElement(parcelable, dest, callFlags);
-
+                
                 if (DEBUG) Log.d(TAG, "Wrote inline #" + i + ": " + mList.get(i));
                 i++;
             }
@@ -165,11 +176,11 @@ public class BList<T extends Parcelable> implements Parcelable {
                         if (DEBUG) Log.d(TAG, "Writing more @" + i + " of " + N);
                         while (i < N && reply.dataSize() < MAX_IPC_SIZE) {
                             reply.writeInt(1);
-
+                            
                             final T parcelable = mList.get(i);
                             verifySameType(listElementClass, parcelable.getClass());
                             writeElement(parcelable, reply, callFlags);
-
+                            
                             if (DEBUG) Log.d(TAG, "Wrote extra #" + i + ": " + mList.get(i));
                             i++;
                         }
@@ -185,35 +196,16 @@ public class BList<T extends Parcelable> implements Parcelable {
             }
         }
     }
-
+    
     protected void writeElement(T parcelable, Parcel reply, int callFlags) {
         parcelable.writeToParcel(reply, callFlags);
     }
-
+    
     protected void writeParcelableCreator(T parcelable, Parcel dest) {
         dest.writeParcelableCreator(parcelable);
     }
-
+    
     protected Creator<?> readParcelableCreator(Parcel from, ClassLoader loader) {
         return from.readParcelableCreator(loader);
     }
-
-    @SuppressWarnings("unchecked")
-    public static final ClassLoaderCreator<BList> CREATOR
-            = new ClassLoaderCreator<>() {
-        @Override
-        public BList createFromParcel(Parcel in) {
-            return new BList(in, getClass().getClassLoader());
-        }
-
-        @Override
-        public BList createFromParcel(Parcel in, ClassLoader loader) {
-            return new BList(in, loader);
-        }
-
-        @Override
-        public BList[] newArray(int size) {
-            return new BList[size];
-        }
-    };
 }

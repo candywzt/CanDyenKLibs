@@ -1,6 +1,5 @@
 package candyenk.android.tools;
 
-import android.annotation.NonNull;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -84,13 +83,12 @@ public abstract class CP extends ContentProvider {
     
     /***************************************************************************************/
     @Override
-    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs,
-                        String sortOrder) {
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         return new DataCursor(get(selection));
     }
     
     @Override
-    public final String getType(@NonNull Uri uri) {
+    public final String getType(Uri uri) {
         return "";
     }
     
@@ -101,12 +99,12 @@ public abstract class CP extends ContentProvider {
     }
     
     @Override
-    public final int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+    public final int delete(Uri uri, String selection, String[] selectionArgs) {
         return 0;
     }
     
     @Override
-    public final int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public final int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         return 0;
     }
     

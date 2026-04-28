@@ -10,7 +10,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class UWeb {
-
+    
     public static void initWebView(Activity activity, WebView webView) {
         webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null); //软件解码
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null); //硬件解码
@@ -25,9 +25,9 @@ public class UWeb {
             intent.setData(Uri.parse(url));
             activity.startActivity(intent);
         });
-
+        
         WebSettings settings = webView.getSettings();
-
+        
         settings.setAllowContentAccess(true);//是否启用内容提供器content加载内容
         settings.setLoadsImagesAutomatically(true);//是否自动加载图片
         settings.setAllowFileAccessFromFileURLs(true);//是否启用File加载内容
@@ -37,8 +37,8 @@ public class UWeb {
         settings.setJavaScriptCanOpenWindowsAutomatically(true);//是否支持js打开新窗口
         settings.setMediaPlaybackRequiresUserGesture(true); //是否需要用户手势来播放Media，默认true
         //settings.setPluginState(WebSettings.PluginState.ON);//插件相关
-
-
+        
+        
         settings.setSupportZoom(true);// 设置可以支持缩放
         settings.setBuiltInZoomControls(true);//是否使用内置缩放控件(默认false)
         settings.setDisplayZoomControls(false);//是否显示原生缩放控件
@@ -46,24 +46,24 @@ public class UWeb {
         settings.setLoadWithOverviewMode(true);//是否启用自适应屏幕
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN); //是否启用自适应屏幕
         settings.setLoadsImagesAutomatically(true); //图片自动缩放 打开
-
-
+        
+        
         settings.setAllowFileAccess(true);//是否可以访问文件
         settings.setDatabaseEnabled(true); //是否启用数据库API
-
+        
         settings.setDomStorageEnabled(true);//是否开启本地DOM存储API
-        settings.setAppCacheEnabled(true);//是否开启APP缓存API
+        settings.setDomStorageEnabled(true); // 启用 DOM 存储（必须开，H5 缓存核心）
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);// 设置缓存模式（正常使用网页标准缓存）
         settings.setGeolocationEnabled(true);//是否开启定位功能
-        settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //优先使用本地缓存
         //settings.setSavePassword(true);//保存密码(不再支持)
-
+        
     }
-
+    
     /**
      * WebView显示字符串????有毛用?
      */
     public static void loadData(WebView webView, String content) {
         webView.loadDataWithBaseURL(null, content, "text/html", "UTF-8", null); //这种写法可以正确解码
     }
-
+    
 }

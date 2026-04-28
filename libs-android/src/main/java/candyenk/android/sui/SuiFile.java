@@ -12,7 +12,6 @@ import java.io.File;
  * 文件操作实现类
  */
 public class SuiFile extends ISuiFile.Stub {
-    public static ISuiFile sui;
     //只读模式
     public static final int MODE_READ_ONLY = 0x10000000;
     //只写模式
@@ -25,7 +24,8 @@ public class SuiFile extends ISuiFile.Stub {
     public static final int MODE_TRUNCATE = 0x4000000;
     //追加模式
     public static final int MODE_APPEND = 0x02000000;
-
+    public static ISuiFile sui;
+    
     /**
      * 绑定Shizuku服务
      * 记得申请权限
@@ -52,9 +52,9 @@ public class SuiFile extends ISuiFile.Stub {
                     if (disBindListener != null) disBindListener.run();
                 })
                 .build().bind();
-
+        
     }
-
+    
     @Override
     public ParcelFileDescriptor getFD(String path, int mode) throws RemoteException {
         if (path == null || path.isBlank()) return null;
@@ -63,31 +63,33 @@ public class SuiFile extends ISuiFile.Stub {
         try {
             return ParcelFileDescriptor.open(file, mode);
         } catch (Exception e) {
-            throw new RemoteException(e);
+            RuntimeException re = new RuntimeException(e);
+            re.initCause(e);
+            throw re;
         }
     }
-
+    
     @Override
     public String[] getChilds(String path) throws RemoteException {
         if (path == null || path.isBlank()) return new String[0];
         File file = new File(path);
         return file.list();
     }
-
+    
     @Override
     public boolean isDirectory(String path) throws RemoteException {
         if (path == null || path.isBlank()) return false;
         File file = new File(path);
         return file.isDirectory();
     }
-
+    
     @Override
     public long getLastModified(String path) throws RemoteException {
         if (path == null || path.isBlank()) return 0;
         File file = new File(path);
         return file.lastModified();
     }
-
+    
     @Override
     public long getSize(String path) throws RemoteException {
         if (path == null || path.isBlank()) return 0;
