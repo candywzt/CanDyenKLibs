@@ -2,7 +2,6 @@ package candyenk.android.widget;
 
 
 import android.annotation.SuppressLint;
-import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.Gravity;
@@ -20,7 +19,6 @@ import candyenk.android.R;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import candyenk.android.utils.ULay;
-import candyenk.android.utils.USDK;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -39,6 +37,7 @@ public class DialogBottom extends BottomSheetDialog {
     /*************************************静态变量**************************************************/
     @SuppressLint("StaticFieldLeak")
     private static View lastSign;//重复标记
+    protected final ListenerSave ls;//事件监听
     /*************************************成员变量**************************************************/
     protected String TAG;
     protected Context context; //拉起弹窗的Activity
@@ -52,7 +51,6 @@ public class DialogBottom extends BottomSheetDialog {
     protected Button leftButton, rightButton;  //左右按钮控件
     protected View centerView;//按钮中间分割区域
     protected LinearLayout buttonGroup;//按钮父级控件
-    protected final ListenerSave ls;//事件监听
     /**********************************************************************************************/
     /*************************************构造方法**************************************************/
     /**********************************************************************************************/
@@ -79,7 +77,6 @@ public class DialogBottom extends BottomSheetDialog {
         this.ok = checkSign();
         if (!ok) L.e(TAG, "弹窗创建重复");
         if (ok) initLayout();
-        getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
     }
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
@@ -238,6 +235,15 @@ public class DialogBottom extends BottomSheetDialog {
     public void setContent(View view) {
         if (!ok) return;
         V.LL(view).weight(1).parent(parentView, 1);
+    }
+    
+    /**
+     * 设置弹窗优先级最高
+     * 弹窗将悬浮在所有Activity之上
+     * 需要悬浮窗权限，没有就报错
+     */
+    public void setOverlay() {
+        getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
     }
     
     /**********************************************************************************************/
