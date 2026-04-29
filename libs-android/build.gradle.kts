@@ -1,5 +1,6 @@
 plugins {
     id("com.android.library")
+//    id("org.jetbrains.kotlin.plugin.compose")
 }
 version = 0.1
 
@@ -18,7 +19,7 @@ android {
     buildFeatures {
         buildConfig = true
         aidl = true
-        compose = true
+//        compose = true
     }
     packaging {
         resources {
@@ -37,13 +38,14 @@ dependencies {
     api("androidx.activity:activity:1.8.1")
     api("androidx.fragment:fragment:1.8.9")
 
-    //JetPack Compose
-    api("androidx.compose.runtime:runtime:1.11.0")
-    api("androidx.compose.ui:ui:1.11.0")
-    api("androidx.compose.ui:ui-tooling-preview:1.11.0")
-    api("androidx.compose.foundation:foundation:1.11.0")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.11.0")
-
+//    //JetPack Compose
+//    api("androidx.compose.runtime:runtime:1.11.0")
+//    api("androidx.compose.foundation:foundation:1.11.0")
+//    api("androidx.compose.material3:material3:1.11.0")
+//    api("androidx.compose.ui:ui:1.11.0")
+//    api("androidx.compose.ui:ui-tooling:1.11.0")
+//    api("androidx.compose.ui:ui-tooling-preview:1.11.0")
+    
     //Google Material
     api("com.google.android.material:material:1.10.0")
 
