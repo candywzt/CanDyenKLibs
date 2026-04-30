@@ -1,15 +1,15 @@
-<resources>
-    
-    <style name="Theme.CDK" parent="Theme.MaterialComponents.Light">
-        <!--        <item name="android:windowSplashScreenBackground">@android:color/background_light</item>-->
-        <!--        <item name="android:windowSplashScreenAnimatedIcon">@drawable/aaa</item>-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.CDK" parent="Theme.MaterialComponents.DayNight">
+<!--        <item name="android:windowSplashScreenBackground">@android:color/background_light</item>-->
+<!--        <item name="android:windowSplashScreenAnimatedIcon">@drawable/aaa</item>-->
         <!-- 状态栏颜色 -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <!--虚拟键和小白条-->
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <!--状态栏区域显示-->
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" >shortEdges</item>
         <!--标题栏-->
         <item name="android:windowTranslucentStatus">true</item>
         <item name="windowActionBar">false</item>
@@ -22,7 +22,7 @@
         <item name="android:colorAccent">@color/main_04</item>
         <item name="colorAccent">@color/main_04</item>
         <!-- 次要颜色 -->
-        <item name="android:colorSecondary">@color/main_03</item>
+        <item name="android:colorSecondary" >@color/main_03</item>
         <item name="colorSecondary">@color/main_03</item>
         <item name="colorSecondaryVariant">@color/main_04</item>
         <item name="colorOnSecondary">@color/main_01</item>
@@ -51,19 +51,10 @@
         <item name="recyclerViewStyle">@style/CDK.RecyclerView</item>
     </style>
     <!--BottomSheetDialog上拉弹窗主题-->
-    <style name="Theme.CDK.Dialog" parent="Base.V7.ThemeOverlay.AppCompat.Dialog">
-        <item name="bottomSheetStyle">@null</item>
-        <item name="android:windowAnimationStyle">@style/Animation.MaterialComponents.BottomSheetDialog</item>
-        <item name="android:windowElevation">0dp</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="enableEdgeToEdge">true</item>
-        <item name="paddingBottomSystemWindowInsets">false</item><!-- 导航栏遮挡 -->
-        <item name="paddingLeftSystemWindowInsets">false</item><!-- 侧边栏遮挡(横屏状态栏) -->
-        <item name="paddingRightSystemWindowInsets">false</item><!-- 侧边栏遮挡(横屏状态栏) -->
-        <item name="paddingTopSystemWindowInsets">true</item><!-- 状态栏遮挡 -->
-    </style>
+<!--    <style name="Theme.CDK.Dialog" parent="Theme.Design.Light.BottomSheetDialog">-->
+<!--    <style name="Theme.CDK.Dialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog">-->
+<!--        <item name="bottomSheetStyle">@style/CDK.DialogBottom</item>-->
+<!--    </style>-->
     <!--*****************************************************************************************-->
 
 

@@ -4,10 +4,7 @@ package candyenk.android.widget;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -148,8 +145,7 @@ public class DialogBottom extends BottomSheetDialog {
      * 监听事件为空则不显示按钮
      * text为null则显示默认文本
      */
-    public void setLeftButton(CharSequence text, Consumer<? extends DialogBottom> leftClick, Consumer<?
-            extends DialogBottom> leftLong) {
+    public void setLeftButton(CharSequence text, Consumer<? extends DialogBottom> leftClick, Consumer<? extends DialogBottom> leftLong) {
         if (!ok) return;
         this.ls.leftClick = leftClick;
         this.ls.leftLong = leftLong;
@@ -168,8 +164,7 @@ public class DialogBottom extends BottomSheetDialog {
      * 监听事件为空则不显示按钮
      * text为null则显示默认文本
      */
-    public void setRightButton(CharSequence text, Consumer<? extends DialogBottom> rightClick, Consumer<?
-            extends DialogBottom> rightLong) {
+    public void setRightButton(CharSequence text, Consumer<? extends DialogBottom> rightClick, Consumer<? extends DialogBottom> rightLong) {
         if (!ok) return;
         this.ls.rightClick = rightClick;
         this.ls.rightLong = rightLong;
@@ -243,7 +238,9 @@ public class DialogBottom extends BottomSheetDialog {
      * 需要悬浮窗权限，没有就报错
      */
     public void setOverlay() {
-        getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+        Window window = getWindow();
+        if (window == null) return;
+        window.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
     }
     
     /**********************************************************************************************/
@@ -253,7 +250,7 @@ public class DialogBottom extends BottomSheetDialog {
     @SuppressLint("RtlHardcoded")
     private void initLayout() {
         dialogView = new MaterialCardView(viewContext);
-        V.LL(dialogView).size(-1, -2).backgroundRes(R.color.back_all).radiusDP(44, 44, 0, 0).refresh();
+        V.LL(dialogView).size(-1, -2).backgroundRes(R.color.back_all).radiusDP(36, 36, 0, 0).refresh();
         dialogView.setClipToOutline(true);
         
         ImageView iv = new AppCompatImageView(viewContext);
@@ -281,12 +278,13 @@ public class DialogBottom extends BottomSheetDialog {
         centerView = new View(viewContext);
         V.LL(centerView).sizeDP(40, 50).hide().parent(buttonGroup);
         
-        rightButton = new MaterialButton(viewContext, null,
-                com.google.android.material.R.attr.materialButtonOutlinedStyle);
+        rightButton = new MaterialButton(viewContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
         V.LL(rightButton).sizeDP(-1, 50).weight(1).text(R.string.no).hide().parent(buttonGroup);
         rightButton.setOnClickListener(this.ls::OnRightClick);
         rightButton.setOnLongClickListener(this.ls::OnRightLong);
         super.setContentView(dialogView);
+        //删除预见式返回动画
+        getOnBackInvokedDispatcher().registerOnBackInvokedCallback(0, this::dismiss);
     }
     
     /*** 检查是否合法 ***/

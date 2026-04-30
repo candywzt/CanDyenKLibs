@@ -33,7 +33,7 @@
     <!--*****************************************************************************************-->
     <!--Chip风格-->
     <style name="CDK.Chip" parent="Widget.MaterialComponents.Chip.Filter">
-
+    
     </style>
     <!--*****************************************************************************************-->
     <!--EditText风格-->
@@ -70,7 +70,7 @@
         <item name="android:background">@null</item>
         <item name="android:maxHeight">25dp</item>
         <item name="android:minHeight">25dp</item>
-
+    
     </style>
     <!--*****************************************************************************************-->
     <!--ShapeableImageView控件样式-->
@@ -106,10 +106,5 @@
         <item name="fastScrollHorizontalTrackDrawable">@android:color/transparent</item><!--水平滚动块背景-->
         <item name="fastScrollVerticalThumbDrawable">@drawable/bg_slider_track</item><!--竖直滚动块-->
         <item name="fastScrollVerticalTrackDrawable">@android:color/transparent</item><!--竖直滚动块背景-->
-    </style>
-    <!--*****************************************************************************************-->
-    <!--DialogButtom风格-->
-    <style name="CDK.DialogBottom" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@android:color/transparent</item>
     </style>
 </resources>
