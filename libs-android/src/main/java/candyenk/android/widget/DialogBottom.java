@@ -1,7 +1,6 @@
 package candyenk.android.widget;
 
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.*;
@@ -26,16 +25,12 @@ import java.util.function.Consumer;
 
 
 /**
- * 自定义上拉弹窗
- * 拦截层叠创建
- * 四次重构
+ * 底部弹窗组件
+ * 建议使用其下继承组件
  */
 public class DialogBottom extends BottomSheetDialog {
-    /*************************************静态变量**************************************************/
-    @SuppressLint("StaticFieldLeak")
     private static View lastSign;//重复标记
     protected final ListenerSave ls;//事件监听
-    /*************************************成员变量**************************************************/
     protected String TAG;
     protected Context context; //拉起弹窗的Activity
     protected Context viewContext;
@@ -45,20 +40,25 @@ public class DialogBottom extends BottomSheetDialog {
     protected LinearLayout parentView;//内容父级
     protected TextView titleView;  //标题控件
     protected ImageView closeView;  //关闭控件
-    protected Button leftButton, rightButton;  //左右按钮控件
+    protected Button leftButton, rightButton;  //按钮控件
     protected View centerView;//按钮中间分割区域
     protected LinearLayout buttonGroup;//按钮父级控件
-    /**********************************************************************************************/
-    /*************************************构造方法**************************************************/
-    /**********************************************************************************************/
+    
     /**
-     * 构造方法
-     * 会自动阻止多重点击,不过避免使用null
+     * 通过上下文创建DialogBottom
+     *
+     * @param context 上下文
      */
     public DialogBottom(Context context) {
         this(context, null);
     }
     
+    /**
+     * 通过View创建DialogBottom
+     * 单个View仅能创建一个DialogBottom,有效防止重复点击
+     *
+     * @param view 用于重复标记的View
+     */
     public DialogBottom(View view) {
         this(view.getContext(), view);
     }
@@ -75,16 +75,14 @@ public class DialogBottom extends BottomSheetDialog {
         if (!ok) L.e(TAG, "弹窗创建重复");
         if (ok) initLayout();
     }
-    /**********************************************************************************************/
-    /*************************************继承方法**************************************************/
-    /**********************************************************************************************/
+    
     /**
      * @deprecated 不允许使用
      */
     @Deprecated
     @Override
     public void setContentView(View view) {
-        L.e(TAG, "不支持的操作" + TAG + ".setContentView(View)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
     
     /**
@@ -93,7 +91,7 @@ public class DialogBottom extends BottomSheetDialog {
     @Deprecated
     @Override
     public void setContentView(int layoutResId) {
-        L.e(TAG, "不支持的操作" + TAG + ".setContentView(int)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
     
     /**
@@ -102,14 +100,15 @@ public class DialogBottom extends BottomSheetDialog {
     @Deprecated
     @Override
     public void setContentView(View view, ViewGroup.LayoutParams params) {
-        L.e(TAG, "不支持的操作" + TAG + ".setContentView(View,ViewGroup.LayoutParams)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
     
     
     @Override
     protected void onStart() {
         super.onStart();
-        getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);//解决横屏显示不全
+        //直接撑开到最大状态
+        getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
     }
     
     @Override
@@ -127,9 +126,7 @@ public class DialogBottom extends BottomSheetDialog {
     protected float dp2px(float dp) {
         return ULay.dp2px(context, dp);
     }
-    /**********************************************************************************************/
-    /*************************************公共方法**************************************************/
-    /**********************************************************************************************/
+    
     /**
      * 带监听关闭
      *
@@ -141,9 +138,12 @@ public class DialogBottom extends BottomSheetDialog {
     }
     
     /**
-     * 设置上拉弹窗底部左侧按钮
-     * 监听事件为空则不显示按钮
-     * text为null则显示默认文本
+     * 设置弹窗底部左侧(积极)按钮
+     * 默认不显示
+     *
+     * @param text      按钮文本,为null显示默认文本
+     * @param leftClick 单击监听,为null不显示该按钮
+     * @param leftLong  长按监听
      */
     public void setLeftButton(CharSequence text, Consumer<? extends DialogBottom> leftClick, Consumer<? extends DialogBottom> leftLong) {
         if (!ok) return;
@@ -160,9 +160,12 @@ public class DialogBottom extends BottomSheetDialog {
     }
     
     /**
-     * 设置上拉弹窗底部右侧按钮
-     * 监听事件为空则不显示按钮
-     * text为null则显示默认文本
+     * 设置弹窗底部右侧(消极)按钮
+     * 默认不显示
+     *
+     * @param text       按钮文本,为null显示默认文本
+     * @param rightClick 单击监听,为null不显示该按钮
+     * @param rightLong  长按监听
      */
     public void setRightButton(CharSequence text, Consumer<? extends DialogBottom> rightClick, Consumer<? extends DialogBottom> rightLong) {
         if (!ok) return;
@@ -179,8 +182,10 @@ public class DialogBottom extends BottomSheetDialog {
     }
     
     /**
-     * 设置弹窗外触关闭和返回键关闭
-     * 默认 true,true
+     * 设置弹窗关闭方式
+     *
+     * @param touchOff 是否允许外部触摸关闭,默认true
+     * @param backOff  是否允许返回键关闭,默认true
      */
     public void setCancelable(boolean touchOff, boolean backOff) {
         if (!ok) return;
@@ -190,12 +195,19 @@ public class DialogBottom extends BottomSheetDialog {
     
     /**
      * 设置标题文本
-     * 调用该方法以显示标题栏
+     *
+     * @param resId 标题资源ID
      */
     public void setTitle(@StringRes int resId) {
         this.setTitle(context.getText(resId));
     }
     
+    /**
+     * 设置标题文本
+     * 默认不显示
+     *
+     * @param title 标题文本,为null则不显示标题栏
+     */
     public void setTitle(CharSequence title) {
         if (!ok) return;
         if (title == null) {
@@ -206,9 +218,11 @@ public class DialogBottom extends BottomSheetDialog {
         }
     }
     
+    
     /**
-     * 设置标题是否居中,默认false
-     * 需设置标题内容,否则不显示
+     * 设置标题文本居中还是居左
+     *
+     * @param isCenter 是否居中
      */
     public void setTitleCenter(boolean isCenter) {
         if (!ok) return;
@@ -216,7 +230,9 @@ public class DialogBottom extends BottomSheetDialog {
     }
     
     /**
-     * 设置是否显示右上角关闭按钮,默认false
+     * 设置右上角关闭按钮是否显示
+     *
+     * @param isShow 是否显示,默认false
      */
     public void setShowClose(boolean isShow) {
         if (!ok) return;
@@ -224,8 +240,10 @@ public class DialogBottom extends BottomSheetDialog {
     }
     
     /**
-     * 设置内容-自定义适配器
+     * 设置内容
      * 拉起弹窗后不可修改
+     *
+     * @param view 自定义内容
      */
     public void setContent(View view) {
         if (!ok) return;
@@ -243,41 +261,37 @@ public class DialogBottom extends BottomSheetDialog {
         window.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
     }
     
-    /**********************************************************************************************/
-    /*************************************私有方法**************************************************/
-    /**********************************************************************************************/
     /*** 创建弹窗根布局 ***/
-    @SuppressLint("RtlHardcoded")
     private void initLayout() {
+        //跟级控件,圆角卡片
         dialogView = new MaterialCardView(viewContext);
         V.LL(dialogView).size(-1, -2).backgroundRes(R.color.back_all).radiusDP(36, 36, 0, 0).refresh();
         dialogView.setClipToOutline(true);
-        
+        //顶栏背景
         ImageView iv = new AppCompatImageView(viewContext);
         V.FL(iv).sizeDP(-1, 120).drawable(R.drawable.bg_transparent_gradual_change).scaleType(ImageView.ScaleType.FIT_XY).parent(dialogView);
-        
+        //内容父控件
         parentView = new LinearLayout(viewContext);
         V.FL(parentView).size(-1, -2).paddingDP(0, 20, 0, 0).orientation(1).parent(dialogView);
-        
+        //标题控件
         titleView = new MaterialTextView(viewContext);
         V.LL(titleView).size(-1, -2).textSize(20).textColorRes(R.color.text_title).hide().paddingDP(20, 0, 0, 0).parent(parentView);
-        
+        //关闭按钮
         closeView = new ImageView(viewContext);
         V.FL(closeView).sizeDP(40, 40).lGravity(Gravity.TOP | Gravity.RIGHT).hide().drawable(R.drawable.ic_close).paddingDP(0, 10, 10, 0).parent(dialogView);
         closeView.setOnClickListener(v -> dismiss());
-        
-        
+        //底部按钮组
         buttonGroup = new LinearLayout(viewContext);
         V.LL(buttonGroup).size(-1, -2).orientation(0).paddingDP(20, 0, 20, 20).hide().parent(parentView);
-        
+        //左按钮
         leftButton = new MaterialButton(viewContext);
         V.LL(leftButton).sizeDP(-1, 50).weight(1).text(R.string.yes).hide().parent(buttonGroup);
         leftButton.setOnClickListener(this.ls::OnLeftClick);
         leftButton.setOnLongClickListener(this.ls::OnLiftLong);
-        
+        //中间隔层
         centerView = new View(viewContext);
         V.LL(centerView).sizeDP(40, 50).hide().parent(buttonGroup);
-        
+        //右按钮
         rightButton = new MaterialButton(viewContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
         V.LL(rightButton).sizeDP(-1, 50).weight(1).text(R.string.no).hide().parent(buttonGroup);
         rightButton.setOnClickListener(this.ls::OnRightClick);
@@ -294,11 +308,9 @@ public class DialogBottom extends BottomSheetDialog {
             return true;
         } else return false;
     }
-    /**********************************************************************************************/
-    /*******************************************内部类**********************************************/
-    /**********************************************************************************************/
+    
     /*** 保存各种监听的类 ***/
-    private class ListenerSave {
+    protected class ListenerSave {
         private Consumer dismissRun;
         private Consumer leftClick;
         private Consumer leftLong;

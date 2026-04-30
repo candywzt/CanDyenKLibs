@@ -5,87 +5,60 @@ import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.LayoutRes;
-import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import com.google.android.material.textview.MaterialTextView;
 
-import java.util.function.Consumer;
-
 
 /**
- * Text展示上拉弹窗
- * 自动拦截重复调用
- * 三次重构
+ * 底部弹窗-文本展示
  */
 public class DialogBottomText extends DialogBottomView {
-    /*************************************成员变量**************************************************/
     protected CharSequence text;
     protected TextView tv;
-    /**********************************************************************************************/
-    /*************************************构造方法**************************************************/
-    /**********************************************************************************************/
-
-    /**
-     * 构造方法
-     * 无法使用同一View拉起多个Dialog,但可使用null拉起一个多余的dialog
-     */
+    
     public DialogBottomText(Context context) {
         this(context, null);
     }
-
+    
     public DialogBottomText(View view) {
         this(view.getContext(), view);
     }
-
+    
     protected DialogBottomText(Context context, View view) {
         super(context, view);
     }
-    /**********************************************************************************************/
-    /*************************************继承方法**************************************************/
-    /**********************************************************************************************/
+    
+    /**
+     * @deprecated 不允许使用
+     */
+    @Deprecated
+    @Override
+    public <T extends View> T getContent() {
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+    }
+    
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence)}
      */
     @Deprecated
     @Override
     public void setContent(@LayoutRes int viewid) {
-        L.e("TAG", "不支持的操作" + TAG + ".setContent(int)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
-
+    
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence)}
      */
     @Deprecated
     @Override
     public void setContent(View view) {
-        L.e("TAG", "不支持的操作" + TAG + ".setContent(View)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
-
-
-    /**
-     * @deprecated 不允许使用
-     */
-    @Deprecated
-    @Override
-    public void bindContent(Consumer<View> binder) {
-        L.e("TAG", "不支持的操作" + TAG + ".bindContent(Consumer)");
-    }
-
-    /**
-     * @deprecated 不允许使用
-     */
-    @Deprecated
-    @Override
-    public View getContent() {
-        return L.e("TAG", "不支持的操作" + TAG + ".getContent()", null);
-    }
-/**********************************************************************************************/
-    /*************************************公共方法**************************************************/
-    /**********************************************************************************************/
-
+    
     /**
      * 设置内容-纯文本
-     * 可重复调用以修改文本内容
+     *
+     * @param text 展示文本,可在show后修改
      */
     public void setContent(CharSequence text) {
         if (!ok) return;
@@ -94,16 +67,16 @@ public class DialogBottomText extends DialogBottomView {
         this.tv.setText(this.text);
         this.tv.setMovementMethod(LinkMovementMethod.getInstance());
     }
-
+    
     /**
      * 获取设置的内容
+     *
+     * @return 文本内容
      */
     public CharSequence getText() {
         return text;
     }
-    /**********************************************************************************************/
-    /*************************************私有方法**************************************************/
-    /**********************************************************************************************/
+    
     /*** 创建纯文本控件 ***/
     private View createTextView() {
         tv = new MaterialTextView(viewContext);

@@ -7,7 +7,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.R;
 import candyenk.android.base.HolderCDK;
-import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import candyenk.android.viewgroup.NoLinearLayout;
 import com.google.android.material.textview.MaterialTextView;
@@ -36,65 +35,65 @@ public class DialogBottomItemText extends DialogBottomItem {
     public DialogBottomItemText(Context context) {
         this(context, null);
     }
-
+    
     public DialogBottomItemText(View view) {
         this(view.getContext(), view);
     }
-
-
+    
+    
     protected DialogBottomItemText(Context context, View view) {
         super(context, view);
     }
-
+    
     /**********************************************************************************************/
     /*************************************继承方法**************************************************/
     /**********************************************************************************************/
-
+    
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence...)}
      */
     @Deprecated
     @Override
     public void setContent(View[] views) {
-        L.e("TAG", "不允许使用DialogBottomView.setContent(View...)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
-
+    
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence...)}
      */
     @Deprecated
     @Override
     public void setContent(int... resIds) {
-        L.e("TAG", "不允许使用DialogBottomView.setContent(int...)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
-
+    
     /**
      * @deprecated 请使用 {@link #setContent(CharSequence...)}
      */
     @Deprecated
     @Override
     public void setContent(int resId, int count) {
-        L.e("TAG", "不允许使用DialogBottomView.setContent(int,int)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
-
+    
     /**
      * @deprecated 不允许使用
      */
     @Deprecated
     @Override
     public void setLayoutManager(RecyclerView.LayoutManager lm) {
-        L.e("TAG", "不允许使用DialogBottomView.setLayoutManager(RecyclerView.LayoutManager)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
-
+    
     /**
      * @deprecated 不允许使用
      */
     @Deprecated
     @Override
     public void setOnBindViewHolder(Consumer<HolderCDK> c) {
-        L.e("TAG", "不允许使用DialogBottomView.setOnBindViewHolder(Consumer)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
-
+    
     /**
      * 设置列表项目点击事件
      * 参数里的View是TextView
@@ -108,7 +107,7 @@ public class DialogBottomItemText extends DialogBottomItem {
             l.accept(V.getChild(h.itemView, 0), p);
         });
     }
-
+    
     /**
      * 设置列表项目长按事件
      * 参数里的View是TextView
@@ -125,16 +124,16 @@ public class DialogBottomItemText extends DialogBottomItem {
     /**********************************************************************************************/
     /*************************************公共方法**************************************************/
     /**********************************************************************************************/
-
+    
     /**
      * 设置字符数组项目是否居中(默认true)
      * 弹窗显示后不可用
      */
-
+    
     public void setItemCenter(boolean isCenter) {
         this.itemCenter = isCenter;
     }
-
+    
     /**
      * 设置是否显示Item分割线(默认true)
      * 弹窗显示后不可用
@@ -142,7 +141,7 @@ public class DialogBottomItemText extends DialogBottomItem {
     public void setShowSplitLine(boolean isShow) {
         this.showSplitLine = isShow;
     }
-
+    
     /**
      * 设置内容-文本项目列表
      * 弹窗显示后不可用
@@ -155,10 +154,11 @@ public class DialogBottomItemText extends DialogBottomItem {
             int p = h.getAdapterPosition();
             CharSequence text = items[p];
             V.LL(V.getChild(h.itemView, 0)).text(text);//TextView
-            if (showSplitLine) V.LL(V.getChild(h.itemView, 1)).visibility(p == items.length - 1 ? View.GONE : View.VISIBLE).refresh();//分割线
+            if (showSplitLine)
+                V.LL(V.getChild(h.itemView, 1)).visibility(p == items.length - 1 ? View.GONE : View.VISIBLE).refresh();//分割线
         });
     }
-
+    
     /**
      * 获取Text列表
      */
@@ -174,7 +174,7 @@ public class DialogBottomItemText extends DialogBottomItem {
         V.RV(nl).sizeDP(-1, 60).backgroundRes(R.drawable.bg_cdk).orientation(1).refresh();
         nl.setClickable(true);
         nl.setFocusable(true);
-
+        
         TextView tv = new MaterialTextView(viewContext);
         V.LL(tv).size(-1).textColorRes(R.color.text_main).gravity(itemCenter ? Gravity.CENTER : Gravity.START | Gravity.CENTER).textSize(18).paddingDP(itemCenter ? 0 : 20, 0, 0, 0).parent(nl);
         if (showSplitLine) {

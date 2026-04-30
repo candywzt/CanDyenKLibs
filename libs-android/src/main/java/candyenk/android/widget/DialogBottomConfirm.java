@@ -11,48 +11,24 @@ import java.util.function.Consumer;
 
 
 /**
- * 确认弹窗
+ * 底部弹窗-确认弹窗
  */
 public class DialogBottomConfirm extends DialogBottomTips {
-    /*************************************成员变量**************************************************/
     protected long confirmTime;
-    /**********************************************************************************************/
-    /***************************************接口****************************************************/
-    /**********************************************************************************************/
-    /**
-     * 操作回应回调
-     */
-    public interface OnEventCallBack {
-        void onYse();
-
-        void onNo();
-    }
-
-    public interface Yes extends OnEventCallBack {
-        default void onNo() {}
-    }
-    /**********************************************************************************************/
-    /*************************************构造方法**************************************************/
-    /**********************************************************************************************/
-    /**
-     * 构造方法
-     * 无法使用同一View拉起多个Dialog,但可使用null拉起一个多余的dialog
-     */
+    
     public DialogBottomConfirm(Context context) {
         this(context, null);
     }
-
+    
     public DialogBottomConfirm(View view) {
         this(view.getContext(), view);
     }
-
+    
     protected DialogBottomConfirm(Context context, View view) {
         super(context, view);
         setTimeOut(0);
     }
-    /**********************************************************************************************/
-    /*************************************继承方法**************************************************/
-    /**********************************************************************************************/
+    
     @Override
     public void show() {
         if (!ok || isShowing()) return;
@@ -80,61 +56,63 @@ public class DialogBottomConfirm extends DialogBottomTips {
                         leftButton.setText(text);
                         leftButton.setEnabled(true);
                     });
-
+                    
                 }
             }).start();
         }
     }
-
+    
     /**
      * @deprecated 不允许使用
      */
     @Deprecated
     @Override
     public void setLeftButton(CharSequence text, Consumer<? extends DialogBottom> leftClick, Consumer<? extends DialogBottom> leftLong) {
-        L.e(TAG, "不支持的操作" + TAG + ".setLeftButton(CharSequence,Consumer,Consumer)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
-
+    
     /**
      * @deprecated 不允许使用
      */
     @Deprecated
     @Override
     public void setRightButton(CharSequence text, Consumer<? extends DialogBottom> rightClick, Consumer<? extends DialogBottom> rightLong) {
-        L.e(TAG, "不支持的操作" + TAG + ".setRightButton(CharSequence,Consumer,Consumer)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
-
+    
     /**
      * @deprecated 不允许使用
      */
     @Deprecated
     @Override
     public void setOnCancelListener(OnCancelListener listener) {
-        L.e(TAG, "不支持的操作" + TAG + ".setOnCancelListener(OnCancelListener)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
-
+    
     /**
      * @deprecated 不允许使用
      */
     @Deprecated
     @Override
     public void dismiss(Consumer<? extends DialogBottom> dismissRun) {
-        L.e(TAG, "不支持的操作" + TAG + ".dismiss(Consumer)");
+        throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
-    /**********************************************************************************************/
-    /*************************************公共方法**************************************************/
-    /**********************************************************************************************/
+    
     /**
-     * 设置确认时间
+     * 设置确认前等待时间
      * 时间结束前无法点击确认
-     * show之后无效
+     * 默认0
+     *
+     * @param time 等待时间
      */
     public void setConfirmTime(long time) {
         if (!isShowing()) confirmTime = time;
     }
-
+    
     /**
-     * 设置确认回应回调
+     * 设置回应回调
+     *
+     * @param callback 回应回调
      */
     public void setOnEventCallBack(OnEventCallBack callback) {
         if (callback == null) {
@@ -151,6 +129,22 @@ public class DialogBottomConfirm extends DialogBottomTips {
             super.setOnCancelListener(d -> callback.onNo());
         }
     }
-
+    
+    /**
+     * 弹窗回应回调
+     */
+    public interface OnEventCallBack {
+        void onYse();
+        
+        void onNo();
+    }
+    
+    /**
+     * 弹窗仅确认回调
+     */
+    public interface Yes extends OnEventCallBack {
+        default void onNo() {}
+    }
+    
 }
 
