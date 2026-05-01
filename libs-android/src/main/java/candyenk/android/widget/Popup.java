@@ -1,11 +1,9 @@
 package candyenk.android.widget;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -16,17 +14,17 @@ import android.widget.TextView;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 import candyenk.android.R;
 import candyenk.android.tools.A;
 import candyenk.android.tools.V;
-import candyenk.android.utils.ULay;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * 气泡弹窗控件
+ * 气泡弹窗组件
  */
 public class Popup extends PopupWindow {
     public static final int STARTOUT = 1;//置于起始点外
@@ -35,7 +33,6 @@ public class Popup extends PopupWindow {
     public static final int END = 4;//对齐结束点
     public static final int ENDOUT = 5;//置于结束点外
     private static final String TAG = Popup.class.getSimpleName();
-    @SuppressLint("StaticFieldLeak")
     private static View lastSign;//上一个标记
     private final Context context;
     private final View parentView;//弹窗目标View
@@ -43,16 +40,12 @@ public class Popup extends PopupWindow {
     private final int[] location = {CENTER, STARTOUT};//位置
     private final int[] deviation = {0, 0};//偏移
     private final float[] animD = {0.5f, 1};//动画参数
+    private final boolean ok;//是否已经初始化成功
     private int margin = 16;//与目标控件的距离
     private View contentView;//内容布局
-    private boolean ok;//是否已经初始化成功
     private boolean overSign;//结束标记
     
-    public Popup(Context context) {
-        this(context, null);
-    }
-    
-    public Popup(View targetView) {
+    public Popup(@NonNull View targetView) {
         this(targetView.getContext(), targetView);
     }
     
@@ -85,12 +78,14 @@ public class Popup extends PopupWindow {
             startAnim();
             showAsDropDown(parentView, deviation[0], deviation[1]);
         }
-        showAtLocation((View) null, Gravity.CENTER, 0, (int) (ULay.getHeight(context) * 0.25f));
     }
     
     /**
-     * 设置弹窗位置(水平,垂直)
+     * 设置弹窗相对(控件)的位置
      * show后无效
+     *
+     * @param hLocation 水平位置
+     * @param vLocation 垂直位置
      */
     public void setLocation(@ViewLocation int hLocation, @ViewLocation int vLocation) {
         if (!ok || isShowing()) return;
@@ -237,7 +232,7 @@ public class Popup extends PopupWindow {
                 break;
         }
     }
-    
+    /*** 展开动画 ***/
     private void startAnim() {
         ScaleAnimation sa = new ScaleAnimation(0, 1, 0, 1, animD[0], animD[1]);
         sa.setDuration(100);
@@ -245,7 +240,7 @@ public class Popup extends PopupWindow {
         sa.setAnimationListener((A.EndV) animation -> rootView.clearAnimation());
         rootView.startAnimation(sa);
     }
-    
+    /*** 回收动画 ***/
     private void endAnim() {
         if (overSign) return;
         overSign = true;

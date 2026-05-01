@@ -137,7 +137,7 @@ public class DialogLoading extends AlertDialog {
         V.LP(dialogView).sizeDP(-1, -2).backgroundRes(android.R.color.transparent).refresh();
         
         CardView cv = new MaterialCardView(context);
-        V.FL(cv).sizeDP(180, 200).lGravity(Gravity.CENTER).backgroundRes(R.color.back_view).radiusDP(20).parent(dialogView);
+        V.FL(cv).sizeDP(180, 200).lGravity(Gravity.CENTER).backgroundRes(R.color.back_view).radiusDP(36).parent(dialogView);
         
         loadView = new LoadView(context);
         loadView.setOnClickListener(v -> {});
