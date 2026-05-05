@@ -41,9 +41,9 @@ public class V<T extends View> {
     private ViewGroup.LayoutParams lp;
     
     private V(T v) {
-        this.view = v;
+        this.view    = v;
         this.context = v.getContext();
-        this.lp = view.getLayoutParams();
+        this.lp      = view.getLayoutParams();
         map.put(v, this);
     }
     
@@ -459,7 +459,7 @@ public class V<T extends View> {
      */
     public V<T> size(int w, int h) {
         if (lp == null) throw new NullPointerException("控件没有LayoutParams,请先创建");
-        lp.width = w == UN ? lp.width : w;
+        lp.width  = w == UN ? lp.width : w;
         lp.height = h == UN ? lp.height : h;
         return this;
     }
@@ -602,9 +602,15 @@ public class V<T extends View> {
      */
     public V<T> radius(float tl, float tr, float bl, float br) {
         if (view instanceof MaterialCardView v)
-            v.setShapeAppearanceModel(ShapeAppearanceModel.builder().setTopLeftCorner(CornerFamily.ROUNDED, tl).setTopRightCorner(CornerFamily.ROUNDED, tr).setBottomLeftCorner(CornerFamily.ROUNDED, bl).setBottomRightCorner(CornerFamily.ROUNDED, br).build());
+            v.setShapeAppearanceModel(ShapeAppearanceModel.builder().setTopLeftCorner(CornerFamily.ROUNDED, tl)
+                                                          .setTopRightCorner(CornerFamily.ROUNDED, tr)
+                                                          .setBottomLeftCorner(CornerFamily.ROUNDED, bl)
+                                                          .setBottomRightCorner(CornerFamily.ROUNDED, br).build());
         else if (view instanceof ShapeableImageView v)
-            v.setShapeAppearanceModel(ShapeAppearanceModel.builder().setTopLeftCorner(CornerFamily.ROUNDED, tl).setTopRightCorner(CornerFamily.ROUNDED, tr).setBottomLeftCorner(CornerFamily.ROUNDED, bl).setBottomRightCorner(CornerFamily.ROUNDED, br).build());
+            v.setShapeAppearanceModel(ShapeAppearanceModel.builder().setTopLeftCorner(CornerFamily.ROUNDED, tl)
+                                                          .setTopRightCorner(CornerFamily.ROUNDED, tr)
+                                                          .setBottomLeftCorner(CornerFamily.ROUNDED, bl)
+                                                          .setBottomRightCorner(CornerFamily.ROUNDED, br).build());
         else L.e(TAG, "控件:" + view + "无法设置独立Radius");
         return this;
     }
@@ -831,6 +837,14 @@ public class V<T extends View> {
     }
     
     /**
+     * 添加子控件
+     */
+    public V<T> add(View... v) {
+        if (view instanceof ViewGroup vg) for (View vv : v) vg.addView(vv);
+        return this;
+    }
+    
+    /**
      * 设置控件父级
      * 自带刷新效果
      */
@@ -868,7 +882,8 @@ public class V<T extends View> {
     
     private V<T> log(UReflex.UM um, String m, Class<?>... c) {
         if (um.isNull() || um.getE() != null) {
-            String log = String.format("控件[%s].%s(%s)失败", view.getClass().getName(), m, UArrays.toString(c, Class::getSimpleName));
+            String log = String.format("控件[%s].%s(%s)失败", view.getClass().getName(), m,
+                                       UArrays.toString(c, Class::getSimpleName));
             L.e(TAG, um.getE(), log);
         }
         return this;
