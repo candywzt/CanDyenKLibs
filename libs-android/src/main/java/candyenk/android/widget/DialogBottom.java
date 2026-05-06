@@ -1,13 +1,9 @@
 package candyenk.android.widget;
 
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.*;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.*;
 import androidx.annotation.StringRes;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -15,14 +11,13 @@ import candyenk.android.R;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import candyenk.android.utils.ULay;
+import candyenk.android.viewgroup.SmoothLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.function.Consumer;
-
 
 /**
  * 底部弹窗组件
@@ -36,7 +31,7 @@ public class DialogBottom extends BottomSheetDialog {
     protected Context viewContext;
     protected View targetView; //调用上拉弹窗的View对象
     protected boolean ok;//是否已经初始化成功
-    protected MaterialCardView dialogView;//弹窗布局对象
+    protected FrameLayout dialogView;//弹窗布局对象
     protected LinearLayout parentView;//内容父级
     protected TextView titleView;  //标题控件
     protected ImageView closeView;  //关闭控件
@@ -81,7 +76,7 @@ public class DialogBottom extends BottomSheetDialog {
      */
     @Deprecated
     @Override
-    public void setContentView(View view) {
+    public void setContentView(int layoutResId) {
         throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
     
@@ -90,7 +85,7 @@ public class DialogBottom extends BottomSheetDialog {
      */
     @Deprecated
     @Override
-    public void setContentView(int layoutResId) {
+    public void setContentView(View view) {
         throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
     
@@ -102,7 +97,6 @@ public class DialogBottom extends BottomSheetDialog {
     public void setContentView(View view, ViewGroup.LayoutParams params) {
         throw new UnsupportedOperationException("改方法在该类中已被禁用");
     }
-    
     
     @Override
     protected void onStart() {
@@ -117,14 +111,35 @@ public class DialogBottom extends BottomSheetDialog {
         super.show();
     }
     
+    /**
+     * 设置标题文本
+     * 默认不显示
+     *
+     * @param title 标题文本,为null则不显示标题栏
+     */
+    public void setTitle(CharSequence title) {
+        if (!ok) return;
+        if (title == null) {
+            titleView.setVisibility(View.GONE);
+        } else {
+            titleView.setText(title);
+            titleView.setVisibility(View.VISIBLE);
+        }
+    }
+    
+    /**
+     * 设置标题文本
+     *
+     * @param resId 标题资源ID
+     */
+    public void setTitle(@StringRes int resId) {
+        this.setTitle(context.getText(resId));
+    }
+    
     @Override
     public void dismiss() {
         lastSign = null;
         super.dismiss();
-    }
-    
-    protected float dp2px(float dp) {
-        return ULay.dp2px(context, dp);
     }
     
     /**
@@ -194,39 +209,14 @@ public class DialogBottom extends BottomSheetDialog {
     }
     
     /**
-     * 设置标题文本
-     *
-     * @param resId 标题资源ID
-     */
-    public void setTitle(@StringRes int resId) {
-        this.setTitle(context.getText(resId));
-    }
-    
-    /**
-     * 设置标题文本
-     * 默认不显示
-     *
-     * @param title 标题文本,为null则不显示标题栏
-     */
-    public void setTitle(CharSequence title) {
-        if (!ok) return;
-        if (title == null) {
-            titleView.setVisibility(View.GONE);
-        } else {
-            titleView.setText(title);
-            titleView.setVisibility(View.VISIBLE);
-        }
-    }
-    
-    
-    /**
      * 设置标题文本居中还是居左
      *
      * @param isCenter 是否居中
      */
     public void setTitleCenter(boolean isCenter) {
         if (!ok) return;
-        V.LL(titleView).gravity(isCenter ? Gravity.CENTER : Gravity.START).paddingDP(isCenter ? 0 : 20, 0, 0, 0).refresh();
+        V.LL(titleView).gravity(isCenter ? Gravity.CENTER : Gravity.START).paddingDP(isCenter ? 0 : 20, 0, 0, 0)
+         .refresh();
     }
     
     /**
@@ -261,24 +251,30 @@ public class DialogBottom extends BottomSheetDialog {
         window.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
     }
     
+    protected float dp2px(float dp) {
+        return ULay.dp2px(context, dp);
+    }
+    
     /*** 创建弹窗根布局 ***/
     private void initLayout() {
-        //跟级控件,圆角卡片
-        dialogView = new MaterialCardView(viewContext);
-        V.LL(dialogView).size(-1, -2).backgroundRes(R.color.back_all).radiusDP(36, 36, 0, 0).refresh();
-        dialogView.setClipToOutline(true);
+        //根级控件,圆角卡片
+        dialogView = new SmoothLayout(viewContext);
+        V.LL(dialogView).size(-1, -2).backgroundRes(R.color.back_all).refresh();
         //顶栏背景
         ImageView iv = new AppCompatImageView(viewContext);
-        V.FL(iv).sizeDP(-1, 120).drawable(R.drawable.bg_transparent_gradual_change).scaleType(ImageView.ScaleType.FIT_XY).parent(dialogView);
+        V.FL(iv).sizeDP(-1, 120).drawable(R.drawable.bg_transparent_gradual_change)
+         .scaleType(ImageView.ScaleType.FIT_XY).parent(dialogView);
         //内容父控件
         parentView = new LinearLayout(viewContext);
         V.FL(parentView).size(-1, -2).paddingDP(0, 20, 0, 0).orientation(1).parent(dialogView);
         //标题控件
         titleView = new MaterialTextView(viewContext);
-        V.LL(titleView).size(-1, -2).textSize(20).textColorRes(R.color.text_title).hide().paddingDP(20, 0, 0, 0).parent(parentView);
+        V.LL(titleView).size(-1, -2).textSize(20).textColorRes(R.color.text_title).hide().paddingDP(20, 0, 0, 0)
+         .parent(parentView);
         //关闭按钮
         closeView = new ImageView(viewContext);
-        V.FL(closeView).sizeDP(40, 40).lGravity(Gravity.TOP | Gravity.RIGHT).hide().drawable(R.drawable.ic_close).paddingDP(0, 10, 10, 0).parent(dialogView);
+        V.FL(closeView).sizeDP(40, 40).lGravity(Gravity.TOP | Gravity.RIGHT).hide().drawable(R.drawable.ic_close)
+         .paddingDP(0, 10, 10, 0).parent(dialogView);
         closeView.setOnClickListener(v -> dismiss());
         //底部按钮组
         buttonGroup = new LinearLayout(viewContext);
@@ -310,6 +306,7 @@ public class DialogBottom extends BottomSheetDialog {
     }
     
     /*** 保存各种监听的类 ***/
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected class ListenerSave {
         private Consumer dismissRun;
         private Consumer leftClick;
@@ -343,7 +340,6 @@ public class DialogBottom extends BottomSheetDialog {
             if (rightLong != null) rightLong.accept(DialogBottom.this);
             return true;
         }
-        
         
     }
 }

@@ -7,18 +7,16 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
-import androidx.cardview.widget.CardView;
 import candyenk.android.R;
 import candyenk.android.tools.RC;
 import candyenk.android.tools.V;
 import candyenk.android.view.LoadView;
-import com.google.android.material.card.MaterialCardView;
+import candyenk.android.viewgroup.SmoothLayout;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-
 
 /**
  * <h1>呼吸加载弹窗</h1>
@@ -55,15 +53,6 @@ public class DialogLoading extends AlertDialog {
     }
     
     @Override
-    protected void onStart() {
-        super.onStart();
-        setContentView(dialogView);
-        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        loadView.start();
-    }
-    
-    
-    @Override
     public void show() {
         if (ok) {
             super.show();
@@ -75,6 +64,28 @@ public class DialogLoading extends AlertDialog {
     public void dismiss() {
         mList.remove(this.parentView);
         loadView.dismiss(l -> DialogLoading.super.dismiss());
+    }
+    
+    /**
+     * 设置标题文本
+     * 调用该方法将显示标题栏
+     * 不调用则隐藏标题栏
+     *
+     * @param title 标题文本
+     */
+    @Override
+    public void setTitle(CharSequence title) {
+        super.setTitle(title);
+        titleView.setText(title);
+        titleView.setVisibility(View.VISIBLE);
+    }
+    
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setContentView(dialogView);
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        loadView.start();
     }
     
     /**
@@ -116,35 +127,22 @@ public class DialogLoading extends AlertDialog {
         dialogView.setOnClickListener(touchOff ? v -> dismiss() : null);
     }
     
-    /**
-     * 设置标题文本
-     * 调用该方法将显示标题栏
-     * 不调用则隐藏标题栏
-     *
-     * @param title 标题文本
-     */
-    @Override
-    public void setTitle(CharSequence title) {
-        super.setTitle(title);
-        titleView.setText(title);
-        titleView.setVisibility(View.VISIBLE);
-    }
-    
     /*** 创建布局 ***/
     private void initLayout() {
         dialogView = new FrameLayout(context);
         dialogView.setOnClickListener(v -> dismiss());
         V.LP(dialogView).sizeDP(-1, -2).backgroundRes(android.R.color.transparent).refresh();
         
-        CardView cv = new MaterialCardView(context);
-        V.FL(cv).sizeDP(180, 200).lGravity(Gravity.CENTER).backgroundRes(R.color.back_view).radiusDP(36).parent(dialogView);
+        SmoothLayout cv = new SmoothLayout(context);
+        V.FL(cv).sizeDP(180, 200).lGravity(Gravity.CENTER).backgroundRes(R.color.back_view).parent(dialogView);
         
         loadView = new LoadView(context);
         loadView.setOnClickListener(v -> {});
         V.FL(loadView).sizeDP(180).lGravity(Gravity.CENTER_HORIZONTAL).parent(cv);
         
         titleView = new MaterialTextView(context);
-        V.FL(titleView).size(-2, -2).lGravity(Gravity.BOTTOM | Gravity.CENTER).paddingDP(0, 0, 0, 10).textColorRes(R.color.text_main).textSize(18).hide().parent(cv);
+        V.FL(titleView).size(-2, -2).lGravity(Gravity.BOTTOM | Gravity.CENTER).paddingDP(0, 0, 0, 10)
+         .textColorRes(R.color.text_main).textSize(18).hide().parent(cv);
         
     }
     
