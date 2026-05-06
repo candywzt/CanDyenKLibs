@@ -20,12 +20,20 @@ public final class SmoothLayout extends FrameLayout implements Shapeable {
     private static final SmoothDrawer drawer = new SmoothDrawer();
     
     public SmoothLayout(Context context) {
-        super(context);
-        super.setWillNotDraw(false);
+        this(context,null);
+    }
+    
+    public SmoothLayout(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+    
+    public SmoothLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr, 0);
     }
     
     public SmoothLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        super.setWillNotDraw(false);
         drawer.m = ShapeAppearanceModel.builder(context, attrs, defStyleAttr, defStyleRes).build();
     }
     
