@@ -30,7 +30,7 @@
         android:textColor="#ff757575" />
 
     <ScrollView
-        style="@style/CDK.RecyclerView.ScrollBars"
+        style="@style/CDK.Widget.RecyclerView.ScrollBars"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1">

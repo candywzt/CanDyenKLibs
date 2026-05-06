@@ -1,16 +1,16 @@
 <resources>
-    
+
     <style name="Theme.CDK" parent="Theme.MaterialComponents.Light">
         <!--        <item name="android:windowSplashScreenBackground">@android:color/background_light</item>-->
         <!--        <item name="android:windowSplashScreenAnimatedIcon">@drawable/aaa</item>-->
         <!-- 状态栏颜色 -->
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <!--虚拟键和小白条-->
+        <!-- 虚拟键和小白条 -->
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <!--状态栏区域显示-->
+        <!-- 状态栏区域显示 -->
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
-        <!--标题栏-->
+        <!-- 标题栏 -->
         <item name="android:windowTranslucentStatus">true</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -26,33 +26,28 @@
         <item name="colorSecondary">@color/main_03</item>
         <item name="colorSecondaryVariant">@color/main_04</item>
         <item name="colorOnSecondary">@color/main_01</item>
-        <!--其他颜色-->
+        <!-- 其他颜色 -->
         <item name="android:textColorLink">@color/main_01</item>
-        <!--TextView控件-->
-        <item name="android:textViewStyle">@style/CDK.TextView</item>
-        <!--Button控件-->
-        <item name="android:buttonStyle">@style/CDK.Button.TextButton</item>
-        <item name="materialButtonStyle">@style/CDK.Button.TextButton</item>
-        <item name="materialButtonOutlinedStyle">@style/CDK.Button.TextButton.Outlined</item>
-        <!--Switch控件-->
-        <item name="android:switchStyle">@style/CDK.Switch</item>
-        <!--EditText控件-->
-        <item name="editTextStyle">@style/CDK.EditText</item>
-        <item name="android:editTextStyle">@style/CDK.EditText</item>
-        <!--CheckBox控件-->
-        <item name="checkboxStyle">@style/CDK.CheckBox</item>
-        <item name="android:checkboxStyle">@style/CDK.CheckBox</item>
-        <!--RadioButton控件-->
-        <item name="radioButtonStyle">@style/CDK.RadioButton</item>
-        <item name="android:radioButtonStyle">@style/CDK.RadioButton</item>
-        <!--Chip控件-->
-        <item name="chipStyle">@style/CDK.Chip</item>
-        <!--RecyclerView控件-->
-        <item name="recyclerViewStyle">@style/CDK.RecyclerView</item>
+        <!-- 默认组件属性 -->
+        <item name="android:textViewStyle">@style/CDK.Widget.TextView</item>
+        <item name="android:buttonStyle">@style/CDK.Widget.Button.TextButton</item>
+        <item name="materialButtonStyle">@style/CDK.Widget.Button.TextButton</item>
+        <item name="materialButtonOutlinedStyle">@style/CDK.Widget.Button.TextButton.Outlined</item>
+        <item name="android:switchStyle">@style/CDK.Widget.Switch</item>
+        <item name="editTextStyle">@style/CDK.Widget.EditText</item>
+        <item name="android:editTextStyle">@style/CDK.Widget.EditText</item>
+        <item name="checkboxStyle">@style/CDK.Widget.CheckBox</item>
+        <item name="android:checkboxStyle">@style/CDK.Widget.CheckBox</item>
+        <item name="radioButtonStyle">@style/CDK.Widget.RadioButton</item>
+        <item name="android:radioButtonStyle">@style/CDK.Widget.RadioButton</item>
+        <item name="chipStyle">@style/CDK.Widget.Chip</item>
+        <item name="recyclerViewStyle">@style/CDK.Widget.RecyclerView</item>
+        <item name="smoothLayoutStyle">@style/CDK.Shapeable.SmoothLayout</item>
     </style>
-    <!--BottomSheetDialog上拉弹窗主题-->
+    <!-- 上拉弹窗专用主题 -->
     <style name="Theme.CDK.Dialog" parent="Base.V7.ThemeOverlay.AppCompat.Dialog">
         <item name="bottomSheetStyle">@null</item>
+        <item name="smoothLayoutStyle">@style/CDK.Shapeable.SmoothLayoutBottomDialog</item>
         <item name="android:windowAnimationStyle">@style/Animation.MaterialComponents.BottomSheetDialog</item>
         <item name="android:windowElevation">0dp</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
@@ -64,7 +59,6 @@
         <item name="paddingRightSystemWindowInsets">false</item><!-- 侧边栏遮挡(横屏状态栏) -->
         <item name="paddingTopSystemWindowInsets">true</item><!-- 状态栏遮挡 -->
     </style>
-    <!--*****************************************************************************************-->
 
 
 </resources>

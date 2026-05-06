@@ -1,14 +1,16 @@
 <resources>
-    <!--CDKstytle基类-->
+    <!--基类-->
     <style name="CDK"/>
+    <style name="CDK.Widget" parent="CDK"/>
+    <style name="CDK.Shapeable" parent="CDK"/>
     <!--*****************************************************************************************-->
     <!--TextView风格-->
-    <style name="CDK.TextView" parent="Widget.AppCompat.TextView">
+    <style name="CDK.Widget.TextView" parent="Widget.AppCompat.TextView">
         <item name="android:textColor">@color/text_main</item><!--按钮文本颜色-->
     </style>
     <!--Button风格-->
     <!--实心按钮-->
-    <style name="CDK.Button.TextButton" parent="Widget.Material3.Button">
+    <style name="CDK.Widget.Button.TextButton" parent="Widget.Material3.Button">
         <item name="android:textColor">@color/color_textbutton_text</item>
         <item name="android:background">@drawable/bg_textbutton</item>
         <item name="android:textSize">12sp</item>
@@ -17,28 +19,28 @@
         <item name="backgroundTint">@null</item>
     </style>
     <!--空心按钮-->
-    <style name="CDK.Button.TextButton.Outlined" parent="CDK.Button.TextButton">
+    <style name="CDK.Widget.Button.TextButton.Outlined" parent="CDK.Widget.Button.TextButton">
         <item name="android:textColor">@color/color_outlinedtextbutton_text</item>
         <item name="android:background">@drawable/bg_outlinedtextbutton</item>
     </style>
     <!--*****************************************************************************************-->
     <!--CheckBox风格-->
-    <style name="CDK.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+    <style name="CDK.Widget.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:textColor">@color/text_main</item>
     </style>
     <!--RadioButton风格-->
-    <style name="CDK.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+    <style name="CDK.Widget.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:textColor">@color/text_main</item>
     </style>
     <!--*****************************************************************************************-->
     <!--Chip风格-->
-    <style name="CDK.Chip" parent="Widget.MaterialComponents.Chip.Filter">
-    
+    <style name="CDK.Widget.Chip" parent="Widget.MaterialComponents.Chip.Filter">
+
     </style>
     <!--*****************************************************************************************-->
     <!--EditText风格-->
     <!--实心编辑框-->
-    <style name="CDK.EditText" parent="Widget.AppCompat.EditText">
+    <style name="CDK.Widget.EditText" parent="Widget.AppCompat.EditText">
         <item name="android:background">@drawable/bg_edit_outlined</item>
         <item name="android:textColor">@color/text_main</item>
         <item name="android:textColorHint">@color/text_deputy</item>
@@ -46,12 +48,12 @@
         <item name="android:padding">10dp</item>
     </style>
     <!--空心编辑框-->
-    <style name="CDK.EditText.Outlined" parent="CDK.EditText">
+    <style name="CDK.Widget.EditText.Outlined" parent="CDK.Widget.EditText">
         <item name="android:background">@drawable/bg_edit</item>
     </style>
     <!--*****************************************************************************************-->
     <!--Switch风格-->
-    <style name="CDK.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
+    <style name="CDK.Widget.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
         <item name="android:thumb">@drawable/bg_switch_thumb</item>
         <item name="android:track">@drawable/bg_switch_track</item>
         <item name="android:background">@null</item>
@@ -62,7 +64,7 @@
     </style>
     <!--*****************************************************************************************-->
     <!--Seekbar风格-->
-    <style name="CDK.SeekBar" parent="Widget.AppCompat.SeekBar">
+    <style name="CDK.Widget.SeekBar" parent="Widget.AppCompat.SeekBar">
         <item name="android:thumb">@drawable/bg_seekbar_thumb</item><!--拖动按钮背景图-->
         <item name="android:progressDrawable">@drawable/bg_seekbar</item>
         <!--        <item name="android:indeterminateDrawable">@drawable/seekbar_indeterminate</item>-->
@@ -70,21 +72,12 @@
         <item name="android:background">@null</item>
         <item name="android:maxHeight">25dp</item>
         <item name="android:minHeight">25dp</item>
-    
-    </style>
-    <!--*****************************************************************************************-->
-    <!--ShapeableImageView控件样式-->
-    <!--圆角图片-->
-    <style name="CDK.ShapeableImageView">
-        <item name="cornerSizeTopLeft">25%</item>
-        <item name="cornerSizeTopRight">25%</item>
-        <item name="cornerSizeBottomRight">25%</item>
-        <item name="cornerSizeBottomLeft">25%</item>
+
     </style>
     <!--*****************************************************************************************-->
     <!--RecycleView风格-->
     <!--RecycleView边缘衰减-->
-    <style name="CDK.RecyclerView">
+    <style name="CDK.Widget.RecyclerView">
         <item name="android:overScrollMode">ifContentScrolls</item><!--滚动条模式-->
         <item name="android:scrollbars">none</item><!--滚动条方向-->
         <item name="android:requiresFadingEdge">vertical</item><!--边缘衰减方向-->
@@ -92,19 +85,43 @@
         <item name="android:colorEdgeEffect">@android:color/transparent</item><!--边缘颜色-->
     </style>
     <!--RecycleView安卓快速滚动条-->
-    <style name="CDK.RecyclerView.ScrollBars" parent="CDK.RecyclerView">
+    <style name="CDK.Widget.RecyclerView.ScrollBars" parent="CDK.Widget.RecyclerView">
         <item name="android:overScrollMode">ifContentScrolls</item><!--滚动条模式-->
         <item name="android:scrollbarSize">5dp</item><!--滚动条宽度-->
         <item name="android:scrollbarThumbVertical">@color/main_01</item><!--滚动条背景-->
         <item name="android:scrollbars">vertical</item><!--滚动条方向-->
     </style>
     <!--RecycleView快速滚动条-->
-    <style name="CDK.RecyclerView.FastScrollBars" parent="CDK.RecyclerView">
+    <style name="CDK.Widget.RecyclerView.FastScrollBars" parent="CDK.Widget.RecyclerView">
         <item name="android:overScrollMode">never</item><!--滚动条模式-->
         <item name="fastScrollEnabled">true</item><!--滚动条拖动-->
         <item name="fastScrollHorizontalThumbDrawable">@drawable/bg_slider_track</item><!--水平滚动块-->
         <item name="fastScrollHorizontalTrackDrawable">@android:color/transparent</item><!--水平滚动块背景-->
         <item name="fastScrollVerticalThumbDrawable">@drawable/bg_slider_track</item><!--竖直滚动块-->
         <item name="fastScrollVerticalTrackDrawable">@android:color/transparent</item><!--竖直滚动块背景-->
+    </style>
+    <!--*****************************************************************************************-->
+    <!--Shapeable控件样式-->
+    <!--圆角图片-->
+    <style name="CDK.Shapeable.ImageView">
+        <item name="cornerSizeTopLeft">25%</item>
+        <item name="cornerSizeTopRight">25%</item>
+        <item name="cornerSizeBottomRight">25%</item>
+        <item name="cornerSizeBottomLeft">25%</item>
+    </style>
+    <!-- 圆角控件-->
+    <style name="CDK.Shapeable.SmoothLayout">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">36dp</item>
+        <item name="cornerSizeTopRight">36dp</item>
+        <item name="cornerSizeBottomLeft">36dp</item>
+        <item name="cornerSizeBottomRight">36dp</item>
+    </style>
+    <style name="CDK.Shapeable.SmoothLayoutBottomDialog">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">36dp</item>
+        <item name="cornerSizeTopRight">36dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
     </style>
 </resources>

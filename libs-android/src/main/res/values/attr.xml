@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 全局属性 -->
+    <attr name="smoothLayoutStyle" format="reference"/>
+    <!-- AmoothLayout控件 -->
+    <declare-styleable name="SmoothLayout">
+        <attr name="shapeAppearance"/>
+    </declare-styleable>
     <!--CDKProgressBar进度条-->
     <declare-styleable name="CDKProgressBar">
         <attr name="android:max"/>

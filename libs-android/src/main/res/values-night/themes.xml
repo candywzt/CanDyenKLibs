@@ -1,15 +1,13 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="Theme.CDK" parent="Theme.MaterialComponents.DayNight">
-<!--        <item name="android:windowSplashScreenBackground">@android:color/background_light</item>-->
-<!--        <item name="android:windowSplashScreenAnimatedIcon">@drawable/aaa</item>-->
         <!-- 状态栏颜色 -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <!--虚拟键和小白条-->
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <!--状态栏区域显示-->
-        <item name="android:windowLayoutInDisplayCutoutMode" >shortEdges</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <!--标题栏-->
         <item name="android:windowTranslucentStatus">true</item>
         <item name="windowActionBar">false</item>
@@ -22,40 +20,12 @@
         <item name="android:colorAccent">@color/main_04</item>
         <item name="colorAccent">@color/main_04</item>
         <!-- 次要颜色 -->
-        <item name="android:colorSecondary" >@color/main_03</item>
+        <item name="android:colorSecondary">@color/main_03</item>
         <item name="colorSecondary">@color/main_03</item>
         <item name="colorSecondaryVariant">@color/main_04</item>
         <item name="colorOnSecondary">@color/main_01</item>
         <!--其他颜色-->
         <item name="android:textColorLink">@color/main_01</item>
-        <!--TextView控件-->
-        <item name="android:textViewStyle">@style/CDK.TextView</item>
-        <!--Button控件-->
-        <item name="android:buttonStyle">@style/CDK.Button.TextButton</item>
-        <item name="materialButtonStyle">@style/CDK.Button.TextButton</item>
-        <item name="materialButtonOutlinedStyle">@style/CDK.Button.TextButton.Outlined</item>
-        <!--Switch控件-->
-        <item name="android:switchStyle">@style/CDK.Switch</item>
-        <!--EditText控件-->
-        <item name="editTextStyle">@style/CDK.EditText</item>
-        <item name="android:editTextStyle">@style/CDK.EditText</item>
-        <!--CheckBox控件-->
-        <item name="checkboxStyle">@style/CDK.CheckBox</item>
-        <item name="android:checkboxStyle">@style/CDK.CheckBox</item>
-        <!--RadioButton控件-->
-        <item name="radioButtonStyle">@style/CDK.RadioButton</item>
-        <item name="android:radioButtonStyle">@style/CDK.RadioButton</item>
-        <!--Chip控件-->
-        <item name="chipStyle">@style/CDK.Chip</item>
-        <!--RecyclerView控件-->
-        <item name="recyclerViewStyle">@style/CDK.RecyclerView</item>
     </style>
-    <!--BottomSheetDialog上拉弹窗主题-->
-<!--    <style name="Theme.CDK.Dialog" parent="Theme.Design.Light.BottomSheetDialog">-->
-<!--    <style name="Theme.CDK.Dialog" parent="Theme.MaterialComponents.Light.BottomSheetDialog">-->
-<!--        <item name="bottomSheetStyle">@style/CDK.DialogBottom</item>-->
-<!--    </style>-->
-    <!--*****************************************************************************************-->
-
 
 </resources>
