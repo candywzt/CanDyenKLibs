@@ -9,26 +9,19 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 import candyenk.android.R;
 import candyenk.android.tools.TX;
 
-
+/**
+ * CDK崩溃收集反馈Activity
+ */
 public class ActivityCrash extends ActivityCDK {
-    //控件声明
     private TextView reportView;
     private Button button1, button2, button3, button4;
     private Class<?> currentActivity;//崩溃前活动
     private Throwable crashReport;//奔溃内容
     private Spannable report;//奔溃日志
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //CDKApplication.finishAllActivity();
-    }
-
+    
     @Override
     protected void intentInit() {
         //传递初始化
@@ -36,7 +29,7 @@ public class ActivityCrash extends ActivityCDK {
         crashReport = (Throwable) intent.getSerializableExtra("crashReport");
         currentActivity = (Class<?>) intent.getSerializableExtra("CurrentActivity");
     }
-
+    
     @Override
     protected void viewInit() {
         //控件初始化
@@ -48,20 +41,21 @@ public class ActivityCrash extends ActivityCDK {
         reportView = findViewById(R.id.crash_report_text);
         setTitle(R.string.crash_title_text);
     }
-
+    
     @Override
     protected void contentInit(Bundle savedInstanceState) {
         //内容初始化
         report = getReport();
         reportView.setText(report);
     }
-
+    
     @Override
     protected void eventInit() {
         //事件初始化
         button1.setOnClickListener(v -> {
             /*
-            Intent intent = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
+            Intent intent = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext()
+            .getPackageName());
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             //与平时Activity页面跳转一样可传递序列化数据,在Launch页面内获得
             intent.putExtra("REBOOT", "reboot");
@@ -79,7 +73,7 @@ public class ActivityCrash extends ActivityCDK {
             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData mClipData = ClipData.newPlainText(getString(R.string.crash_title_text), report);
             cm.setPrimaryClip(mClipData);
-            Toast.makeText(this, "已复制到剪切板", Toast.LENGTH_SHORT).show();
+            toast("已复制到剪切板");
         });
         button4.setOnClickListener(v -> {
             /*
@@ -91,7 +85,8 @@ public class ActivityCrash extends ActivityCDK {
                         web.loadUrl("https://wj.qq.com/s2/9654530/5215/");
                         UWeb.initWebView(this, web);
                         web.setWebChromeClient(new WebChromeClient() {
-                            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+                            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, 
+                            FileChooserParams fileChooserParams) {
 
                                 return true;
                             }
@@ -101,15 +96,19 @@ public class ActivityCrash extends ActivityCDK {
              */
         });
     }
-
+    
     @Override
     protected Bundle saveData(Bundle bundle) {
         return bundle;
     }
-
-
-    /**********************************************************************************************/
-    //拼接异常日志展示内容
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //CDKApplication.finishAllActivity();
+    }
+    
+    /*** 拼接异常日志展示内容 ***/
     private Spannable getReport() {
         SpannableStringBuilder report = new SpannableStringBuilder();
         report.append("Version:");
@@ -121,7 +120,7 @@ public class ActivityCrash extends ActivityCDK {
         } else {
             report.append("崩溃活动:").append(String.valueOf(currentActivity)).append("\n");
         }
-
+        
         if (crashReport == null) {
             report.append(getString(R.string.crash_error));
         } else {
@@ -129,17 +128,16 @@ public class ActivityCrash extends ActivityCDK {
         }
         return report;
     }
-
-    /**
-     * 获取APP崩溃异常报告
-     */
+    
+    /*** 获取APP崩溃异常报告 ***/
     private Spannable getCrashReport(Throwable ex) {
         SpannableStringBuilder sb = new SpannableStringBuilder();
-        sb.append(ex.getClass().toString()).append(":").append(String.valueOf(TX.color(ex.getMessage(), getColor(R.color.red)))).append("\n");
+        sb.append(ex.getClass().toString()).append(":")
+          .append(String.valueOf(TX.color(ex.getMessage(), getColor(R.color.red)))).append("\n");
         StackTraceElement[] elements = ex.getStackTrace();
         for (StackTraceElement ste : elements) sb.append(ste.toString()).append("\n");
         return sb;
     }
-
+    
 }
 

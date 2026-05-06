@@ -65,7 +65,6 @@ public class DialogFileChooser extends DialogBottomRV {
         initAdapter();
     }
     
-    
     /**
      * 展示指定FileInfo组选择器
      *
@@ -215,7 +214,6 @@ public class DialogFileChooser extends DialogBottomRV {
         adapter.fileLong = onLongClickListener;
     }
     
-    
     /*** 初始化Adapter ***/
     private void initAdapter() {
         super.setContent(adapter);
@@ -241,7 +239,6 @@ public class DialogFileChooser extends DialogBottomRV {
     private void updateAdapter() {
         adapter.notifyDataSetChanged();
     }
-    
     
     /*** 检查是否合法 ***/
     private boolean checkSign() {
@@ -337,13 +334,16 @@ public class DialogFileChooser extends DialogBottomRV {
                 return item;
             } else {
                 LinearLayout l1 = new LinearLayout(context);
-                V.RV(l1).size(-1, -2).orientation(1).gravity(Gravity.CENTER_HORIZONTAL).backgroundRes(R.drawable.bg_cdk).refresh();
+                V.RV(l1).size(-1, -2).orientation(1).gravity(Gravity.CENTER_HORIZONTAL).backgroundRes(R.drawable.bg_cdk)
+                 .refresh();
                 
                 ImageView iv = new ImageView(context);
-                V.LL(iv).sizeDP(120).paddingDP(8).scaleType(ImageView.ScaleType.CENTER_CROP).drawable(R.drawable.ic_file_unknown).parent(l1);
+                V.LL(iv).sizeDP(120).paddingDP(8).scaleType(ImageView.ScaleType.CENTER_CROP)
+                 .drawable(R.drawable.ic_file_unknown).parent(l1);
                 
                 TextView tv = new MaterialTextView(context);
-                V.LL(tv).size(-2).paddingDP(0, 0, 0, 40).textSize(16).textColorRes(R.color.text_main).text(R.string.file_chooser_no_file).parent(l1);
+                V.LL(tv).size(-2).paddingDP(0, 0, 0, 40).textSize(16).textColorRes(R.color.text_main)
+                 .text(R.string.file_chooser_no_file).parent(l1);
                 return l1;
             }
         }
