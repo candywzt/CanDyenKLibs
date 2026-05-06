@@ -20,7 +20,7 @@ public final class SmoothLayout extends FrameLayout implements Shapeable {
     private static final SmoothDrawer drawer = new SmoothDrawer();
     
     public SmoothLayout(Context context) {
-        this(context,null);
+        this(context, null);
     }
     
     public SmoothLayout(Context context, AttributeSet attrs) {
@@ -38,10 +38,10 @@ public final class SmoothLayout extends FrameLayout implements Shapeable {
     }
     
     @Override
-    protected void onDraw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         canvas.save();
         canvas.clipPath(drawer.path);
-        super.onDraw(canvas);
+        super.draw(canvas);
         canvas.restore();
     }
     
@@ -49,11 +49,11 @@ public final class SmoothLayout extends FrameLayout implements Shapeable {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         drawer.rf.set(0, 0, w, h);
+        drawer.calculatePath();
     }
     
     @Override
     protected void dispatchDraw(@NonNull Canvas canvas) {
-        drawer.calculatePath();
         canvas.save();
         canvas.clipPath(drawer.path);
         super.dispatchDraw(canvas);
