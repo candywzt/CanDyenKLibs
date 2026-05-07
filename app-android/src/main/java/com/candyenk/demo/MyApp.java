@@ -1,9 +1,6 @@
 package com.candyenk.demo;
 
-import android.util.Log;
 import candyenk.android.base.ApplicationCDK;
-import rikka.shizuku.Shizuku;
-import rikka.sui.Sui;
 
 
 public class MyApp extends ApplicationCDK {

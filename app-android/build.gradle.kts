@@ -1,14 +1,15 @@
 plugins {
     id("com.android.application")
+    //id("org.jetbrains.kotlin.plugin.compose")
 }
 android {
     namespace = "com.candyenk.demo"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = namespace
         minSdk = 30
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
     }
@@ -23,13 +24,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
-        viewBinding = true;
-        buildConfig = true;
-        aidl = true;
+        viewBinding = true
+        buildConfig = true
+        aidl = true
+//        compose = true
     }
     packaging {
         resources {
@@ -44,4 +46,6 @@ dependencies {
     api(project(":libs-android"))
     implementation("org.litepal.guolindev:core:3.2.3")//LitePal
     implementation("org.luaj:luaj-jse:3.0.1")//LuaJ
+
+
 }
