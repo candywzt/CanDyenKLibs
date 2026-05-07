@@ -117,7 +117,7 @@ public class DialogBottomItem extends DialogBottomRV {
     /*** 创建页脚 ***/
     private View createFoot() {
         View view = new View(context);
-        V.RL(view).sizeDP(-1, 20).refresh();
+        V.RL(view).sizeDP(36, 36).refresh();
         return view;
     }
     

@@ -1,6 +1,5 @@
 package candyenk.android.base;
 
-
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.View;
@@ -114,7 +113,7 @@ public class HolderCDK extends RecyclerView.ViewHolder {
      */
     public int getItemPosition() {
         int index = super.getAdapterPosition();
-        if (adapter.headH != null) index--;
+        if (adapter.getHeader() != null) index--;
         return index;
     }
 }

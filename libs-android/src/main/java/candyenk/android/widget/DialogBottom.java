@@ -264,30 +264,30 @@ public class DialogBottom extends BottomSheetDialog {
          .scaleType(ImageView.ScaleType.FIT_XY).parent(dialogView);
         //内容父控件
         contentView = new LinearLayout(context);
-        V.FL(contentView).size(-1, -2).paddingDP(0, 20, 0, 0).orientation(1).parent(dialogView);
+        V.FL(contentView).size(-1, -2).paddingDP(0, 24, 0, 0).orientation(1).parent(dialogView);
         //标题控件
         titleView = new MaterialTextView(context);
-        V.LL(titleView).size(-1, -2).textSize(20).textColorRes(R.color.text_title).hide().paddingDP(20, 0, 0, 0)
+        V.LL(titleView).size(-1, -2).textSize(24).textColorRes(R.color.text_title).hide().paddingDP(24, 0, 0, 0)
          .parent(contentView);
         //关闭按钮
         closeView = new ImageView(context);
-        V.FL(closeView).sizeDP(40, 40).lGravity(Gravity.TOP | Gravity.RIGHT).hide().drawable(R.drawable.ic_close)
-         .paddingDP(0, 10, 10, 0).parent(dialogView);
+        V.FL(closeView).sizeDP(64).lGravity(Gravity.TOP | Gravity.RIGHT).hide().drawable(R.drawable.ic_close)
+         .paddingDP(16).parent(dialogView);
         closeView.setOnClickListener(v -> dismiss());
         //底部按钮组
         buttonGroup = new LinearLayout(context);
-        V.LL(buttonGroup).size(-1, -2).orientation(0).paddingDP(20, 0, 20, 20).hide().parent(contentView);
+        V.LL(buttonGroup).size(-1, -2).orientation(0).paddingDP(24, 0, 24, 36).hide().parent(contentView);
         //左按钮
         leftButton = new MaterialButton(context);
-        V.LL(leftButton).sizeDP(-1, 50).weight(1).text(R.string.yes).hide().parent(buttonGroup);
+        V.LL(leftButton).sizeDP(-1, 48).weight(1).text(R.string.yes).hide().parent(buttonGroup);
         leftButton.setOnClickListener(this.ls::OnLeftClick);
         leftButton.setOnLongClickListener(this.ls::OnLiftLong);
         //中间隔层
         centerView = new View(context);
-        V.LL(centerView).sizeDP(40, 50).hide().parent(buttonGroup);
+        V.LL(centerView).sizeDP(36, 48).hide().parent(buttonGroup);
         //右按钮
         rightButton = new MaterialButton(context, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
-        V.LL(rightButton).sizeDP(-1, 50).weight(1).text(R.string.no).hide().parent(buttonGroup);
+        V.LL(rightButton).sizeDP(-1, 48).weight(1).text(R.string.no).hide().parent(buttonGroup);
         rightButton.setOnClickListener(this.ls::OnRightClick);
         rightButton.setOnLongClickListener(this.ls::OnRightLong);
         super.setContentView(dialogView);

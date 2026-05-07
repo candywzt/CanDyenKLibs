@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import candyenk.android.R;
 import candyenk.android.base.AdapterRVCDK;
@@ -291,7 +292,7 @@ public class DialogFileChooser extends DialogBottomRV {
         }
         
         @Override
-        public void onBind(FileHolder h, int p) {
+        public void onBind(@NonNull FileHolder h, int p) {
             h.setContent(infoList.get(p));
         }
         
