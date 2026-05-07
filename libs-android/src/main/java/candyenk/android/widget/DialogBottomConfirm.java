@@ -1,6 +1,7 @@
 package candyenk.android.widget;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.annotation.DrawableRes;
 import candyenk.android.R;
 import candyenk.android.tools.V;
 import candyenk.java.utils.UData;
@@ -21,6 +23,7 @@ import java.util.function.Consumer;
 public class DialogBottomConfirm extends DialogBottomView {
     protected long time;
     private TextView textView;
+    private ImageView imageView;
     
     public DialogBottomConfirm(Context context) {
         this(context, null);
@@ -83,12 +86,21 @@ public class DialogBottomConfirm extends DialogBottomView {
     }
     
     /**
-     * 设置图标样式
+     * 设置图标
      *
-     * @param style 样式ID
+     * @param resId 样式ID
      */
-    public void setIconStyle(int style) {
-        //TODO:还没做
+    public void setIcon(@DrawableRes int resId) {
+        imageView.setImageResource(resId);
+    }
+    
+    /**
+     * 设置图标
+     *
+     * @param drawable 图标
+     */
+    public void setIcon(Drawable drawable) {
+        imageView.setImageDrawable(drawable);
     }
     
     /**
@@ -140,19 +152,13 @@ public class DialogBottomConfirm extends DialogBottomView {
     /*** 初始化布局 ***/
     private void initLayout() {
         LinearLayout layout = new LinearLayout(context);
-        V.RV(layout).size(-1, -2).orientation(1).paddingDP(20).refresh();
+        V.RV(layout).size(-1, -2).orientation(1).gravity(Gravity.CENTER).paddingDP(0).refresh();
         
-        LinearLayout l1 = new LinearLayout(context);
-        V.LL(l1).size(-1, -2).orientation(0).gravity(Gravity.CENTER).parent(layout);
-        
-        ImageView iconView = new ImageView(context);
-        V.LL(iconView).sizeDP(80).drawable(R.drawable.ic_ok).parent(l1);
-        
-        TextView titleView = new MaterialTextView(context);
-        V.LL(titleView).size(-1, -1).gravity(Gravity.CENTER).textSize(24).hide().parent(l1);
+        imageView = new ImageView(context);
+        V.LL(imageView).sizeDP(128).paddingDP(12).drawable(R.drawable.ic_ok).parent(layout);
         
         textView = new MaterialTextView(context);
-        V.LL(textView).size(-1, -2).paddingDP(0, 20, 0, 0).hide().parent(layout);
+        V.LL(textView).size(-1, -2).paddingDP(12).textSize(16).hide().parent(layout);
         super.setContent(layout);
     }
     
