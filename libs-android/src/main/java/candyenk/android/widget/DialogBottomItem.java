@@ -122,18 +122,15 @@ public class DialogBottomItem extends DialogBottomRV {
     
     /*** Item适配器 ***/
     protected static class ItemAdapter extends AdapterRVCDK<HolderCDK> {
-        protected View[] items;
-        protected Supplier<View> supplier;
-        private int count;
-        private Consumer<HolderCDK> c;
+        protected View[] items;//控件组
+        private Consumer<HolderCDK> c; //元数据绑定器
         
         protected ItemAdapter() {
         }
         
         @Override
         public HolderCDK onCreate(ViewGroup p, int t) {
-            View view = t == -1 ? supplier.get() : items[t];
-            return new HolderCDK(view);
+            return new HolderCDK(items[t]);
         }
         
         @Override
@@ -143,28 +140,26 @@ public class DialogBottomItem extends DialogBottomRV {
         
         @Override
         public int getCount() {
-            return count;
+            return items.length;
         }
         
         /**
          * 获取指定位置的控件类型
-         * 唯一布局为-1,其他的为p
          */
         @Override
         public int getType(int p) {
-            return items == null ? -1 : p;
+            return p;
         }
         
         /*** 设置Adapter内容,控件组 ***/
         protected void setItems(View... items) {
             this.items = items;
-            this.count = items.length;
         }
         
         /*** 设置Adapter内容,重复控件 ***/
         protected void setItems(Supplier<View> supplier, int count) {
-            this.supplier = supplier;
-            this.count = count;
+            this.items = new View[count];
+            for (int i = 0; i < count; i++) items[i] = supplier.get();
         }
         
         /*** 设置布局绑定 ***/

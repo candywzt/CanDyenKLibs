@@ -116,4 +116,5 @@ public class HolderCDK extends RecyclerView.ViewHolder {
         if (adapter.getHeader() != null) index--;
         return index;
     }
+    
 }

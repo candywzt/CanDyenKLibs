@@ -31,11 +31,11 @@ public class DialogBottom extends BottomSheetDialog {
     protected Context context; //上下文
     protected boolean ok;//是否已经初始化成功
     protected Button leftButton, rightButton;  //按钮控件
+    protected LinearLayout contentView;//内容父级
     private TextView titleView;  //标题控件
     private ImageView closeView;  //关闭控件
     private View centerView;//按钮中间分割区域
     private LinearLayout buttonGroup;//按钮父级控件
-    private LinearLayout contentView;//内容父级
     
     /**
      * 通过上下文创建DialogBottom

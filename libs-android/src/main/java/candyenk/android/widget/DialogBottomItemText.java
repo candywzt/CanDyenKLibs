@@ -131,7 +131,7 @@ public class DialogBottomItemText extends DialogBottomItem {
         this.items = stringList;
         adapter.setItems(this::createLayout, items.length);
         super.setOnBindViewHolder(h -> {
-            int p = h.getAdapterPosition();
+            int p = h.getItemPosition();
             CharSequence text = items[p];
             V.LL(V.getChild(h.itemView, 0)).text(text);//TextView
             if (showSplitLine)

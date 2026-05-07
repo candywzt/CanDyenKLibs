@@ -1,6 +1,5 @@
 package candyenk.android.base;
 
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -65,10 +64,10 @@ public abstract class AdapterRVCDK<H extends HolderCDK> extends RecyclerView.Ada
     
     @Override
     public final void onBindViewHolder(@NonNull H h, int p) {
-        if (getItemViewType(p) == Integer.MIN_VALUE || getItemViewType(p) == Integer.MAX_VALUE) return;
+        int type = getItemViewType(p);
+        if (type == Integer.MIN_VALUE || type == Integer.MAX_VALUE) return;
         if (getHeader() != null) p--;
         onBind(h, p);
-        
     }
     
     /**
@@ -83,7 +82,7 @@ public abstract class AdapterRVCDK<H extends HolderCDK> extends RecyclerView.Ada
     public final int getItemViewType(int p) {
         if (getHeader() != null && p == 0) return Integer.MIN_VALUE;
         if (getFootrt() != null && p == getItemCount() - 1) return Integer.MAX_VALUE;
-        return getType(p);
+        return getType(getHeader() == null ? p : p - 1);
     }
     
     @Override
@@ -108,6 +107,7 @@ public abstract class AdapterRVCDK<H extends HolderCDK> extends RecyclerView.Ada
      * @param list 适配器绑定的数据集组件
      * @param c    适配器项目的点击监听
      */
+    
     public void setOnClickListener(RecyclerView list, Consumer<H> c) {
         if (l == null) l = v -> {};
         else l = v -> c.accept((H) list.getChildViewHolder(v));
@@ -128,23 +128,13 @@ public abstract class AdapterRVCDK<H extends HolderCDK> extends RecyclerView.Ada
     }
     
     /**
-     * 设置数据集头部
-     * 仅适用于纵向列表
-     *
-     * @param holder 头部的元数据
-     */
-    public H setHeader(H holder) {
-        return this.headH = holder;
-    }
-    
-    /**
      * 设置数据集尾部
      * 仅适用于纵向列表
      *
      * @param holder 尾部的元数据
      */
-    public H setFooter(H holder) {
-        return this.footH = holder;
+    public void setFooter(H holder) {
+        this.footH = holder;
     }
     
     /**
@@ -156,6 +146,16 @@ public abstract class AdapterRVCDK<H extends HolderCDK> extends RecyclerView.Ada
     public H getHeader() {
         if (needHF) return headH;
         return null;
+    }
+    
+    /**
+     * 设置数据集头部
+     * 仅适用于纵向列表
+     *
+     * @param holder 头部的元数据
+     */
+    public void setHeader(H holder) {
+        this.headH = holder;
     }
     
     /**
