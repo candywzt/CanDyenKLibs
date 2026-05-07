@@ -1,4 +1,5 @@
 <resources>
+    <!-- ===============================================组件样式================================================== -->
     <!--基类-->
     <style name="CDK"/>
     <style name="CDK.Widget" parent="CDK"/>
@@ -86,10 +87,9 @@
     </style>
     <!--RecycleView安卓快速滚动条-->
     <style name="CDK.Widget.RecyclerView.ScrollBars" parent="CDK.Widget.RecyclerView">
-        <item name="android:overScrollMode">ifContentScrolls</item><!--滚动条模式-->
         <item name="android:scrollbarSize">5dp</item><!--滚动条宽度-->
         <item name="android:scrollbarThumbVertical">@color/main_01</item><!--滚动条背景-->
-        <item name="android:scrollbars">vertical</item><!--滚动条方向-->
+        <item name="android:scrollbars">vertical</item><!--垂直滚动-->
     </style>
     <!--RecycleView快速滚动条-->
     <style name="CDK.Widget.RecyclerView.FastScrollBars" parent="CDK.Widget.RecyclerView">
@@ -100,27 +100,32 @@
         <item name="fastScrollVerticalThumbDrawable">@drawable/bg_slider_track</item><!--竖直滚动块-->
         <item name="fastScrollVerticalTrackDrawable">@android:color/transparent</item><!--竖直滚动块背景-->
     </style>
-    <!--*****************************************************************************************-->
-    <!--Shapeable控件样式-->
+    <!-- Shapable空样式 -->
+    <style name="CDK.Widget.Shapeable"/>
+    <!-- Shapable默认圆角样式 -->
+    <style name="CDK.Widget.Shapeable.DefaultRound">
+        <item name="shapeAppearance">@style/CDK.Shapeable.SmoothRound</item>
+    </style>
+    <!-- SmoothLayout仅上圆角样式 -->
+    <style name="CDK.Widget.Shapeable.TopRound">
+        <item name="shapeAppearance">@style/CDK.Shapeable.SmoothRoundTop</item>
+    </style>
+    <!-- ===============================================属性样式================================================== -->
+    <!--Shapeable样式-->
     <!--圆角图片-->
-    <style name="CDK.Shapeable.ImageView">
+    <style name="CDK.Shapeable.ImageRound">
         <item name="cornerSizeTopLeft">25%</item>
         <item name="cornerSizeTopRight">25%</item>
         <item name="cornerSizeBottomRight">25%</item>
         <item name="cornerSizeBottomLeft">25%</item>
     </style>
     <!-- 圆角控件-->
-    <style name="CDK.Shapeable.SmoothLayout">
+    <style name="CDK.Shapeable.SmoothRound">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopLeft">36dp</item>
-        <item name="cornerSizeTopRight">36dp</item>
-        <item name="cornerSizeBottomLeft">36dp</item>
-        <item name="cornerSizeBottomRight">36dp</item>
+        <item name="cornerSize">36dp</item>
     </style>
-    <style name="CDK.Shapeable.SmoothLayoutBottomDialog">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopLeft">36dp</item>
-        <item name="cornerSizeTopRight">36dp</item>
+    <!-- 圆角底部弹窗 -->
+    <style name="CDK.Shapeable.SmoothRoundTop" parent="CDK.Shapeable.SmoothRound">
         <item name="cornerSizeBottomLeft">0dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
     </style>

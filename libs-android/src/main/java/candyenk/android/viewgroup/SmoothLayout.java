@@ -5,10 +5,14 @@ import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
+import candyenk.android.R;
 import com.google.android.material.shape.ShapeAppearanceModel;
 import com.google.android.material.shape.Shapeable;
+
+import java.util.Arrays;
 
 /**
  * 圆角容器
@@ -17,24 +21,37 @@ import com.google.android.material.shape.Shapeable;
  * 数据来源  <a href="https://www.paintcodeapp.com/news/code-for-ios-7-rounded-rectangles">paintcode</a>
  */
 public final class SmoothLayout extends FrameLayout implements Shapeable {
-    private static final SmoothDrawer drawer = new SmoothDrawer();
+    private final SmoothDrawer drawer = new SmoothDrawer();
     
     public SmoothLayout(Context context) {
         this(context, null);
     }
     
     public SmoothLayout(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        this(context, attrs, R.attr.smoothLayoutStyle);
     }
     
     public SmoothLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr, 0);
+        this(context, attrs, defStyleAttr, 0);
     }
     
     public SmoothLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         super.setWillNotDraw(false);
+       
         drawer.m = ShapeAppearanceModel.builder(context, attrs, defStyleAttr, defStyleRes).build();
+        
+        
+        if (attrs == null) return;
+        
+        for (int i = 0; i < attrs.getAttributeCount(); i++) {
+            Log.e("AAA", attrs.getAttributeNamespace(i));
+            Log.e("AAA", attrs.getAttributeName(i));
+            Log.e("AAA", attrs.getAttributeValue(i));
+            Log.e("AAA", "===");
+        }
+        
+        
     }
     
     @Override
@@ -50,6 +67,8 @@ public final class SmoothLayout extends FrameLayout implements Shapeable {
         super.onSizeChanged(w, h, oldw, oldh);
         drawer.rf.set(0, 0, w, h);
         drawer.calculatePath();
+        Log.e("TAG", "onSizeChanged: " + drawer.rf + "===" + w + ":" + h + ":" + oldh + ":" + oldh);
+        Log.e("TAG", "onSizeChanged: " + Arrays.toString(drawer.r));
     }
     
     @Override

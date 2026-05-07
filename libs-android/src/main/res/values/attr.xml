@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- =================================================属性声明================================================= -->
     <!-- 全局属性 -->
     <attr name="smoothLayoutStyle" format="reference"/>
-    <!-- AmoothLayout控件 -->
+    <!-- SmoothLayout控件 -->
     <declare-styleable name="SmoothLayout">
         <attr name="shapeAppearance"/>
     </declare-styleable>

@@ -10,16 +10,13 @@ import candyenk.android.R;
 import candyenk.android.tools.V;
 import com.google.android.material.textview.MaterialTextView;
 
-
 /**
  * 底部弹窗-提示弹窗
  * 3秒后自动关闭
  */
 public class DialogBottomTips extends DialogBottomView {
-    protected LinearLayout layout;
-    protected ImageView iconView;
-    protected TextView contentView;
-    protected long timeout = 3000;
+    private TextView textView;
+    private long timeout = 3000;
     
     public DialogBottomTips(Context context) {
         this(context, null);
@@ -54,7 +51,7 @@ public class DialogBottomTips extends DialogBottomView {
     @Deprecated
     @Override
     public <T extends View> T getContent() {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -63,7 +60,7 @@ public class DialogBottomTips extends DialogBottomView {
     @Deprecated
     @Override
     public void setContent(int viewid) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -72,7 +69,7 @@ public class DialogBottomTips extends DialogBottomView {
     @Deprecated
     @Override
     public void setContent(View view) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -82,10 +79,10 @@ public class DialogBottomTips extends DialogBottomView {
      */
     public void setContent(CharSequence text) {
         if (!ok) return;
-        if (text == null) contentView.setVisibility(View.GONE);
+        if (text == null) textView.setVisibility(View.GONE);
         else {
-            contentView.setVisibility(View.VISIBLE);
-            contentView.setText(text);
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(text);
         }
     }
     
@@ -95,7 +92,7 @@ public class DialogBottomTips extends DialogBottomView {
     @Deprecated
     @Override
     public void setCancelable(boolean touchOff, boolean backOff) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -104,7 +101,7 @@ public class DialogBottomTips extends DialogBottomView {
     @Deprecated
     @Override
     public void setTitleCenter(boolean isCenter) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -113,7 +110,7 @@ public class DialogBottomTips extends DialogBottomView {
     @Deprecated
     @Override
     public void setShowClose(boolean isShow) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -139,20 +136,20 @@ public class DialogBottomTips extends DialogBottomView {
     
     /*** 初始化布局 ***/
     private void initLayout() {
-        this.layout = new LinearLayout(viewContext);
-        V.RL(layout).size(-1, -2).orientation(1).paddingDP(20).refresh();
+        LinearLayout layout = new LinearLayout(context);
+        V.RV(layout).size(-1, -2).orientation(1).paddingDP(20).refresh();
         
-        LinearLayout l1 = new LinearLayout(viewContext);
+        LinearLayout l1 = new LinearLayout(context);
         V.LL(l1).size(-1, -2).orientation(0).gravity(Gravity.CENTER).parent(layout);
         
-        iconView = new ImageView(viewContext);
+        ImageView iconView = new ImageView(context);
         V.LL(iconView).sizeDP(80).drawable(R.drawable.ic_ok).parent(l1);
         
-        titleView = new MaterialTextView(viewContext);
+        TextView titleView = new MaterialTextView(context);
         V.LL(titleView).size(-1, -1).gravity(Gravity.CENTER).textSize(24).hide().parent(l1);
         
-        contentView = new MaterialTextView(viewContext);
-        V.LL(contentView).size(-1, -2).paddingDP(0, 20, 0, 0).hide().parent(layout);
+        textView = new MaterialTextView(context);
+        V.LL(textView).size(-1, -2).paddingDP(0, 20, 0, 0).hide().parent(layout);
         super.setContent(layout);
     }
     

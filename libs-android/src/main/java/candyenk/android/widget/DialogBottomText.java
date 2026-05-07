@@ -8,7 +8,6 @@ import androidx.annotation.LayoutRes;
 import candyenk.android.tools.V;
 import com.google.android.material.textview.MaterialTextView;
 
-
 /**
  * 底部弹窗-文本展示
  */
@@ -34,7 +33,7 @@ public class DialogBottomText extends DialogBottomView {
     @Deprecated
     @Override
     public <T extends View> T getContent() {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -43,7 +42,7 @@ public class DialogBottomText extends DialogBottomView {
     @Deprecated
     @Override
     public void setContent(@LayoutRes int viewid) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -52,7 +51,7 @@ public class DialogBottomText extends DialogBottomView {
     @Deprecated
     @Override
     public void setContent(View view) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -79,7 +78,7 @@ public class DialogBottomText extends DialogBottomView {
     
     /*** 创建纯文本控件 ***/
     private View createTextView() {
-        tv = new MaterialTextView(viewContext);
+        tv = new MaterialTextView(context);
         V.RV(tv).size(-1, -2).paddingDP(10).refresh();
         tv.setTextIsSelectable(true);
         return tv;

@@ -1,6 +1,5 @@
 package candyenk.android.widget;
 
-
 import android.content.Context;
 import android.view.View;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,14 +8,12 @@ import candyenk.android.base.AdapterRVCDK;
 import candyenk.android.base.HolderCDK;
 import candyenk.android.tools.V;
 
-
 /**
  * 底部弹窗组件-数据集适配器
  */
 public class DialogBottomRV extends DialogBottom {
     protected RecyclerView listView; //列表控件
     protected AdapterRVCDK<? extends HolderCDK> adapter;
-    
     
     public DialogBottomRV(Context context) {
         this(context, null);
@@ -31,20 +28,20 @@ public class DialogBottomRV extends DialogBottom {
         if (ok) super.setContent(initLayout());
     }
     
+    @Override
+    public void show() {
+        if (!ok || isShowing()) return;
+        if (listView.getAdapter() == null) return;
+        super.show();
+    }
+    
     /**
      * @deprecated 不允许使用
      */
     @Deprecated
     @Override
     public void setContent(View view) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
-    }
-    
-    @Override
-    public void show() {
-        if (!ok || isShowing()) return;
-        if (listView.getAdapter() == null) return;
-        super.show();
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -82,7 +79,7 @@ public class DialogBottomRV extends DialogBottom {
     
     /*** 创建弹窗根布局 ***/
     private View initLayout() {
-        listView = new RecyclerView(viewContext);
+        listView = new RecyclerView(context);
         V.LL(listView).size(-1, -2).weight(1).refresh();
         listView.setLayoutManager(new LinearLayoutManager(context));
         return listView;

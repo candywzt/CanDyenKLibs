@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import candyenk.android.tools.V;
 
-
 /**
  * DialogBottomItem-Item可横向滚动的
  * listView的父级变为FrameLayout
@@ -28,8 +27,9 @@ public class DialogBottomItemHScroll extends DialogBottomItem {
     }
     
     /**
-     * 头部
+     * 设置头部
      * 独立于横向滚动Item的内容
+     *
      * @param view 独立头部View
      */
     public void setHeader(View view) {
@@ -43,7 +43,7 @@ public class DialogBottomItemHScroll extends DialogBottomItem {
         ViewGroup parent = V.getParent(listView);
         int index = parent.indexOfChild(listView);
         parent.removeView(listView);
-        hs = new HorizontalScrollView(viewContext);
+        hs = new HorizontalScrollView(context);
         V.LL(hs).size(-1, -2).parent(parent, index);
         hs.addView(listView);
     }

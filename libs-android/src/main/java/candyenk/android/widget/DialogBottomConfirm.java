@@ -9,12 +9,11 @@ import candyenk.java.utils.UData;
 
 import java.util.function.Consumer;
 
-
 /**
  * 底部弹窗-确认弹窗
  */
 public class DialogBottomConfirm extends DialogBottomTips {
-    protected long confirmTime;
+    private long confirmTime;
     
     public DialogBottomConfirm(Context context) {
         this(context, null);
@@ -67,26 +66,8 @@ public class DialogBottomConfirm extends DialogBottomTips {
      */
     @Deprecated
     @Override
-    public void setLeftButton(CharSequence text, Consumer<? extends DialogBottom> leftClick, Consumer<? extends DialogBottom> leftLong) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
-    }
-    
-    /**
-     * @deprecated 不允许使用
-     */
-    @Deprecated
-    @Override
-    public void setRightButton(CharSequence text, Consumer<? extends DialogBottom> rightClick, Consumer<? extends DialogBottom> rightLong) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
-    }
-    
-    /**
-     * @deprecated 不允许使用
-     */
-    @Deprecated
-    @Override
     public void setOnCancelListener(OnCancelListener listener) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -95,7 +76,25 @@ public class DialogBottomConfirm extends DialogBottomTips {
     @Deprecated
     @Override
     public void dismiss(Consumer<? extends DialogBottom> dismissRun) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
+    }
+    
+    /**
+     * @deprecated 不允许使用
+     */
+    @Deprecated
+    @Override
+    public void setLeftButton(CharSequence text, Consumer<? extends DialogBottom> leftClick, Consumer<? extends DialogBottom> leftLong) {
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
+    }
+    
+    /**
+     * @deprecated 不允许使用
+     */
+    @Deprecated
+    @Override
+    public void setRightButton(CharSequence text, Consumer<? extends DialogBottom> rightClick, Consumer<? extends DialogBottom> rightLong) {
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**

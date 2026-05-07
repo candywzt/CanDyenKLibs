@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
@@ -25,7 +26,7 @@ public class DialogLoading extends AlertDialog {
     private static final String TAG = DialogLoading.class.getSimpleName();
     private static final HashSet<View> mList = new HashSet<>();//拉起的控件列表
     private final Context context;//拉起弹窗的Context
-    private final View parentView;//调用上拉弹窗的View对象
+    private final View sign;//调用上拉弹窗的View对象
     private final boolean ok;//是否初始化成功
     private final AtomicReference<Consumer<DialogLoading>> dl = new AtomicReference<>();//结束监听
     private FrameLayout dialogView;//弹窗布局对象
@@ -44,25 +45,25 @@ public class DialogLoading extends AlertDialog {
     public DialogLoading(Context context, View view) {
         super(context, 0);
         this.context = context;
-        this.parentView = view;
+        this.sign = view;
         super.setOnDismissListener(d -> {
             if (dl.get() != null) dl.get().accept(DialogLoading.this);
         });
         this.ok = mList.add(view);
         if (this.ok) initLayout();
+        else Log.e(TAG, "拦截重复调用");
     }
     
     @Override
     public void show() {
-        if (ok) {
-            super.show();
-            if (rc != null) rc.runThread();
-        } else Log.e(TAG, "拦截重复调用");
+        if (!ok | isShowing()) return;
+        super.show();
+        if (rc != null) rc.runThread();
     }
     
     @Override
     public void dismiss() {
-        mList.remove(this.parentView);
+        mList.remove(this.sign);
         loadView.dismiss(l -> DialogLoading.super.dismiss());
     }
     
@@ -84,7 +85,8 @@ public class DialogLoading extends AlertDialog {
     protected void onStart() {
         super.onStart();
         setContentView(dialogView);
-        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        Window window = getWindow();
+        if (window != null) window.setBackgroundDrawableResource(android.R.color.transparent);
         loadView.start();
     }
     
@@ -108,10 +110,9 @@ public class DialogLoading extends AlertDialog {
      */
     public void setThreadRun(RC rc) {
         if (!ok || isShowing()) return;
-        this.rc = new RC(rc.run, (sign, msg) -> {
-            if (sign == RC.SIGN_RETURN) dismiss(d -> rc.returnCall(msg));
-            else rc.runCall(sign, msg);
-        });
+        this.rc = rc;
+        RC.ResultCB<Object> result = rc.result();
+        rc.result(o -> dismiss(d -> result.call(o)));
     }
     
     /**

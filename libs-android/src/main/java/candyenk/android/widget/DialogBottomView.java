@@ -9,7 +9,6 @@ import candyenk.android.base.HolderCDK;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-
 /**
  * 底部弹窗-自定义View
  */
@@ -33,43 +32,7 @@ public class DialogBottomView extends DialogBottomItem {
     @Deprecated
     @Override
     public void setContent(int resId, int count) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
-    }
-    
-    /**
-     * @deprecated 不允许使用
-     */
-    @Deprecated
-    @Override
-    public void setLayoutManager(RecyclerView.LayoutManager lm) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
-    }
-    
-    /**
-     * @deprecated 不允许使用
-     */
-    @Deprecated
-    @Override
-    public void setOnBindViewHolder(Consumer<HolderCDK> c) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
-    }
-    
-    /**
-     * @deprecated 不允许使用
-     */
-    @Deprecated
-    @Override
-    public void setOnItemClickListener(BiConsumer<View, Integer> l) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
-    }
-    
-    /**
-     * @deprecated 不允许使用
-     */
-    @Deprecated
-    @Override
-    public void setOnItemLongClickListener(BiConsumer<View, Integer> l) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -89,7 +52,7 @@ public class DialogBottomView extends DialogBottomItem {
     @Deprecated
     @Override
     public void setContent(View[] views) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -98,7 +61,34 @@ public class DialogBottomView extends DialogBottomItem {
     @Deprecated
     @Override
     public void setContent(int... resIds) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
+    }
+    
+    /**
+     * @deprecated 不允许使用
+     */
+    @Deprecated
+    @Override
+    public void setOnBindViewHolder(Consumer<HolderCDK> c) {
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
+    }
+    
+    /**
+     * @deprecated 不允许使用
+     */
+    @Deprecated
+    @Override
+    public void setOnItemClickListener(BiConsumer<View, Integer> l) {
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
+    }
+    
+    /**
+     * @deprecated 不允许使用
+     */
+    @Deprecated
+    @Override
+    public void setOnItemLongClickListener(BiConsumer<View, Integer> l) {
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -116,10 +106,20 @@ public class DialogBottomView extends DialogBottomItem {
      *
      * @param view 自定义View
      */
+    @Override
     public void setContent(View view) {
         if (!ok) return;
         super.setContent(new View[]{view});
         adapter.clearListener();
+    }
+    
+    /**
+     * @deprecated 不允许使用
+     */
+    @Deprecated
+    @Override
+    public void setLayoutManager(RecyclerView.LayoutManager lm) {
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
 }

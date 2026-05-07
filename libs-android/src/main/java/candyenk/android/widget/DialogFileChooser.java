@@ -87,7 +87,7 @@ public class DialogFileChooser extends DialogBottomRV {
     @Deprecated
     @Override
     public void setTitleCenter(boolean isCenter) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -96,7 +96,7 @@ public class DialogFileChooser extends DialogBottomRV {
     @Deprecated
     @Override
     public void setShowClose(boolean isShow) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -105,7 +105,7 @@ public class DialogFileChooser extends DialogBottomRV {
     @Deprecated
     @Override
     public void setContent(AdapterRVCDK<? extends HolderCDK> adapter) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**
@@ -113,7 +113,7 @@ public class DialogFileChooser extends DialogBottomRV {
      */
     @Deprecated
     public void setLayoutManager(RecyclerView.LayoutManager lm) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
     
     /**

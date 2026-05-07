@@ -14,13 +14,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-
 /**
  * 底部弹窗组件-数据集项目
  */
 public class DialogBottomItem extends DialogBottomRV {
     protected ItemAdapter adapter;
-    
     
     public DialogBottomItem(Context context) {
         this(context, null);
@@ -43,9 +41,8 @@ public class DialogBottomItem extends DialogBottomRV {
     @Deprecated
     @Override
     public void setContent(AdapterRVCDK<? extends HolderCDK> adapter) {
-        throw new UnsupportedOperationException("改方法在该类中已被禁用");
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
     }
-    
     
     /**
      * 设置内容-单布局多项目
@@ -134,29 +131,6 @@ public class DialogBottomItem extends DialogBottomRV {
         protected ItemAdapter() {
         }
         
-        /*** 设置Adapter内容,控件组 ***/
-        protected void setItems(View... items) {
-            this.items = items;
-            this.count = items.length;
-        }
-        
-        /*** 设置Adapter内容,重复控件 ***/
-        protected void setItems(Supplier<View> supplier, int count) {
-            this.supplier = supplier;
-            this.count = count;
-        }
-        
-        /*** 设置布局绑定 ***/
-        protected void setOnBindViewHolder(Consumer<HolderCDK> c) {
-            this.c = c;
-        }
-        
-        /*** 清空Item事件监听 ***/
-        protected void clearListener() {
-            l = null;
-            ll = null;
-        }
-        
         @Override
         public HolderCDK onCreate(ViewGroup p, int t) {
             View view = t == -1 ? supplier.get() : items[t];
@@ -180,6 +154,29 @@ public class DialogBottomItem extends DialogBottomRV {
         @Override
         public int getType(int p) {
             return items == null ? -1 : p;
+        }
+        
+        /*** 设置Adapter内容,控件组 ***/
+        protected void setItems(View... items) {
+            this.items = items;
+            this.count = items.length;
+        }
+        
+        /*** 设置Adapter内容,重复控件 ***/
+        protected void setItems(Supplier<View> supplier, int count) {
+            this.supplier = supplier;
+            this.count = count;
+        }
+        
+        /*** 设置布局绑定 ***/
+        protected void setOnBindViewHolder(Consumer<HolderCDK> c) {
+            this.c = c;
+        }
+        
+        /*** 清空Item事件监听 ***/
+        protected void clearListener() {
+            l = null;
+            ll = null;
         }
     }
 }
