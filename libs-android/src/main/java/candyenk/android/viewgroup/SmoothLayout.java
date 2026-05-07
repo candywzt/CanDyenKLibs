@@ -5,14 +5,11 @@ import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import candyenk.android.R;
 import com.google.android.material.shape.ShapeAppearanceModel;
 import com.google.android.material.shape.Shapeable;
-
-import java.util.Arrays;
 
 /**
  * 圆角容器
@@ -38,20 +35,7 @@ public final class SmoothLayout extends FrameLayout implements Shapeable {
     public SmoothLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         super.setWillNotDraw(false);
-       
         drawer.m = ShapeAppearanceModel.builder(context, attrs, defStyleAttr, defStyleRes).build();
-        
-        
-        if (attrs == null) return;
-        
-        for (int i = 0; i < attrs.getAttributeCount(); i++) {
-            Log.e("AAA", attrs.getAttributeNamespace(i));
-            Log.e("AAA", attrs.getAttributeName(i));
-            Log.e("AAA", attrs.getAttributeValue(i));
-            Log.e("AAA", "===");
-        }
-        
-        
     }
     
     @Override
@@ -67,8 +51,6 @@ public final class SmoothLayout extends FrameLayout implements Shapeable {
         super.onSizeChanged(w, h, oldw, oldh);
         drawer.rf.set(0, 0, w, h);
         drawer.calculatePath();
-        Log.e("TAG", "onSizeChanged: " + drawer.rf + "===" + w + ":" + h + ":" + oldh + ":" + oldh);
-        Log.e("TAG", "onSizeChanged: " + Arrays.toString(drawer.r));
     }
     
     @Override
