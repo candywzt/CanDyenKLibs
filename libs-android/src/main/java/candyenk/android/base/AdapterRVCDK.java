@@ -1,5 +1,6 @@
 package candyenk.android.base;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -80,8 +81,8 @@ public abstract class AdapterRVCDK<H extends HolderCDK> extends RecyclerView.Ada
      */
     @Override
     public final int getItemViewType(int p) {
-        if (getHeader() != null  && p == 0) return Integer.MIN_VALUE;
-        if (getFootrt() != null  && p == getItemCount() - 1) return Integer.MAX_VALUE;
+        if (getHeader() != null && p == 0) return Integer.MIN_VALUE;
+        if (getFootrt() != null && p == getItemCount() - 1) return Integer.MAX_VALUE;
         return getType(p);
     }
     
@@ -89,17 +90,15 @@ public abstract class AdapterRVCDK<H extends HolderCDK> extends RecyclerView.Ada
     public final int getItemCount() {
         int count = getCount();
         if (getHeader() != null) count++;
-        if (getFootrt() != null ) count++;
+        if (getFootrt() != null) count++;
         return count;
     }
     
     @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        if (layoutManager instanceof LinearLayoutManager) {
-            int orientation = ((LinearLayoutManager) layoutManager).getOrientation();
-            this.needHF = orientation == LinearLayoutManager.VERTICAL;
+    public void onAttachedToRecyclerView(@NonNull RecyclerView rv) {
+        super.onAttachedToRecyclerView(rv);
+        if (rv.getLayoutManager() instanceof LinearLayoutManager lm) {
+            this.needHF = (lm.getOrientation() == LinearLayoutManager.VERTICAL);
         }
     }
     
@@ -166,7 +165,7 @@ public abstract class AdapterRVCDK<H extends HolderCDK> extends RecyclerView.Ada
      * @return 尾部
      */
     public H getFootrt() {
-        if (needHF) return headH;
+        if (needHF) return footH;
         return null;
     }
 }

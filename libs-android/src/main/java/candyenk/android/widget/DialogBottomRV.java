@@ -1,7 +1,6 @@
 package candyenk.android.widget;
 
 import android.content.Context;
-import android.view.Gravity;
 import android.view.View;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -66,6 +65,7 @@ public class DialogBottomRV extends DialogBottom {
     public void setLayoutManager(RecyclerView.LayoutManager lm) {
         if (!ok) return;
         listView.setLayoutManager(lm);
+        adapter.onAttachedToRecyclerView(listView);//触发一下观察者
     }
     
     /**

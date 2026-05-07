@@ -31,7 +31,8 @@ public class DialogBottomItem extends DialogBottomRV {
     protected DialogBottomItem(Context context, View view) {
         super(context, view);
         this.adapter = new ItemAdapter();
-        this.adapter.setFooter(new HolderCDK(createFoot()));
+        this.adapter.setFooter(new HolderCDK(createHF()));
+        this.adapter.setHeader(new HolderCDK(createHF()));
         if (ok) super.setContent(this.adapter);
     }
     
@@ -114,11 +115,9 @@ public class DialogBottomItem extends DialogBottomRV {
         this.adapter.setOnClickListener(listView, h -> l.accept(h.itemView, h.getAdapterPosition()));
     }
     
-    /*** 创建页脚 ***/
-    private View createFoot() {
-        View view = new View(context);
-        V.RL(view).sizeDP(36, 36).refresh();
-        return view;
+    /*** 创建首尾 ***/
+    private View createHF() {
+        return V.RV(new View(context)).sizeDP(-1, 24).refresh();
     }
     
     /*** Item适配器 ***/
