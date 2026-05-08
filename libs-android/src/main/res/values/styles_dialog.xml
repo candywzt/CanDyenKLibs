@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ===============================================Dialog样式================================================ -->
+    <!-- Dialog-默认 -->
+    <style name="CDK.Dialog" parent="@style/ThemeOverlay.AppCompat.Dialog.Alert">
+        <!-- 背景压暗 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 避开输入法 -->
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <!-- 外触关闭 -->
+        <item name="android:windowCloseOnTouchOutside">false</item>
+        <!-- 动画 -->
+        <item name="android:windowAnimationStyle">@style/Animation.MaterialComponents.BottomSheetDialog</item>
+        <!-- 状态栏颜色 -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- 透明背景 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 边到边优化 -->
+        <item name="enableEdgeToEdge">true</item>
+    </style>
+    <!-- Dialog-Bottom -->
+    <style name="CDK.Dialog.Bottom" parent="CDK.Dialog">
+        <!-- 不是悬浮窗口 -->
+        <item name="android:windowIsFloating">false</item>
+        <!-- 外触关闭 -->
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <!-- 导航栏遮挡 -->
+        <item name="paddingBottomSystemWindowInsets">false</item>
+        <!-- 侧边栏遮挡(横屏状态栏) -->
+        <item name="paddingLeftSystemWindowInsets">false</item>
+        <!-- 侧边栏遮挡(横屏状态栏) -->
+        <item name="paddingRightSystemWindowInsets">false</item>
+        <!-- 状态栏遮挡 -->
+        <item name="paddingTopSystemWindowInsets">true</item>
+        <!-- ======================================默认组件样式====================================================== -->
+        <item name="smoothLayoutStyle">@style/CDK.Widget.Shapeable.TopRound</item>
+    </style>
+</resources>

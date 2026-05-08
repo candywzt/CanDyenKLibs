@@ -57,7 +57,7 @@ public class DialogBottom extends BottomSheetDialog {
     }
     
     protected DialogBottom(Context context, View view) {
-        super(context, R.style.Theme_CDK_Dialog);
+        super(context, 0);
         this.TAG = this.getClass().getSimpleName();
         this.context = context;
         this.sign = view;
@@ -157,7 +157,8 @@ public class DialogBottom extends BottomSheetDialog {
      * @param leftClick 单击监听,为null不显示该按钮
      * @param leftLong  长按监听
      */
-    public void setLeftButton(CharSequence text, Consumer<? extends DialogBottom> leftClick, Consumer<? extends DialogBottom> leftLong) {
+    public void setLeftButton(CharSequence text, Consumer<? extends DialogBottom> leftClick, Consumer<?
+            extends DialogBottom> leftLong) {
         if (!ok) return;
         this.ls.leftClick = leftClick;
         this.ls.leftLong = leftLong;
@@ -179,7 +180,8 @@ public class DialogBottom extends BottomSheetDialog {
      * @param rightClick 单击监听,为null不显示该按钮
      * @param rightLong  长按监听
      */
-    public void setRightButton(CharSequence text, Consumer<? extends DialogBottom> rightClick, Consumer<? extends DialogBottom> rightLong) {
+    public void setRightButton(CharSequence text, Consumer<? extends DialogBottom> rightClick, Consumer<?
+            extends DialogBottom> rightLong) {
         if (!ok) return;
         this.ls.rightClick = rightClick;
         this.ls.rightLong = rightLong;

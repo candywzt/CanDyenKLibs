@@ -1,6 +1,6 @@
 <resources>
-
-    <style name="Theme.CDK" parent="Theme.MaterialComponents.Light">
+    <style name="CDK"/>
+    <style name="CDK.Theme" parent="Theme.AppCompat.Light">
         <!--        <item name="android:windowSplashScreenBackground">@android:color/background_light</item>-->
         <!--        <item name="android:windowSplashScreenAnimatedIcon">@drawable/aaa</item>-->
         <!-- 状态栏颜色 -->
@@ -15,81 +15,35 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <!-- 主要颜色 -->
-        <item name="android:colorPrimary">@color/main_01</item>
         <item name="colorPrimary">@color/main_01</item>
         <item name="colorPrimaryVariant">@color/main_02</item>
         <item name="colorOnPrimary">@color/main_03</item>
-        <item name="android:colorAccent">@color/main_04</item>
         <item name="colorAccent">@color/main_04</item>
         <!-- 次要颜色 -->
-        <item name="android:colorSecondary">@color/main_03</item>
         <item name="colorSecondary">@color/main_03</item>
         <item name="colorSecondaryVariant">@color/main_04</item>
         <item name="colorOnSecondary">@color/main_01</item>
         <!-- 其他颜色 -->
         <item name="android:textColorLink">@color/main_01</item>
-        <!-- 默认组件样式 -->
+        <!-- 设置MD视图 -->
+        <item name="viewInflaterClass">com.google.android.material.theme.MaterialComponentsViewInflater</item>
+        <item name="isMaterialTheme">true</item>
+        <!-- 组件样式 -->
         <item name="android:textViewStyle">@style/CDK.Widget.TextView</item>
         <item name="android:buttonStyle">@style/CDK.Widget.Button.TextButton</item>
+        <item name="android:switchStyle">@style/CDK.Widget.Switch</item>
+        <item name="android:editTextStyle">@style/CDK.Widget.EditText</item>
+        <item name="android:checkboxStyle">@style/CDK.Widget.CheckBox</item>
+        <item name="android:radioButtonStyle">@style/CDK.Widget.RadioButton</item>
         <item name="materialButtonStyle">@style/CDK.Widget.Button.TextButton</item>
         <item name="materialButtonOutlinedStyle">@style/CDK.Widget.Button.TextButton.Outlined</item>
-        <item name="android:switchStyle">@style/CDK.Widget.Switch</item>
         <item name="editTextStyle">@style/CDK.Widget.EditText</item>
-        <item name="android:editTextStyle">@style/CDK.Widget.EditText</item>
         <item name="checkboxStyle">@style/CDK.Widget.CheckBox</item>
-        <item name="android:checkboxStyle">@style/CDK.Widget.CheckBox</item>
         <item name="radioButtonStyle">@style/CDK.Widget.RadioButton</item>
-        <item name="android:radioButtonStyle">@style/CDK.Widget.RadioButton</item>
         <item name="chipStyle">@style/CDK.Widget.Chip</item>
         <item name="recyclerViewStyle">@style/CDK.Widget.RecyclerView</item>
         <item name="smoothLayoutStyle">@style/CDK.Widget.Shapeable.DefaultRound</item>
+        <item name="bottomSheetDialogTheme">@style/CDK.Dialog.Bottom</item>
+        <item name="alertDialogTheme">@style/CDK.Dialog</item>
     </style>
-    <!-- 上拉弹窗专用主题 -->
-    <style name="Theme.CDK.Dialog">
-
-        <item name="android:colorPrimary">?attr/colorPrimary</item>
-        <item name="android:colorPrimaryDark">?attr/colorPrimaryDark</item>
-        <item name="android:colorAccent">?attr/colorAccent</item>
-        <item name="android:colorControlNormal">?attr/colorControlNormal</item>
-        <item name="android:colorControlActivated">?attr/colorControlActivated</item>
-        <item name="android:colorControlHighlight">?attr/colorControlHighlight</item>
-        <item name="android:colorButtonNormal">?attr/colorButtonNormal</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:colorBackground">?attr/colorBackgroundFloating</item>
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowTitleStyle">@style/RtlOverlay.DialogWindowTitle.AppCompat</item>
-        <item name="android:windowTitleBackgroundStyle">@style/Base.DialogWindowTitleBackground.AppCompat</item>
-        <item name="android:backgroundDimEnabled">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
-        <item name="android:listDivider">@null</item>
-        <item name="android:buttonBarStyle">@style/Widget.AppCompat.ButtonBar.AlertDialog</item>
-        <item name="android:borderlessButtonStyle">@style/Widget.AppCompat.Button.Borderless</item>
-        <item name="android:windowCloseOnTouchOutside">true</item>
-        <item name="windowFixedWidthMajor">@null</item>
-        <item name="windowFixedWidthMinor">@null</item>
-        <item name="windowFixedHeightMajor">@null</item>
-        <item name="windowFixedHeightMinor">@null</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowActionModeOverlay">true</item>
-        <item name="listPreferredItemPaddingLeft">24dip</item>
-        <item name="listPreferredItemPaddingRight">24dip</item>
-
-
-        <item name="android:windowAnimationStyle">@style/Animation.MaterialComponents.BottomSheetDialog</item>
-        <item name="android:windowElevation">0dp</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="enableEdgeToEdge">true</item>
-        <item name="paddingBottomSystemWindowInsets">false</item><!-- 导航栏遮挡 -->
-        <item name="paddingLeftSystemWindowInsets">false</item><!-- 侧边栏遮挡(横屏状态栏) -->
-        <item name="paddingRightSystemWindowInsets">false</item><!-- 侧边栏遮挡(横屏状态栏) -->
-        <item name="paddingTopSystemWindowInsets">true</item><!-- 状态栏遮挡 -->
-        <!-- 默认组件样式 -->
-        <item name="bottomSheetStyle">@null</item>
-        <item name="smoothLayoutStyle">@style/CDK.Widget.Shapeable.TopRound</item>
-    </style>
-
-
 </resources>
