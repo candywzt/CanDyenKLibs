@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+        
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="96dp"/>
+        
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+            
+            <Button
+                    android:text="自定义View"
+                    android:layout_margin="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:id="@+id/b1"/>
+            
+            <Button
+                    android:text="自定义项目"
+                    android:layout_margin="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:id="@+id/b11"/>
+        </LinearLayout>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+            <Button
+                    android:text="横向自定义项目"
+                    android:layout_margin="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:id="@+id/b2"/>
+
+            <Button
+                    android:text="文本项目"
+                    android:layout_margin="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:id="@+id/b22"/>
+        </LinearLayout>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+            <Button
+                    android:text="纯文本"
+                    android:layout_margin="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:id="@+id/b3"/>
+
+            <Button
+                    android:text="提示"
+                    android:layout_margin="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:id="@+id/b33"/>
+        </LinearLayout>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+            <Button
+                    android:text="确认"
+                    android:layout_margin="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:id="@+id/b4"/>
+
+            <Button
+                    android:text="文件选择器"
+                    android:layout_margin="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:id="@+id/b44"/>
+        </LinearLayout>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+            <Button
+                    android:text="加载中"
+                    android:layout_margin="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:id="@+id/b5"/>
+
+            <Button
+                    android:text=""
+                    android:layout_margin="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:id="@+id/b55"/>
+        </LinearLayout>
+        
+    </LinearLayout>
+</ScrollView>

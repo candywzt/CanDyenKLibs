@@ -10,7 +10,7 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher"
             android:supportsRtl="true"
-            android:theme="@style/AAA">
+            android:theme="@style/CDK.Theme">
         <activity
                 android:name=".activity.MainActivity"
                 android:exported="true">
@@ -38,7 +38,7 @@
         </activity>
         <activity
                 android:label="弹窗测试"
-                android:name=".activity.DBTest"
+                android:name=".activity.DialogTest"
                 android:exported="true">
         </activity>
         

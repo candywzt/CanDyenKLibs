@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-<style name="AAA" parent="Theme.CDK">
-    <item name="android:windowSplashScreenBackground">@android:color/background_dark</item>
-    <item name="android:windowSplashScreenAnimatedIcon">@drawable/aaa</item>
+<style name="AAA" parent="CDK.Theme">
+<!--    <item name="android:windowSplashScreenBackground">@android:color/background_dark</item>-->
+<!--    <item name="android:windowSplashScreenAnimatedIcon">@drawable/aaa</item>-->
 </style>
 </resources>

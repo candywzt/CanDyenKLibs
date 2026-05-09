@@ -24,7 +24,7 @@ public class MainActivity extends ActivityCDK.Default {
         fun(bd.b1, "Shizuku测试", ShizukuTest.class);
         fun(bd.b2, "悬浮窗测试", WindowsTest.class);
         fun(bd.b3, "灵动卡片测试", NVTest.class);
-        fun(bd.b4, "底部弹窗测试", DBTest.class);
+        fun(bd.b4, "底部弹窗测试", DialogTest.class);
         
         
         bd.b5.setOnClickListener(v -> {
