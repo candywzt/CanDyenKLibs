@@ -55,13 +55,6 @@ public class DialogLoading extends AlertDialog {
     }
     
     @Override
-    public void show() {
-        if (!ok | isShowing()) return;
-        super.show();
-        if (rc != null) rc.runThread();
-    }
-    
-    @Override
     public void dismiss() {
         mList.remove(this.sign);
         loadView.dismiss(l -> DialogLoading.super.dismiss());
@@ -79,6 +72,31 @@ public class DialogLoading extends AlertDialog {
         super.setTitle(title);
         titleView.setText(title);
         titleView.setVisibility(View.VISIBLE);
+    }
+    
+    /**
+     * @deprecated 不允许使用
+     */
+    @Deprecated
+    @Override
+    public void setCancelable(boolean flag) {
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
+    }
+    
+    /**
+     * @deprecated 不允许使用
+     */
+    @Deprecated
+    @Override
+    public void setCanceledOnTouchOutside(boolean cancel) {
+        throw new UnsupportedOperationException("此方法在该类中已被禁用");
+    }
+    
+    @Override
+    public void show() {
+        if (!ok | isShowing()) return;
+        super.show();
+        if (rc != null) rc.runThread();
     }
     
     @Override
@@ -123,27 +141,25 @@ public class DialogLoading extends AlertDialog {
      * @param backOff  返回键是否关闭
      */
     public void setCanceledable(boolean touchOff, boolean backOff) {
-        setCanceledOnTouchOutside(touchOff);
-        setCancelable(backOff);
+        super.setCanceledOnTouchOutside(touchOff);
+        super.setCancelable(backOff);
         dialogView.setOnClickListener(touchOff ? v -> dismiss() : null);
     }
     
     /*** 创建布局 ***/
     private void initLayout() {
-        dialogView = new FrameLayout(context);
+        dialogView = new SmoothLayout(context);
         dialogView.setOnClickListener(v -> dismiss());
-        V.LP(dialogView).sizeDP(-1, -2).backgroundRes(android.R.color.transparent).refresh();
-        
-        SmoothLayout cv = new SmoothLayout(context);
-        V.FL(cv).sizeDP(180, 200).lGravity(Gravity.CENTER).backgroundRes(R.color.back_view).parent(dialogView);
+        //        V.LP(dialogView).sizeDP(-1, -2).backgroundRes(android.R.color.transparent).refresh();
+        V.FL(dialogView).sizeDP(180, 200).lGravity(Gravity.CENTER).backgroundRes(R.color.back_view).refresh();
         
         loadView = new LoadView(context);
         loadView.setOnClickListener(v -> {});
-        V.FL(loadView).sizeDP(180).lGravity(Gravity.CENTER_HORIZONTAL).parent(cv);
+        V.FL(loadView).sizeDP(180).lGravity(Gravity.CENTER_HORIZONTAL).parent(dialogView);
         
         titleView = new MaterialTextView(context);
         V.FL(titleView).size(-2, -2).lGravity(Gravity.BOTTOM | Gravity.CENTER).paddingDP(0, 0, 0, 10)
-         .textColorRes(R.color.text_main).textSize(18).hide().parent(cv);
+         .textColorRes(R.color.text_main).textSize(18).hide().parent(dialogView);
         
     }
     

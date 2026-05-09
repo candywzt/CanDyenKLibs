@@ -2,6 +2,7 @@ package candyenk.android.widget;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.*;
 import android.widget.*;
 import androidx.annotation.StringRes;
@@ -10,6 +11,7 @@ import candyenk.android.R;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import candyenk.android.utils.ULay;
+import candyenk.android.utils.USDK;
 import candyenk.android.viewgroup.SmoothLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -259,11 +261,13 @@ public class DialogBottom extends BottomSheetDialog {
         //根级控件,圆角卡片
         //弹窗布局对象
         FrameLayout dialogView = new SmoothLayout(context);
-        V.LL(dialogView).size(-1, -2).backgroundRes(R.color.back_all).refresh();
+//        V.LL(dialogView).size(-1, -2).backgroundRes(R.drawable.bg_gradual_change).refresh();
+        V.LL(dialogView).size(-1, -2).refresh();
+                
         //顶栏背景
         ImageView iv = new AppCompatImageView(context);
         V.FL(iv).sizeDP(-1, 120).drawable(R.drawable.bg_transparent_gradual_change)
-         .scaleType(ImageView.ScaleType.FIT_XY).parent(dialogView);
+         .scaleType(ImageView.ScaleType.FIT_XY);//.parent(dialogView);
         //内容父控件
         contentView = new LinearLayout(context);
         V.FL(contentView).size(-1, -2).paddingDP(0, 24, 0, 0).orientation(1).parent(dialogView);
@@ -294,7 +298,7 @@ public class DialogBottom extends BottomSheetDialog {
         rightButton.setOnLongClickListener(this.ls::OnRightLong);
         super.setContentView(dialogView);
         //删除预见式返回动画
-        getOnBackInvokedDispatcher().registerOnBackInvokedCallback(0, this::dismiss);
+        if (USDK.T()) getOnBackInvokedDispatcher().registerOnBackInvokedCallback(0, this::dismiss);
     }
     
     /*** 保存各种监听的类 ***/
