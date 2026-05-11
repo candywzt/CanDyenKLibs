@@ -16,7 +16,6 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import candyenk.android.R;
-import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import candyenk.android.widget.BottomBar;
 import candyenk.java.utils.UArrays;
@@ -76,27 +75,27 @@ public abstract class ActivityCDK extends AppCompatActivity {
         container.addView(view);
     }
     
-    @Override
-    protected void onStart() {
-        L.e(TAG, "前台可见-Start");
-        super.onStart();
-    }
-    
-    @Override
-    protected void onStop() {
-        L.e(TAG, "退出可见-Stop");
-        super.onStop();
-    }
-    
-    protected void onDestroy() {
-        L.e(TAG, "生命结束-Destroy");
-        super.onDestroy();
-    }
+    //    @Override
+    //    protected void onStart() {
+    //        L.e(TAG, "前台可见-Start");
+    //        super.onStart();
+    //    }
+    //    
+    //    @Override
+    //    protected void onStop() {
+    //        L.e(TAG, "退出可见-Stop");
+    //        super.onStop();
+    //    }
+    //    
+    //    protected void onDestroy() {
+    //        L.e(TAG, "生命结束-Destroy");
+    //        super.onDestroy();
+    //    }
     
     @Override
     protected final void onCreate(Bundle save) {
         this.TAG = this.getClass().getSimpleName();
-        L.e(TAG, "启动创建-Create");
+        //        L.e(TAG, "启动创建-Create");
         contextInit(save);
         super.onCreate(save);
         initLayout();
@@ -108,19 +107,19 @@ public abstract class ActivityCDK extends AppCompatActivity {
     
     @Override
     protected void onPause() {
-        L.e(TAG, "退出栈顶-Pause");
+        //        L.e(TAG, "退出栈顶-Pause");
         super.onPause();
     }
     
     @Override
     protected void onResume() {
-        L.e(TAG, "处于栈顶-Resume");
+        //        L.e(TAG, "处于栈顶-Resume");
         super.onResume();
     }
     
     @Override
     protected void onRestart() {
-        L.e(TAG, "重新可见-Restart");
+        //        L.e(TAG, "重新可见-Restart");
         super.onRestart();
     }
     
@@ -144,7 +143,7 @@ public abstract class ActivityCDK extends AppCompatActivity {
     
     @Override
     protected void onSaveInstanceState(@NotNull Bundle outState) {
-        L.e(TAG, "保存状态-Save");
+        //        L.e(TAG, "保存状态-Save");
         Bundle save = saveData(outState);
         if (save == null) save = outState;
         save.putInt("sign0", sign[0]);
@@ -268,22 +267,19 @@ public abstract class ActivityCDK extends AppCompatActivity {
     private void initLayout() {
         container = new FrameLayout(this);
         container.setId(31636368);
-        V.LP(container).eleDP(-100);
-        container.setBackgroundResource(R.color.back_all);
+        V.LP(container).eleDP(-100).id(31636368).backgroundRes(R.color.back_all).refresh();
         super.setContentView(container);
         
         ImageView iv = new ImageView(this);
-        V.FL(iv).size(-1, -1).eleDP(-90).parent(container);
-        iv.setScaleType(ImageView.ScaleType.FIT_START);
-        iv.setImageResource(R.drawable.bg_cdk_head);
+        V.FL(iv).size(-1, -1).eleDP(-99).scaleType(ImageView.ScaleType.FIT_START).drawable(R.drawable.bg_cdk_head)
+         .parent(container);
         
         titleBar = new MaterialTextView(this);
-        V.FL(titleBar).size(-1, -2).paddingDP(40, 60, 0, 40).eleDP(100).parent(container);
+        V.FL(titleBar).size(-1, -2).paddingDP(40, 60, 0, 40).eleDP(100).textColorRes(R.color.text_title).textSize(24)
+         .parent(container);
+        titleBar.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         if (getTitle() != null) setTitle(getTitle());
         else titleBar.setVisibility(View.GONE);
-        titleBar.setTextColor(getColor(R.color.text_title));
-        titleBar.setTextSize(20);
-        titleBar.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
     }
     
     /*** 创建底栏布局 ***/
