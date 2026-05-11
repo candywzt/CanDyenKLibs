@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- 主题渐变色 -->
+    <color name="main_02">#FFFA9371</color>
     <color name="main_01">#FFFA9371</color>
-    <color name="main_02">#FFFA8A7A</color>
-    <color name="main_03">#FFFA7394</color>
-    <color name="main_04">#FFFA58B1</color>
-    <color name="main_00">#FFC9C9C9</color>
+    <color name="main_03">#FFE6704C</color>
+    <color name="main_04">#FFC95532</color>
+    <color name="main_00">#FFE0E0E0</color>
+    
     <!-- 主题透明色 -->
     <color name="main_11">#50FA9371</color>
     <color name="main_12">#50FA8A7A</color>
     <color name="main_13">#50FA7394</color>
     <color name="main_14">#50FA58B1</color>
-    <!-- 额忘了这是啥来着 -->
+    <!-- 忘了是啥来着 -->
     <color name="light_night">#FF000000</color>
-    <!-- 文字颜色,主,副,标题 -->
+    <!-- 文字颜色-主要 -->
     <color name="text_main">#FF222222</color>
+    <!-- 文字颜色-次要 -->
     <color name="text_deputy">#FFA9A9A9</color>
-    <color name="text_title">#FFFFFFFF</color>
+    <!-- 文字颜色-标题 -->
+    <color name="text_title">#FF333333</color>
+    <!-- 文字颜色-不可用 -->
     <color name="text_none">#FF9A9A9A</color>
-    <!-- 背景色,页面背景,控件组背景,控件背景 -->
+    <!-- 背景-整体 -->
     <color name="back_all">#FFEEEEEE</color>
-    <color name="back_group">#FFFFFFFF</color>
+    <!-- 背景-部分 -->
+    <color name="back_group">#55FFFFFF</color>
+    <!-- 背景-单个 -->
     <color name="back_view">#FFF2F2F2</color>
+    
+
     <!--MD颜色-->
     <color name="md_red_100">#FFFFCDD2</color><!--红色100-->
     <color name="md_red_500">#FFF44336</color><!--红色500-->
@@ -61,7 +69,7 @@
     <color name="md_grey_500">#FF9E9E9E</color><!--灰色500-->
     <color name="md_blue_grey_100">#FFCFD8DC</color><!--蓝灰色100-->
     <color name="md_blue_grey_500">#FF607D8B</color><!--蓝灰色500-->
-    
+
     <!--固定颜色-->
     <color name="transparent">#00000000</color><!--透明-->
     <color name="translucent">#33000000</color><!--半透明-->

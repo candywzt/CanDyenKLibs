@@ -23,7 +23,7 @@
         <item name="colorSecondary">@color/main_03</item>
         <item name="colorSecondaryVariant">@color/main_04</item>
         <item name="colorOnSecondary">@color/main_01</item>
-        <!-- 其他颜色 -->
+        <!-- 文本链接颜色 -->
         <item name="android:textColorLink">@color/main_01</item>
         <!-- 设置MD视图 -->
         <item name="viewInflaterClass">com.google.android.material.theme.MaterialComponentsViewInflater</item>

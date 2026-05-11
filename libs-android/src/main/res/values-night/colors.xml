@@ -13,13 +13,18 @@
     <color name="main_14">#80B544A0</color>
     <!-- 忘了是啥来着 -->
     <color name="light_night">#FFEEEEEE</color>
-    <!-- 文字颜色 -->
+    <!-- 文字颜色-主要 -->
     <color name="text_main">#FFEEEEEE</color>
+    <!-- 文字颜色-提示 -->
     <color name="text_deputy">#FF888888</color>
-
+    <!-- 文字颜色-标题 -->
+    <color name="text_title">#FFE0E0E0</color>
+    <!-- 文字颜色-不可用 -->
     <color name="text_none">#FF666666</color>
-    <!-- 背景色 -->
+    <!-- 背景-整体 -->
     <color name="back_all">#FF121212</color>
-    <color name="back_group">#FF1E1E1E</color>
+    <!-- 背景-部分 -->
+    <color name="back_group">#551E1E1E</color>
+    <!-- 背景-单个 -->
     <color name="back_view">#FF2A2A2A</color>
-</resources>
+</resources>  

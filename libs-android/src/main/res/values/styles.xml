@@ -12,8 +12,8 @@
         <item name="android:textColor">@color/color_textbutton_text</item>
         <item name="android:background">@drawable/bg_textbutton</item>
         <item name="android:textSize">12sp</item>
-        <item name="android:minHeight">35dp</item>
-        <item name="android:minWidth">35dp</item>
+        <item name="android:minHeight">36dp</item>
+        <item name="android:minWidth">36dp</item>
         <item name="backgroundTint">@null</item>
     </style>
     <!--Button组件-空心按钮-->
@@ -35,23 +35,23 @@
     </style>
     <!--EditText组件-实心编辑框-->
     <style name="CDK.Widget.EditText" parent="Widget.AppCompat.EditText">
-        <item name="android:background">@drawable/bg_edit_outlined</item>
+        <item name="android:background">@drawable/bg_edit</item>
         <item name="android:textColor">@color/text_main</item>
         <item name="android:textColorHint">@color/text_deputy</item>
         <item name="android:textCursorDrawable">@drawable/bg_edit_cursor</item>
-        <item name="android:padding">10dp</item>
+        <item name="android:padding">8dp</item>
     </style>
     <!--EditText组件-空心编辑框-->
     <style name="CDK.Widget.EditText.Outlined" parent="CDK.Widget.EditText">
-        <item name="android:background">@drawable/bg_edit</item>
+        <item name="android:background">@drawable/bg_edit_outlined</item>
     </style>
     <!--Switch组件-默认-->
     <style name="CDK.Widget.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
         <item name="android:thumb">@drawable/bg_switch_thumb</item>
         <item name="android:track">@drawable/bg_switch_track</item>
         <item name="android:background">@null</item>
-        <item name="android:maxHeight">25dp</item>
-        <item name="android:minHeight">25dp</item>
+        <item name="android:maxHeight">24dp</item>
+        <item name="android:minHeight">24dp</item>
         <item name="android:textOn">""</item>
         <item name="android:textOff">""</item>
     </style>
@@ -62,8 +62,8 @@
         <!--        <item name="android:indeterminateDrawable">@drawable/seekbar_indeterminate</item>-->
         <item name="android:splitTrack">false</item><!--关闭中间割裂-->
         <item name="android:background">@null</item>
-        <item name="android:maxHeight">25dp</item>
-        <item name="android:minHeight">25dp</item>
+        <item name="android:maxHeight">24dp</item>
+        <item name="android:minHeight">24dp</item>
 
     </style>
     <!--RecycleView组件-->
@@ -72,12 +72,12 @@
         <item name="android:overScrollMode">ifContentScrolls</item><!--滚动条模式-->
         <item name="android:scrollbars">none</item><!--滚动条方向-->
         <item name="android:requiresFadingEdge">vertical</item><!--边缘衰减方向-->
-        <item name="android:fadingEdgeLength">30dp</item><!--边缘衰减长度-->
+        <item name="android:fadingEdgeLength">32dp</item><!--边缘衰减长度-->
         <item name="android:colorEdgeEffect">@android:color/transparent</item><!--边缘颜色-->
     </style>
     <!--RecycleView组件-安卓快速滚动条-->
     <style name="CDK.Widget.RecyclerView.ScrollBars" parent="CDK.Widget.RecyclerView">
-        <item name="android:scrollbarSize">5dp</item><!--滚动条宽度-->
+        <item name="android:scrollbarSize">8dp</item><!--滚动条宽度-->
         <item name="android:scrollbarThumbVertical">@color/main_01</item><!--滚动条背景-->
         <item name="android:scrollbars">vertical</item><!--垂直滚动-->
     </style>
