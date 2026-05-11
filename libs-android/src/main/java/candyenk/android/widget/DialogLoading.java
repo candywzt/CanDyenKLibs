@@ -150,9 +150,8 @@ public class DialogLoading extends AlertDialog {
     private void initLayout() {
         dialogView = new SmoothLayout(context);
         dialogView.setOnClickListener(v -> dismiss());
-        V.FL(dialogView).sizeDP(180, 200).lGravity(Gravity.CENTER).backgroundRes(R.drawable.bg_gradual_change)
+        V.FL(dialogView).sizeDP(180, 200).lGravity(Gravity.CENTER).background(GD.DEFAULT(context))
          .refresh();
-        
         loadView = new LoadView(context);
         loadView.setOnClickListener(v -> {});
         V.FL(loadView).sizeDP(180).lGravity(Gravity.CENTER_HORIZONTAL).parent(dialogView);
