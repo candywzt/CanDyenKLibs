@@ -22,7 +22,7 @@ public class ShizukuTest extends ActivityCDK.Default {
     
     @Override
     protected void viewInit() {
-        Log.e("AAAAA", "UID:" + Shizuku.getUid());
+        Log.e("GD", "UID:" + Shizuku.getUid());
         ShizukuTestBinding bd = ShizukuTestBinding.inflate(getLayoutInflater());
         setContentView(bd.getRoot());
         

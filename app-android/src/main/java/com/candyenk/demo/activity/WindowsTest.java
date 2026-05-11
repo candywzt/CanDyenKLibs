@@ -35,8 +35,8 @@ public class WindowsTest extends ActivityCDK.Default {
                 if (pm == null) return;
                 PackageManager pm;
                 //pm.install
-                Log.e("AAAAA", "已授权");
-                Log.e("AAAAA", "监察权限:" + USys.checkPermission(this, "android.permission.SYSTEM_ALERT_WINDOW"));
+                Log.e("GD", "已授权");
+                Log.e("GD", "监察权限:" + USys.checkPermission(this, "android.permission.SYSTEM_ALERT_WINDOW"));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -53,7 +53,7 @@ public class WindowsTest extends ActivityCDK.Default {
 //                        .processNameSuffix("service")
 //                        .version(BuildConfig.VERSION_CODE))
 //                .connectListener((c, i) -> {
-//                    Log.e("AAAAA", "已绑定");
+//                    Log.e("GD", "已绑定");
 //                    pm = ISuiPM.Stub.asInterface(i);
 //                })
 //                .disConnectListener(c -> {
