@@ -27,10 +27,10 @@ import com.google.android.material.card.MaterialCardView;
 public class WindowLayout extends MaterialCardView {
     private static final String TAG = WindowLayout.class.getSimpleName();
     private Context context;
-
+    
     private ImageView horwView;//缩放控件
     private View backView;//边框控件
-
+    
     private LinearLayout toolbar;//悬浮窗控制栏
     private ImageView barView;//拖动控件
     private ImageView inputView;//焦点控件
@@ -39,33 +39,18 @@ public class WindowLayout extends MaterialCardView {
     private ImageView lookView;//锁定控件
     private ImageView lookPlusView;//挂件控件
     private int horwState;//大小调整按钮状态0未调整1调整中2调整完毕
-
-
+    
     private OnWindowSizeChangedListener onWindowSizeChangedListener;//控件尺寸改变监听
     private OnWindowPositionChangedListener onWindowPositionChangedListener;//控件位置改变监听
-
-    /**********************************************************************************************/
-    /*****************************************接口**************************************************/
-    /**********************************************************************************************/
-    public interface OnWindowSizeChangedListener {
-        void onViewSizeChanged(int width, int height);
-    }
-
-    public interface OnWindowPositionChangedListener {
-        void onViewPositionChanged(int x, int y);
-    }
-
-    /**********************************************************************************************/
-    /*****************************************构造方法***********************************************/
-    /**********************************************************************************************/
+    
     public WindowLayout(Context context) {
         this(context, null);
     }
-
+    
     public WindowLayout(Context context, AttributeSet attrs) {
-        this(context, attrs, R.style.Theme_CDK);
+        this(context, attrs, R.style.CDK_Theme);
     }
-
+    
     public WindowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
@@ -73,10 +58,7 @@ public class WindowLayout extends MaterialCardView {
         initAttrs(attrs);
         initEvents();
     }
-
-    /**********************************************************************************************/
-    /*****************************************重写方法***********************************************/
-    /**********************************************************************************************/
+    
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         if (horwState == 1) {
@@ -92,11 +74,32 @@ public class WindowLayout extends MaterialCardView {
             super.onLayout(changed, left, top, right, bottom);
         }
     }
-
-
-    /**********************************************************************************************/
-    /*****************************************私有方法***********************************************/
-    /**********************************************************************************************/
+    
+    /**
+     * 设置控件大小改变监听
+     * 在该接口内改变WindowManager.LayoutParams的大小
+     * 否则无法实现窗口大小调整功能
+     */
+    public void setOnWindowSizeChangedListener(OnWindowSizeChangedListener onWindowSizeChanged) {
+        this.onWindowSizeChangedListener = onWindowSizeChanged;
+    }
+    
+    /**
+     * 设置控件位置改变监听
+     * 在该接口内改变WindowManager.LayoutParams的位置
+     * 否则无法实现窗口位置调整功能
+     */
+    public void setOnWindowPositionChangedListener(OnWindowPositionChangedListener onWindowPositionChanged) {
+        this.onWindowPositionChangedListener = onWindowPositionChanged;
+    }
+    
+    /**
+     * 获取BarView控件
+     */
+    public View getBarView() {
+        return this.barView;
+    }
+    
     private void initLayout() {
         setRadius(20);
         horwView = new ImageView(context);
@@ -106,7 +109,7 @@ public class WindowLayout extends MaterialCardView {
         horwView.setElevation(100);
         horwView.setImageDrawable(context.getDrawable(R.drawable.ic_window_horw));
         addView(horwView);
-
+        
         barView = new ImageView(context);
         FrameLayout.LayoutParams lp2 = new FrameLayout.LayoutParams(dp2px(20), dp2px(20));
         lp2.setMargins(dp2px(5), dp2px(5), 0, 0);
@@ -114,7 +117,7 @@ public class WindowLayout extends MaterialCardView {
         barView.setElevation(98);
         barView.setBackgroundResource(R.drawable.bg_window_bar);
         addView(barView);
-
+        
         backView = new View(context);
         FrameLayout.LayoutParams lp3 = new FrameLayout.LayoutParams(dp2px(20), dp2px(20));
         lp3.setMargins(0, 0, dp2px(5), dp2px(5));
@@ -123,19 +126,18 @@ public class WindowLayout extends MaterialCardView {
         backView.setBackgroundResource(R.drawable.bg_window);
         backView.setVisibility(GONE);
         addView(backView);
-
-
+        
     }
-
+    
     private void initAttrs(AttributeSet attrs) {
     }
-
+    
     @SuppressLint("ClickableViewAccessibility")
     private void initEvents() {
         OnTouchListener onSizeChangeListener = new OnTouchListener() {
             //按下位置的坐标和按下时控件的尺寸
             private float lastX, lastY, viewW, viewH;
-
+            
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
@@ -173,7 +175,7 @@ public class WindowLayout extends MaterialCardView {
         OnTouchListener onPositionChangedListener = new OnTouchListener() {
             //按下位置的坐标和按下时控件的位置坐标
             private float lastX, lastY, viewX, viewY;
-
+            
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
@@ -211,38 +213,19 @@ public class WindowLayout extends MaterialCardView {
         horwView.setOnTouchListener(onSizeChangeListener);
         barView.setOnTouchListener(onPositionChangedListener);
     }
-
+    
     private int dp2px(double dpValue) {
         float num = dpValue < 0 ? -1 : 1;
         final double scale = getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + (0.5f * num));
     }
-    /**********************************************************************************************/
-    /*****************************************公共方法***********************************************/
-    /**********************************************************************************************/
-    /**
-     * 设置控件大小改变监听
-     * 在该接口内改变WindowManager.LayoutParams的大小
-     * 否则无法实现窗口大小调整功能
-     */
-    public void setOnWindowSizeChangedListener(OnWindowSizeChangedListener onWindowSizeChanged) {
-        this.onWindowSizeChangedListener = onWindowSizeChanged;
+    
+    public interface OnWindowSizeChangedListener {
+        void onViewSizeChanged(int width, int height);
     }
-
-    /**
-     * 设置控件位置改变监听
-     * 在该接口内改变WindowManager.LayoutParams的位置
-     * 否则无法实现窗口位置调整功能
-     */
-    public void setOnWindowPositionChangedListener(OnWindowPositionChangedListener onWindowPositionChanged) {
-        this.onWindowPositionChangedListener = onWindowPositionChanged;
+    
+    public interface OnWindowPositionChangedListener {
+        void onViewPositionChanged(int x, int y);
     }
-
-    /**
-     * 获取BarView控件
-     */
-    public View getBarView() {
-        return this.barView;
-    }
-
+    
 }

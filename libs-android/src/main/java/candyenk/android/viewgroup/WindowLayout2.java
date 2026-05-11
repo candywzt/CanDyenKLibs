@@ -26,41 +26,26 @@ import com.google.android.material.card.MaterialCardView;
 public class WindowLayout2 extends FrameLayout {
     private static final String TAG = WindowLayout2.class.getSimpleName();
     private Context context;
-
+    
     private MaterialCardView cardView;//内容控件
     private ImageView horwView;//缩放控件
     private View backView;//边框控件
-
+    
     private LinearLayout toolbar;//悬浮窗控制栏
-
+    
     private int horwState;//大小调整按钮状态0未调整1调整中2调整完毕
-
-
+    
     private OnWindowSizeChangedListener onWindowSizeChangedListener;//控件尺寸改变监听
     private OnWindowPositionChangedListener onWindowPositionChangedListener;//控件位置改变监听
-
-    /**********************************************************************************************/
-    /*****************************************接口**************************************************/
-    /**********************************************************************************************/
-    public interface OnWindowSizeChangedListener {
-        void onViewSizeChanged(int width, int height);
-    }
-
-    public interface OnWindowPositionChangedListener {
-        void onViewPositionChanged(int x, int y);
-    }
-
-    /**********************************************************************************************/
-    /*****************************************构造方法***********************************************/
-    /**********************************************************************************************/
+    
     public WindowLayout2(Context context) {
         this(context, null);
     }
-
+    
     public WindowLayout2(Context context, AttributeSet attrs) {
-        this(context, attrs, R.style.Theme_CDK);
+        this(context, attrs, R.style.CDK_Theme);
     }
-
+    
     public WindowLayout2(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
@@ -68,10 +53,7 @@ public class WindowLayout2 extends FrameLayout {
         initAttrs(attrs);
         initEvents();
     }
-
-    /**********************************************************************************************/
-    /*****************************************重写方法***********************************************/
-    /**********************************************************************************************/
+    
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         if (horwState == 1) {
@@ -87,10 +69,25 @@ public class WindowLayout2 extends FrameLayout {
             super.onLayout(changed, left, top, right, bottom);
         }
     }
-
-    /**********************************************************************************************/
-    /*****************************************私有方法***********************************************/
-    /**********************************************************************************************/
+    
+    /**
+     * 设置控件大小改变监听
+     * 在该接口内改变WindowManager.LayoutParams的大小
+     * 否则无法实现窗口大小调整功能
+     */
+    public void setOnWindowSizeChangedListener(OnWindowSizeChangedListener onWindowSizeChanged) {
+        this.onWindowSizeChangedListener = onWindowSizeChanged;
+    }
+    
+    /**
+     * 设置控件位置改变监听
+     * 在该接口内改变WindowManager.LayoutParams的位置
+     * 否则无法实现窗口位置调整功能
+     */
+    public void setOnWindowPositionChangedListener(OnWindowPositionChangedListener onWindowPositionChanged) {
+        this.onWindowPositionChangedListener = onWindowPositionChanged;
+    }
+    
     private void initLayout() {
         //悬浮窗内容卡片
         cardView = new MaterialCardView(context);
@@ -99,7 +96,7 @@ public class WindowLayout2 extends FrameLayout {
         cardView.setElevation(0);
         cardView.setRadius(20);
         addView(cardView);
-
+        
         //悬浮窗缩放控件
         horwView = new ImageView(context);
         lp = new LayoutParams(dp2px(30), dp2px(30));
@@ -108,7 +105,7 @@ public class WindowLayout2 extends FrameLayout {
         horwView.setElevation(100);//设置层级为最高
         horwView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_window_horw));
         addView(horwView);
-
+        
         //悬浮窗控制栏
         toolbar = new LinearLayout(context);
         lp = new LayoutParams(-2, -2);
@@ -118,7 +115,7 @@ public class WindowLayout2 extends FrameLayout {
         toolbar.setElevation(99);//设置层级99
         toolbar.setBackgroundColor(Color.GREEN);
         addView(toolbar);
-
+        
         //悬浮窗边框控件
         backView = new View(context);
         lp = new LayoutParams(dp2px(20), dp2px(20));
@@ -130,16 +127,16 @@ public class WindowLayout2 extends FrameLayout {
         addView(backView);
         //初始化工具栏控件
         createToolbar();
-
+        
     }
-
+    
     private void initAttrs(AttributeSet attrs) {
     }
-
+    
     private void initEvents() {
         setWindowSize(horwView);
     }
-
+    
     //创建工具栏
     private void createToolbar() {
         //拖动控件
@@ -155,9 +152,9 @@ public class WindowLayout2 extends FrameLayout {
         //焦点
         //设置
         //快捷设置
-
+        
     }
-
+    
     //创建工具栏控件
     private ImageView createToolbarView() {
         ImageView view = new ImageView(context);
@@ -165,53 +162,53 @@ public class WindowLayout2 extends FrameLayout {
         view.setLayoutParams(lp);
         return view;
     }
-
+    
     //悬浮窗停靠
     private void setWindowDock(ImageView view) {
-
+        
     }
-
+    
     //悬浮窗关闭
     private void setWindowClose(ImageView view) {
-
+        
     }
-
+    
     //悬浮窗锁定
     private void setWindowLock(ImageView view) {
-
+        
     }
-
+    
     //悬浮窗挂件
     private void setWindowPendant(ImageView view) {
-
+        
     }
-
+    
     //悬浮窗透明度
     private void setWindowAlpha(ImageView view) {
-
+        
     }
-
+    
     //悬浮窗焦点
     private void setWindowFocus(ImageView view) {
-
+        
     }
-
+    
     //悬浮窗设置
     private void setWindowSetting(ImageView view) {
-
+        
     }
-
+    
     //悬浮窗快捷设置
     private void setWindowQuickSetting(ImageView view) {
-
+        
     }
-
+    
     //悬浮窗缩放
     private void setWindowSize(View view) {
         view.setOnTouchListener(new OnTouchListener() {
             //按下位置的坐标和按下时控件的尺寸
             private float lastX, lastY, viewW, viewH;
-
+            
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
@@ -247,13 +244,13 @@ public class WindowLayout2 extends FrameLayout {
             }
         });
     }
-
+    
     //悬浮窗拖动
     private void setWindowPosition(View view) {
         view.setOnTouchListener(new OnTouchListener() {
             //按下位置的坐标和按下时控件的位置坐标
             private float lastX, lastY, viewX, viewY;
-
+            
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
@@ -286,32 +283,19 @@ public class WindowLayout2 extends FrameLayout {
             }
         });
     }
-
+    
     private int dp2px(double dpValue) {
         float num = dpValue < 0 ? -1 : 1;
         final double scale = getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + (0.5f * num));
     }
-    /**********************************************************************************************/
-    /*****************************************公共方法***********************************************/
-    /**********************************************************************************************/
-    /**
-     * 设置控件大小改变监听
-     * 在该接口内改变WindowManager.LayoutParams的大小
-     * 否则无法实现窗口大小调整功能
-     */
-    public void setOnWindowSizeChangedListener(OnWindowSizeChangedListener onWindowSizeChanged) {
-        this.onWindowSizeChangedListener = onWindowSizeChanged;
+    
+    public interface OnWindowSizeChangedListener {
+        void onViewSizeChanged(int width, int height);
     }
-
-    /**
-     * 设置控件位置改变监听
-     * 在该接口内改变WindowManager.LayoutParams的位置
-     * 否则无法实现窗口位置调整功能
-     */
-    public void setOnWindowPositionChangedListener(OnWindowPositionChangedListener onWindowPositionChanged) {
-        this.onWindowPositionChangedListener = onWindowPositionChanged;
+    
+    public interface OnWindowPositionChangedListener {
+        void onViewPositionChanged(int x, int y);
     }
-
-
+    
 }

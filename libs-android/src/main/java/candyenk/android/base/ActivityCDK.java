@@ -93,6 +93,64 @@ public abstract class ActivityCDK extends AppCompatActivity {
         super.onDestroy();
     }
     
+    @Override
+    protected final void onCreate(Bundle save) {
+        this.TAG = this.getClass().getSimpleName();
+        L.e(TAG, "启动创建-Create");
+        contextInit(save);
+        super.onCreate(save);
+        initLayout();
+        intentInit();
+        viewInit();
+        contentInit(save);
+        eventInit();
+    }
+    
+    @Override
+    protected void onPause() {
+        L.e(TAG, "退出栈顶-Pause");
+        super.onPause();
+    }
+    
+    @Override
+    protected void onResume() {
+        L.e(TAG, "处于栈顶-Resume");
+        super.onResume();
+    }
+    
+    @Override
+    protected void onRestart() {
+        L.e(TAG, "重新可见-Restart");
+        super.onRestart();
+    }
+    
+    @Override
+    public void setTitle(int stringResourceId) {
+        if (stringResourceId <= 0) setTitle(null);
+        else setTitle(getString(stringResourceId));
+    }
+    
+    /**
+     * 设置标题
+     * 设置为NULL则关闭Activity标题显示(或res为0)
+     * 设置为非NULL则关闭Fragment标题显示
+     */
+    @Override
+    public void setTitle(CharSequence title) {
+        //TODO:这个地方能不能为空?
+        super.setTitle(title);
+        setTitleText(title);
+    }
+    
+    @Override
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
+        L.e(TAG, "保存状态-Save");
+        Bundle save = saveData(outState);
+        if (save == null) save = outState;
+        save.putInt("sign0", sign[0]);
+        super.onSaveInstanceState(save);
+    }
+    
     /**
      * 设置Fragment
      * 与setContentView二选一
@@ -173,64 +231,6 @@ public abstract class ActivityCDK extends AppCompatActivity {
      */
     public int color(@ColorRes int id) {
         return getColor(id);
-    }
-    
-    @Override
-    protected final void onCreate(Bundle save) {
-        this.TAG = this.getClass().getSimpleName();
-        L.e(TAG, "启动创建-Create");
-        contextInit(save);
-        super.onCreate(save);
-        initLayout();
-        intentInit();
-        viewInit();
-        contentInit(save);
-        eventInit();
-    }
-    
-    @Override
-    protected void onPause() {
-        L.e(TAG, "退出栈顶-Pause");
-        super.onPause();
-    }
-    
-    @Override
-    protected void onResume() {
-        L.e(TAG, "处于栈顶-Resume");
-        super.onResume();
-    }
-    
-    @Override
-    protected void onRestart() {
-        L.e(TAG, "重新可见-Restart");
-        super.onRestart();
-    }
-    
-    @Override
-    public void setTitle(int stringResourceId) {
-        if (stringResourceId <= 0) setTitle(null);
-        else setTitle(getString(stringResourceId));
-    }
-    
-    /**
-     * 设置标题
-     * 设置为NULL则关闭Activity标题显示(或res为0)
-     * 设置为非NULL则关闭Fragment标题显示
-     */
-    @Override
-    public void setTitle(CharSequence title) {
-        //TODO:这个地方能不能为空?
-        super.setTitle(title);
-        setTitleText(title);
-    }
-    
-    @Override
-    protected void onSaveInstanceState(@NotNull Bundle outState) {
-        L.e(TAG, "保存状态-Save");
-        Bundle save = saveData(outState);
-        if (save == null) save = outState;
-        save.putInt("sign0", sign[0]);
-        super.onSaveInstanceState(save);
     }
     
     /*** 便捷吐司 ***/
