@@ -150,8 +150,8 @@ public class DialogLoading extends AlertDialog {
     private void initLayout() {
         dialogView = new SmoothLayout(context);
         dialogView.setOnClickListener(v -> dismiss());
-        //        V.LP(dialogView).sizeDP(-1, -2).backgroundRes(android.R.color.transparent).refresh();
-        V.FL(dialogView).sizeDP(180, 200).lGravity(Gravity.CENTER).backgroundRes(R.color.back_view).refresh();
+        V.FL(dialogView).sizeDP(180, 200).lGravity(Gravity.CENTER).backgroundRes(R.drawable.bg_gradual_change)
+         .refresh();
         
         loadView = new LoadView(context);
         loadView.setOnClickListener(v -> {});
