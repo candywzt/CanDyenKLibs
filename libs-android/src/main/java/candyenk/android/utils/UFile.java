@@ -24,64 +24,85 @@ public class UFile extends candyenk.java.utils.UFile {
     public static final String rootPath = "/";//根目录
     public static final String sdcardPath = "/storage/emulated/0";//外部存储目录
     public static final String systemPath = "/system";//System目录
-
+    
     /**
      * 获取私有Data目录(/data/user/0/APPID)
+     *
+     * @param context 上下文
+     * @return 绝对路径
      */
     public static String getDataPath(Context context) {
         return context.getDataDir().getAbsolutePath();
     }
-
+    
     /**
      * 获取私有Files目录(/data/user/0/APPID/files)
+     *
+     * @param context 上下文
+     * @return 绝对路径
      */
     public static String getFilesPath(Context context) {
         return context.getFilesDir().getAbsolutePath();
     }
-
+    
     /**
      * 获取私有Cache目录(/data/user/0/APPID/cache)
+     *
+     * @param context 上下文
+     * @return 绝对路径
      */
     public static String getCachePath(Context context) {
         return context.getCacheDir().getAbsolutePath();
     }
-
+    
     /**
      * 主共享目录
      * 获取共享Data目录(/storage/emulated/0/Android/data/APPID
+     *
+     * @param context 上下文
+     * @return 绝对路径
      */
     public static String getEDataPath(@Nullable Context context) {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
-
+    
     /**
      * 获取共享Files目录(/storage/emulated/0/Android/data/APPID/files
+     *
+     * @param context 上下文
+     * @return 绝对路径
      */
     public static String getEFilesPath(Context context) {
         return context.getExternalFilesDir("").getAbsolutePath();
     }
-
+    
     /**
      * 获取共享Cache目录(/storage/emulated/0/Android/data/APPID/cache)
+     *
+     * @param context 上下文
+     * @return 绝对路径
      */
     public static String getECachePath(Context context) {
         return context.getExternalCacheDir().getAbsolutePath();
     }
-
-
+    
+    
     /**
      * Raw资源文件读取(res/raw/文件夹)
      *
-     * @param resId R.raw.fileName
+     * @param resId   R.raw.fileName
+     * @param context 上下文
+     * @return 输入流
      */
     public static InputStream readRaw(Context context, @RawRes int resId) {
         return context.getResources().openRawResource(resId);
     }
-
+    
     /**
      * Assets资源文件读取(assets/文件夹)
      *
      * @param fileName 文件名带后缀
+     * @param context  上下文
      * @return 无法读取返回NULL
      */
     public static InputStream readAssets(Context context, String fileName) {
@@ -89,22 +110,27 @@ public class UFile extends candyenk.java.utils.UFile {
             return context.getResources().getAssets().open(fileName);
         } catch (IOException e) {return null;}
     }
-
+    
     /**
      * Data目录文件读取(data/data/包名/files/目录)
+     * 不存在则自动创建
      *
      * @param fileName 文件名带后缀
-     * @return
+     * @param context  上下文
+     * @return 文件输入流
      */
     public static FileInputStream readData(Context context, String fileName) {
         try {
+            createFile(new File(context.getFilesDir(), fileName));
             return context.openFileInput(fileName);
         } catch (IOException e) {return null;}
     }
-
+    
     /**
      * Data文件写入(data/data/包名/files/目录)
+     * 不存在则自动创建
      *
+     * @param context  上下文
      * @param fileName 写入文件名带后缀
      * @param isAppend 是够追加写入
      */
@@ -113,20 +139,22 @@ public class UFile extends candyenk.java.utils.UFile {
             return context.openFileOutput(fileName, isAppend ? Context.MODE_APPEND : 0);
         } catch (IOException e) {return null;}
     }
-
+    
     /**
      * Data文件删除(data/data/包名/files/目录)
      *
+     * @param context  上下文
      * @param fileName 删除文件名
      * @return 执行结果
      */
     public static boolean deleteData(Context context, String fileName) {
         return context.deleteFile(fileName);
     }
-
+    
     /**
      * Data文件(夹)重命名(data/data/包名/files/目录)
      *
+     * @param context  上下文
      * @param filePath 重命名文件路径
      * @param newName  新文件名
      * @return 重命名成功返回true, 其他情况通通返回false
@@ -135,7 +163,7 @@ public class UFile extends candyenk.java.utils.UFile {
         File file = context.getFileStreamPath(filePath);
         return renameFile(file, newName);
     }
-
+    
     /**
      * Uri文件读取
      *
@@ -145,7 +173,7 @@ public class UFile extends candyenk.java.utils.UFile {
     public static InputStream readUri(Context context, Uri uri) {
         try {return context.getContentResolver().openInputStream(uri);} catch (Exception e) {return null;}
     }
-
+    
     /**
      * Uri文件写入
      *
@@ -155,16 +183,21 @@ public class UFile extends candyenk.java.utils.UFile {
     public static OutputStream writeUri(Context context, Uri uri) {
         try {return context.getContentResolver().openOutputStream(uri);} catch (Exception e) {return null;}
     }
-
+    
     /**
-     * 获取文件Meta信息
+     * 获取文件元数据
      * 返回数组0:文件名 1:文件大小
      * 若为空则为空字符串不是NULL
+     *
+     * @param context 上下文
+     * @param uri     URI
+     * @return 元数据信息数组
      */
     @SuppressLint("Range")
     public static String[] getMetaData(Context context, Uri uri) {
         String[] meta = {"", ""};
-        if (uri.getScheme().equals("content")) {
+        if (uri == null) return meta;
+        if ("content".equals(uri.getScheme())) {
             Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
             try {
                 if (cursor != null && cursor.moveToFirst()) {
