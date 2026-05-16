@@ -9,71 +9,84 @@ import java.util.function.Consumer;
  * 尽量避免Stream到Reader的转换,效率会降低
  */
 public class IO {
-
+    
     /**
      * 输入流读取字节数组(自动关闭)
+     *
+     * @param in 输入流
+     * @return 字节数组,流无法读取返回空数组
      */
     public static byte[] read(InputStream in) {
         return read(in, true);
     }
-
+    
     /**
      * 输入流读取字节数组
      *
-     * @param in 输入流
-     * @return 流无法读取返回空数组
+     * @param in      输入流
+     * @param isClose 是否自动关闭输入流
+     * @return 字节数组,流无法读取返回空数组
      */
     public static byte[] read(InputStream in, boolean isClose) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         streamRW(in, baos, isClose, false);
         return baos.toByteArray();
     }
-
+    
     /**
      * 输入流读取字符串(默认编码)(自动关闭)
+     *
+     * @param in 输入流
+     * @return 字符串,流无法读取返回空字符串
      */
     public static String readString(InputStream in) {
         return readString(in, true);
     }
-
+    
     /**
      * 输入流读取字符串(默认编码)
      * 底层采用byte[]读取String
      *
      * @param in 输入流
-     * @return 流无法读取返回空字符串
+     * @return 字符串,流无法读取返回空字符串
      */
     public static String readString(InputStream in, boolean isClose) {
         return readString(in, Charset.defaultCharset(), isClose);
     }
-
+    
     /**
      * 输入流读取字符串(自动关闭)
+     *
+     * @param in 输入流
+     * @return 字符串,流无法读取返回空字符串
      */
     public static String readString(InputStream in, Charset charset) {
         return readString(in, charset, true);
     }
-
+    
     /**
      * 输入流读取字符串
      * 底层采用byte[]读取String
      *
      * @param in      输入流
      * @param charset 字符编码
-     * @return 流无法读取返回空字符串
+     * @return 字符串,流无法读取返回空字符串
      */
     public static String readString(InputStream in, Charset charset, boolean isClose) {
         return new String(read(in, isClose), charset);
     }
-
-
+    
+    
     /**
      * Reader读取字符串(自动关闭)
+     *
+     * @param reader 字符流
+     * @return 字符串,流无法读取返回空字符串
      */
     public static String readString(Reader reader) {
         return readString(reader, true);
     }
-
+    
     /**
      * Reader读取字符串
      * 不建议读取StreamReader,直接读取Stream较好
@@ -93,14 +106,17 @@ public class IO {
         } catch (Exception ignored) {return "";} finally {if (isClose) close(reader);}
         return sb.toString();
     }
-
+    
     /**
      * Reader按行读取字符串(自动关闭)
+     *
+     * @param reader 字符流
+     * @return 读取是否成功
      */
     public static boolean readString(Reader reader, Consumer<String> action) {
         return readString(reader, true, action);
     }
-
+    
     /**
      * Reader按行读取字符串
      *
@@ -118,21 +134,25 @@ public class IO {
         } catch (IOException ignored) {} finally {if (isClose) close(reader);}
         return false;
     }
-
+    
     /**
      * 流间读写(自动关闭输入流)
      * 输出流不会关闭(关了还怎么输出)
      * 默认true,false
+     *
+     * @param in  来源流
+     * @param out 目标流
+     * @return 读写是否成功
      */
     public static boolean streamRW(InputStream in, OutputStream out) {
         return streamRW(in, out, true, false);
     }
-
+    
     /**
      * 流间读写
      *
-     * @param in         输入流
-     * @param out        输出流
+     * @param in         来源流
+     * @param out        目标流
      * @param isCloseIn  是否关闭输入流
      * @param isCloseOut 是否关闭输出流
      * @return 读写成功与否
@@ -140,8 +160,10 @@ public class IO {
     public static boolean streamRW(InputStream in, OutputStream out, boolean isCloseIn, boolean isCloseOut) {
         if (in == null || out == null) return false;//必要,所有的判空都靠这个
         try {
-            BufferedInputStream bis = in instanceof BufferedInputStream ? (BufferedInputStream) in : new BufferedInputStream(in);
-            BufferedOutputStream bos = out instanceof BufferedOutputStream ? (BufferedOutputStream) out : new BufferedOutputStream(out);
+            BufferedInputStream bis =
+                    in instanceof BufferedInputStream ? (BufferedInputStream) in : new BufferedInputStream(in);
+            BufferedOutputStream bos =
+                    out instanceof BufferedOutputStream ? (BufferedOutputStream) out : new BufferedOutputStream(out);
             //            byte[] b = new byte[8192];
             //            int size;
             //            while ((size = bis.read(b)) > -1) bos.write(b, 0, size);
@@ -159,19 +181,24 @@ public class IO {
             close(isCloseIn ? in : null, isCloseOut ? out : null);
         }
     }
-
+    
     /**
      * 字节数组写入到流(自动关闭)
+     *
+     * @param out     输出流
+     * @param content 字节数组
+     * @return 写入是否成功
      */
     public static boolean write(OutputStream out, byte[] content) {
         return write(out, content, true);
     }
-
+    
     /**
      * 字节数组写入到流
      *
-     * @param out     写入流
-     * @param content 写入内容
+     * @param out     输出流
+     * @param content 字节数组
+     * @param isClose 是否自动关闭输出流
      * @return 写入成功与否
      */
     public static boolean write(OutputStream out, byte[] content, boolean isClose) {
@@ -185,33 +212,42 @@ public class IO {
         } catch (IOException ignored) {} finally {if (isClose) close(bos);}
         return false;
     }
-
+    
     /**
      * 字符串写入到流(默认编码)(自动关闭)
+     *
+     * @param out  输出流
+     * @param text 字符串
+     * @return 写入是否成功
      */
     public static boolean writeString(OutputStream out, String text) {
         return writeString(out, text, true);
     }
-
+    
     /**
      * 字符串写入到流(默认编码)
      * 底层采用byte[]写入
      *
-     * @param out  写入流
-     * @param text 写入内容
+     * @param out  输出流
+     * @param text 字符串
      * @return 写入成功与否
      */
     public static boolean writeString(OutputStream out, String text, boolean isClose) {
         return writeString(out, text, Charset.defaultCharset(), isClose);
     }
-
+    
     /**
      * 字符串写入到流(自动关闭)
+     *
+     * @param out     输出流
+     * @param text    字符串
+     * @param charset 编码
+     * @return 写入是否成功
      */
     public static boolean writeString(OutputStream out, String text, Charset charset) {
         return writeString(out, text, charset, true);
     }
-
+    
     /**
      * 字符串写入到流
      * 底层采用byte[]写入
@@ -225,20 +261,24 @@ public class IO {
         if (out == null || text == null) return false;
         return write(out, text.getBytes(charset), isClose);
     }
-
+    
     /**
      * 字符串写入到Writer(自动关闭)
+     *
+     * @param writer 写如流
+     * @param text   字符串
+     * @return 写入成功与否
      */
     public static boolean writeString(Writer writer, String text) {
         return writeString(writer, text, true);
     }
-
+    
     /**
      * 字符串写入到Writer
      * 不建议写入StreamReader,直接写入Stream较好
      *
-     * @param writer 写入Writer
-     * @param text   写入内容
+     * @param writer 写入流
+     * @param text   字符串
      * @return 写入成功与否
      */
     public static boolean writeString(Writer writer, String text, boolean isClose) {
@@ -252,30 +292,38 @@ public class IO {
         } catch (IOException ignored) {} finally {if (isClose) close(bw);}
         return false;
     }
-
-
+    
+    
     /**
      * 关闭器
      * 返回NULL
+     *
+     * @param c   需要关闭的对象
+     * @param <T> 返回的null
      */
     public static <T> T close(Closeable... c) {
         if (c == null) return null;
         for (Closeable able : c) try {able.close();} catch (Exception ignored) {}
         return null;
     }
-
+    
     /**
      * Process关闭器
      * 返回NULL
+     *
+     * @param p 需要关闭的对象
+     * @return 反回null
      */
     public static Process close(Process... p) {
         if (p == null) return null;
         for (Process pp : p) if (pp != null) pp.destroy();
         return null;
     }
-
+    
     /**
      * 刷新器
+     *
+     * @param c 需要刷新的对象
      */
     public static void flush(Flushable... c) {
         if (c == null) return;
