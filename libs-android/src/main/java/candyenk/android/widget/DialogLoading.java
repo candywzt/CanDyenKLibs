@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import candyenk.android.R;
+import candyenk.android.graphics.Gradient;
 import candyenk.android.tools.RC;
 import candyenk.android.tools.V;
 import candyenk.android.view.LoadView;
@@ -150,7 +151,7 @@ public class DialogLoading extends AlertDialog {
     private void initLayout() {
         dialogView = new SmoothLayout(context);
         dialogView.setOnClickListener(v -> dismiss());
-        V.FL(dialogView).sizeDP(180, 200).lGravity(Gravity.CENTER).background(GD.DEFAULT(context))
+        V.FL(dialogView).sizeDP(180, 200).lGravity(Gravity.CENTER).background(Gradient.DEFAULT(context))
          .refresh();
         loadView = new LoadView(context);
         loadView.setOnClickListener(v -> {});

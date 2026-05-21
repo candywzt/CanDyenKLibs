@@ -6,6 +6,7 @@ import android.view.*;
 import android.widget.*;
 import androidx.annotation.StringRes;
 import candyenk.android.R;
+import candyenk.android.graphics.Gradient;
 import candyenk.android.tools.L;
 import candyenk.android.tools.V;
 import candyenk.android.utils.ULay;
@@ -259,7 +260,7 @@ public class DialogBottom extends BottomSheetDialog {
         //根级控件,圆角卡片
         //弹窗布局对象
         FrameLayout dialogView = new SmoothLayout(context);
-        V.LL(dialogView).size(-1, -2).background(GD.DEFAULT(context)).refresh();
+        V.LL(dialogView).size(-1, -2).background(Gradient.DEFAULT(context)).refresh();
         
         //        //顶栏背景
         //        ImageView iv = new AppCompatImageView(context);

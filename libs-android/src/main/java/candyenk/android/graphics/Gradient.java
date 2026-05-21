@@ -1,4 +1,4 @@
-package candyenk.android.widget;
+package candyenk.android.graphics;
 
 import android.content.Context;
 import android.graphics.*;
@@ -11,9 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 渐变图像生成器
+ * 渐变图像背景
+ * 使用构建器
  */
-public class GD extends Drawable {
+public class Gradient extends Drawable {
     private static final int[] bc = {Color.WHITE, 0xFF404040};
     private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Context context;
@@ -21,10 +22,10 @@ public class GD extends Drawable {
     private final float[][] arr;
     private BitmapDrawable cache;
     
-    private GD(Context context, float[][] arr) {
+    private Gradient(Context context, float[][] arr) {
         this.context = context;
-        isDM = context.getResources().getConfiguration().isNightModeActive();
-        this.arr = arr;
+        isDM         = context.getResources().getConfiguration().isNightModeActive();
+        this.arr     = arr;
     }
     
     /**
@@ -62,7 +63,7 @@ public class GD extends Drawable {
             tempCanvas.drawColor(isDM ? bc[1] : bc[0]);
             for (float[] f : arr) {
                 Shader s = new RadialGradient(w * f[0], h * f[1], w * f[2], (int) (isDM ? f[4] : f[3]), 0,
-                        Shader.TileMode.CLAMP);
+                                              Shader.TileMode.CLAMP);
                 p.setShader(s);
                 tempCanvas.drawRect(0, 0, w, h, p);
             }
@@ -130,7 +131,7 @@ public class GD extends Drawable {
          * @return 图像
          */
         public Drawable build() {
-            return new GD(context, list.toArray(new float[0][0]));
+            return new Gradient(context, list.toArray(new float[0][0]));
         }
     }
     
